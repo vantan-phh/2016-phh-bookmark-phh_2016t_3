@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8">
+<style>
+#list{
+  position:absolute;
+  top:30px;
+}
+
+</style>
+<body>
+  <div id="organization"></div>
+  <div id="search"><button>検索</button><input type="text"></div>
+  <form accept-charset="UTF-8" action="/submit" method="post">
+  <div id="list">
+  <input type="text" placeholder="URLを入力" id="url" name="new_bookmark">
+  <input type="text" placeholder="タイトル" id="title" name="title">
+  <input type="text" placeholder="コメント"　id="commnet" name="comment">
+  <input type="submit"></input>
+</form>
+<div id="name"></div>
+<% list.forEach(function(list) { %>
+  <li class="main-list__item">
+    <div id="my-bookmark"><%= list.my_bookmark%><%= list.title %><%= list.comment %></div>
+  </li>
+<% }); %>
+</div>
+</body>
+</html>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script src="/test/test.js"></script>

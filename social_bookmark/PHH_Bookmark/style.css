@@ -1,0 +1,396 @@
+body, p, form, input{margin: 0px;}
+html {
+    font-family: sans-serif;
+    -ms-text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+    overflow: auto;
+}
+body {
+  min-width: 1020px;
+  word-wrap: break-word;
+  font-family: Helvetica, arial, nimbussansl, liberationsans, freesans, clean, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  font-size: 13px;
+  line-height: 1.4;
+  color: #333;
+}
+h1, h2, h3, h4, h5, h6 {
+    margin-top: 0;
+    margin-bottom: 0;
+    line-height: 1.4;
+}
+a {
+    color: #000;
+    text-decoration: none;
+}
+a:active, a:hover {
+    outline-width: 0;
+}
+* {
+    box-sizing: border-box;
+}
+
+/* ヘッダー全体 */
+.site-header::before {
+    display: table;
+    content: "";
+}
+.site-header .header-logo-invertocat {
+    margin-right: 0;
+    margin-left: 0;
+}
+.site-header {
+    position: relative;
+    z-index: 3;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    margin-bottom: -1px;
+    background-color: #fff;
+    background-clip: padding-box;
+    border-bottom: 1px solid rgba(0,0,0,0.075);
+    box-shadow: 0 0 5px rgba(0,0,0,0.1);
+}
+article, aside, details, figcaption, figure, footer, header, main, menu, nav, section, summary {
+    display: block;
+}
+.site-header::after {
+    display: table;
+    clear: both;
+    content: "";
+}
+
+/* ヘッダーファビコン部分 */
+img {
+  display: inline-block;
+  vertical-align: text-top;
+  fill: currentColor;
+}
+.header-logo-invertocat {
+    float: left;
+    margin-right: 10px;
+    margin-left: -2px;;
+    white-space: nowrap;
+    margin-top: -10px;
+}
+.container-responsive {
+    max-width: 980px;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+/* ヘッダー左側 */
+.site-header-nav-main .nav-item {
+    float: left;
+    padding-top: 6px;
+    padding-right: 10px;
+    padding-bottom: 24px;
+    padding-left: 10px;
+    margin-bottom: -25px;
+    font-size: 16px;
+    border-top: 0;
+    border-bottom: 4px solid transparent;
+}
+.site-header-nav .nav-item {
+    display: block;
+    float: left;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    line-height: 20px;
+    color: #555;
+}
+.site-header-nav .nav-item:hover {
+    color: #333;
+    text-decoration: none;
+}
+
+/* ヘッダー サブメニュー部分 */
+.nav-item {
+  padding: 8px 10px;
+  font-size: 14px;
+}
+
+/* ヘッダー検索部分 */
+.site-header-nav-secondary {
+    float: right;
+    margin-top: 0;
+    margin-right: 10px;
+}
+.site-header .header-search {
+    width: 160px;
+    margin-right: 6px;
+    margin-left: 10px;
+}
+.header-search {
+    float: right;
+    width: 360px;
+    margin-right: 500px;
+}
+.header-search-scope {
+    display: none;
+    width: 1%;
+    padding-right: 8px;
+    padding-left: 8px;
+    color: #767676;
+    white-space: nowrap;
+    vertical-align: middle;
+    border-right: 1px solid #eee;
+    border-top-left-radius: 2px;
+    border-bottom-left-radius: 2px;
+}
+.header-search-wrapper {
+    display: table;
+    width: 100%;
+    max-width: 100%;
+    min-height: 0;
+    padding: 0;
+    font-size: 12px;
+    font-weight: normal;
+    vertical-align: middle;
+}
+.header-search-input {
+    display: table-cell;
+    width: 99%;
+    min-height: 26px;
+    padding-top: 0;
+    padding-bottom: 0;
+    background: none;
+    border: 0;
+    box-shadow: none;
+}
+.site-header .header-search-input {
+    min-height: 32px;
+}
+label {
+    font-size: 13px;
+    font-weight: bold;
+}
+.home-hero, .jumbotron, .jumbotron-followup-container, .featurette, .site-header, .site-subheader, .tile {
+    font-family: Roboto, -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Segoe UI", Oxygen, Ubuntu, Cantarell, "Open Sans", sans-serif;
+    font-size: 16px;
+    line-height: 1.4;
+    color: #767676;
+}
+
+/* ヘッダー右側 Signin Signup */
+.site-header-actions {
+    position: relative;
+    z-index: 3;
+    margin-top: -1px;
+    margin-bottom: -1px;
+    text-align: left;
+}
+.btn {
+    position: relative;
+    display: inline-block;
+    padding: 6px 12px;
+    font-size: 13px;
+    font-weight: bold;
+    line-height: 20px;
+    color: #333;
+    white-space: nowrap;
+    vertical-align: middle;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    background-color: #eee;
+    background-image: -webkit-linear-gradient(#fcfcfc, #eee);
+    background-image: linear-gradient(#fcfcfc, #eee);
+    border: 1px solid #d5d5d5;
+    border-radius: 3px;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+.btn-primary {
+    color: #fff;
+    text-shadow: 0 -1px 0 rgba(0,0,0,0.15);
+    background-color: #60b044;
+    background-image: -webkit-linear-gradient(#8add6d, #60b044);
+    background-image: linear-gradient(#8add6d, #60b044);
+    border-color: #5ca941;
+}
+.btn-primary:hover {
+  background: #75C759;
+}
+.site-header-actions-btn {
+    float: right;
+    font-weight: 500;
+}
+.mr-2 {
+    margin-right: 6px !important;
+}
+.mr-2:hover {
+  background: #eee;
+}
+
+/* body 背景 */
+.shade-gradient {
+    background-image: -webkit-linear-gradient(270deg, #f5f5f5, #fff);
+    background-image: linear-gradient(180deg, #f5f5f5, #fff);
+    background-repeat: no-repeat;
+    background-size: 100% 200px;
+}
+
+/* アカウント作成画面 */
+.setup-header h1 {
+    margin-top: 0;
+    margin-bottom: 0;
+    font-size: 45px;
+    font-weight: normal;
+    line-height: 1.1;
+    letter-spacing: -1px;
+}
+h1 {
+    font-size: 2em;
+    margin: 0.67em 0;
+}
+.lead {
+  margin-top: 4px;
+  font-size: 16px;
+}
+.setup-wrapper {
+    width: 750px;
+    padding-top: 30px;
+    margin: 0 auto;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+.setup-main {
+  float: left;
+  width: 450px;
+  margin: 30px auto;
+  padding: 20px;
+  font-size: 14px;
+}
+.form-title{
+  text-align: left;
+  font-size: 24px;
+}
+h2 {
+    display: block;
+    font-size: 1.5em;
+    -webkit-margin-before: 0.83em;
+    -webkit-margin-after: 0.83em;
+    -webkit-margin-start: 0px;
+    -webkit-margin-end: 0px;
+    font-weight: bold;
+}
+/* 入力欄デザイン */
+.entry-field {
+  width: 600px;
+}
+
+/* アカウント作成入力画面 */
+.setup-form .form-group dd .form-control {
+    width: 100%;
+}
+.form-group .form-control {
+    width: 440px;
+    max-width: 100%;
+    margin-right: 5px;
+    background-color: #fafafa;
+}
+.form-control, .form-select {
+    min-height: 34px;
+    padding: 7px 8px;
+    font-size: 13px;
+    color: #333;
+    outline-color: green;
+    vertical-align: middle;
+    background-color: #fff;
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.075);
+}
+input, textarea {
+    -webkit-font-feature-settings: "liga" 0;
+    font-feature-settings: "liga" 0;
+}
+input, select, textarea, button {
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+}
+button, input {
+    overflow: visible;
+}
+button, input, select, textarea {
+    font: inherit;
+    margin: 0;
+}
+.input-label {
+  margin-bottom: 3px;
+}
+.post-lead {
+  min-height: 17px;
+  margin: 4px 0 2px;
+  font-size: 12px;
+  color: #000;
+}
+/* 最後の確認的な部分 */
+.tos-info {
+  padding: 15px 0;
+}
+.setup-form .tos-info, .setup-form .setup-organization-next {
+    margin: 15px 0;
+    border-top: 1px solid #bfbfbf;
+    border-bottom: 1px solid #bfbfbf;
+}
+/* アカウント作成ボタン */
+.submit {
+  text-align: left;
+}
+.submit input{
+  font-family: Arial;
+  color: #ffffff;
+  font-size: 13px;
+  padding-top: 5px;
+  padding-right: 10px;
+  padding-bottom: 5px;
+  padding-left: 10px;
+  text-decoration: none;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-radius: 5px;
+  border: solid #3cb300 1px;
+  background: -webkit-gradient(linear, 0 0, 0 100%, from(#07d34f), to(#3cb300));
+  background: -moz-linear-gradient(top, #07d34f, #3cb300);
+  }
+.submit input:hover{
+  background: #22C328;
+ }
+
+/* 一番下 */
+.site-footer-container {
+    width: auto;
+    max-width: 1020px;
+    padding-right: 20px;
+    padding-left: 20px;
+    margin-right: auto;
+    margin-left: auto;
+}
+.logged-out.signup .site-footer {
+    margin-right: auto;
+    margin-left: auto;
+}
+.logged-out.signup .header-logged-out .container, .logged-out.signup .site-footer {
+    width: 750px;
+}
+.site-footer {
+    position: relative;
+    padding-top: 40px;
+    padding-bottom: 40px;
+    margin-top: 40px;
+    font-size: 12px;
+    line-height: 1.5;
+    color: #767676;
+    border-top: 1px solid #eee;
+}
+.site-footer-phh {
+    position: absolute;
+    top: 0px;
+    left: 30%;
+    margin-left: -12px;
+}
