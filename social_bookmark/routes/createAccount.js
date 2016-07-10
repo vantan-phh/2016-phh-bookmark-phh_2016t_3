@@ -34,7 +34,7 @@ function hashPassword(password){
 }
 
 router.get('/',function(req,res){
-  res.render('index.ejs');
+  res.render('createAccount.ejs');
 });
 router.post('/join', function(req,res){
   var eMail = req.body.email;
@@ -43,7 +43,7 @@ router.post('/join', function(req,res){
   hashPassword(password);
   var query = 'INSERT INTO `users` (`user_name`,`mail`) VALUES(?, ?)';
   connection.query(query,[userName,eMail],function(err,rows){
-    res.redirect('/PHH_Bookmark/view');
+    res.redirect('/PHH_Bookmark/login');
   });
 });
 

@@ -2,16 +2,15 @@
 <html lang="en" class="is-copy-enabled emoji-size-boost is-u2f-enabled">
 <head>
   <meta charset="UTF-8">
-  <title>Create Account - PHHB</title>
-  <link rel="stylesheet" type="text/css" href="style.css">
+  <title>Sign In - PHHB</title>
+  <!-- <link rel="stylesheet" type="text/css" href="style.css"> -->
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-  <script src="index.js"></script>
 </head>
 <body class="logged-out env-production macintosh signup">
   <header class="site-header" role="banner">
     <div class="container-responsive">
       <a class="header-logo-invertocat" href="https://まだ" data-hotkey="g b" aria-label="Homepage" data-ga-click="Header, go to dashboard, icon:logo">
-        <img class="PB" src="img/favicon_Prototype.ico">
+        <!--<img src="img/favicon_Prototype.ico"> -->
       </a>
       <div class="site-header-menu">
         <nav class="site-header-nav-main site-header-nav">
@@ -52,45 +51,40 @@
         </div> -->
         <div id="setup-main">
           <div class="setup-form-container">
-            <form accept-charset="UTF-8" action="/join" autocomplete="off" class="setup-form js-signup-form" id="signup-form" method="post">
+            <form accept-charset="UTF-8" action="/PHH_Bookmark/login" autocomplete="off" class="setup-form js-signup-form" id="signup-form" method="post">
               <div style="margin:0;padding:0;display:inline">
                 <input name="utf8" type="hidden" value="✔︎">
                 <input name="authenticity_token" type="hidden" value="未設定!!!!">
               </div>
-              <h2 class="form-title">Create an Account</h2>
+              <h2 class="form-title">Sign In</h2>
               <div class="entry-field">
                 <dl class="form-group">
                   <dt class="input-label">
                     <label autocapitalize="off" autofocus="autofocus" data-autocheck-url="/signup_check/email"
-                      for="user_email" name="user[email]">Email Address</label>
+                      for="user_email" name="email">Email Address</label>
                   </dt>
                     <input autocapitalize="off" autofocus="autofocus" class="form-control" data-autocheck-url="/signup_check/email"
-                      id="user_email" name="user[email]" size="30" type="text" data-throttle-wait="300">
-                    <p class="post-lead">メールアドレスを入力してください。</p>
+                      id="user_email" name="email_or_user_name" size="30" type="text" data-throttle-wait="300">
+                    <p class="post-lead">メールアドレスまたはユーザーネームを入力してください。</p>
                 </dl>
-                <dl class="form-group">
-                  <dt class="input-label">
-                    <label autocapitalize="off" autofocus="autofocus" data-autocheck-url="/signup_check/username"
-                      for="user_login" name="user[login]">Username</label>
-                  </dt>
-                    <input autocapitalize="off" autofocus="autofocus" class="form-control" data-autocheck-url="/signup_check/username"
-                      id="user_login" name="user[login]" size="30" type="text" data-throttle-wait="300">
-                    <p class="post-lead">ユーザーネームを入力してください。</p>
-                </dl>
+
                 <dl class="form-group">
                   <dt class="input-label">
                     <label autocapitalize="off" autofocus="autofocus" data-autocheck-url="/signup_check/password"
-                      for="user_password" name="user[password]">Password</label>
+                      for="user_password" name="password">Password</label>
                   </dt>
                     <input autocapitalize="off" autofocus="autofocus" class="form-control" data-autocheck-url="/signup_check/password"
-                      id="user_password" name="user[password]" size="30" type="text" data-throttle-wait="300">
+                      id="user_password" name="password" size="30" type="text" data-throttle-wait="300">
                     <p class="post-lead">パスワードを入力してください。</p>
                 </dl>
                 <input type="hidden" name="source" class="未設定!!!!!" value="header">
 
-                <p class="tos-info">アカウントを作成すると利用規約に同意した事になります。</p>
+                <!--<p class="tos-info">By clicking on "Create an account" below, you are agreeing to the Terms of Service and the Privacy Policy.</p> -->
 
-                <p class="submit"><input type="submit" value="Create an account"/></p>
+                <p class="submit"><input type="submit" value="Sign In"/></p>
+                <% if (typeof noUser !== 'undefined') { %>
+                  <p class="error"><%= noUser %></p>
+                  <% } %>
             </form>
             </div>
           </div>
@@ -101,13 +95,13 @@
   <div class="container site-footer-container">
     <footer class="site-footer" role="footer">
       <a class="site-footer-vantan" href="http://www.vantan-hs.com/index.php">
-        <img src="img/vantan_logo.png">
+        <!-- <img src="img/vantan_logo.png"> -->
       </a>
       <a class="site-footer-phh" href="http://www.vantan-hs.com/phh/index.php">
-        <img src="img/phh_logo.png">
+        <!-- <img src="img/phh_logo.png"> -->
       </a>
         <a class="site-footer-n-highschool" href="https://nnn.ed.jp/">
-          <img src="img/n_highschool_logo.png">
+          <!-- <img src="img/n_highschool_logo.png"> -->
       </a>
     </footer>
   </div>

@@ -1,9 +1,11 @@
 var express = require('express');
 var session = require('express-session');
+//var path = require('path');
 
-var index = require('./routes/index.js');
+var topPage = require('./routes/topPage.js');
 //var users = require('./routes/users.js');
 var createAccount = require('./routes/createAccount.js');
+var login = require('./routes/login.js');
 
 var app = express();
 
@@ -18,11 +20,17 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(logger('dev'));
-app.use('/PHH_Bookmark',createAccount);
-app.use('/PHH_Bookmark/view',index);
 app.use(express.static(__dirname + '/PHH_Bookmark'));
 app.use(express.static(__dirname + '/PHH_Bookmark/view'));
-app.use(express.static(__dirname + '/index'));
+// app.use(express.static(path.join(__dirname,'public')));
+// app.use(session({
+//   secret: 'keyboard cat',
+//   resave: false,
+//   saveUninitialized: true
+// }));
+app.use('/PHH_Bookmark',createAccount);
+app.use('/PHH_Bookmark/topPage',topPage);
+app.use('/PHH_Bookmark/login',login);
 app.use(function(req,res,next){
   console.log('my custom middleware!');
   next();

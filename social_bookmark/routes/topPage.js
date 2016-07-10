@@ -7,7 +7,7 @@ router.get('/',function(req,res){
   var a = 1;
   var query = 'SELECT * FROM `user_bookmarks` WHERE `id` = ?';
   connection.query(query,[a],function(err,rows){
-    res.render('test.ejs',{
+    res.render('topPage.ejs',{
       list : rows
     });
   });
@@ -18,7 +18,7 @@ router.post('/submit',function(req,res){
   var newBookmarkDescription = req.body.description;
   var query = 'INSERT INTO `user_bookmarks` (`title`,`url`,`description`) VALUES(?, ? ,?)';
   connection.query(query,[newBookmarkTitle,newBookmarkUrl,newBookmarkDescription],function(err,rows){
-    res.redirect('/view');
+    res.redirect('/topPage');
   });
 });
 
