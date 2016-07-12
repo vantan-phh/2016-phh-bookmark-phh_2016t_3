@@ -1,6 +1,6 @@
 var express = require('express');
 var session = require('express-session');
-//var path = require('path');
+var path = require('path');
 
 var topPage = require('./routes/topPage.js');
 //var users = require('./routes/users.js');
@@ -13,14 +13,14 @@ var logger = require('morgan');
 
 var bodyParser = require('body-parser');
 
-app.set('views', __dirname + '/PHH_Bookmark/view');
+app.set('views', path.join(__dirname + '/PHH_Bookmark/view'));
 app.set('view engine', 'ejs');
 
 //middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(logger('dev'));
-app.use(express.static(__dirname + '/PHH_Bookmark'));
+//app.use(express.static(__dirname + '/PHH_Bookmark'));
 app.use(express.static(__dirname + '/PHH_Bookmark/view'));
 // app.use(express.static(path.join(__dirname,'public')));
 // app.use(session({

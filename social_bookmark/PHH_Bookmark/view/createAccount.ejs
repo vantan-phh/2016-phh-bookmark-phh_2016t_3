@@ -51,7 +51,7 @@
         </div> -->
         <div id="setup-main">
           <div class="setup-form-container">
-            <form accept-charset="UTF-8" action="/PHH_Bookmark/join" autocomplete="off" class="setup-form js-signup-form" id="signup-form" method="post">
+            <form accept-charset="UTF-8" action="/PHH_Bookmark" autocomplete="off" class="setup-form js-signup-form" id="signup-form" method="post">
               <div style="margin:0;padding:0;display:inline">
                 <input name="utf8" type="hidden" value="✔︎">
                 <input name="authenticity_token" type="hidden" value="未設定!!!!">
@@ -66,6 +66,9 @@
                     <input autocapitalize="off" autofocus="autofocus" class="form-control" data-autocheck-url="/signup_check/email"
                       id="user_email" name="email" size="30" type="text" data-throttle-wait="300">
                     <p class="post-lead">メールアドレスを入力してください。</p>
+                    <% if (typeof emailExists !== 'undefined') { %>
+                      <p class="error"><%= emailExists %></p>
+                    <% } %>
                 </dl>
                 <dl class="form-group">
                   <dt class="input-label">

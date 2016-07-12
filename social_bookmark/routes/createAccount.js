@@ -30,20 +30,33 @@ function hashPassword(password){
     a = b;
   }
   password = b;
-  connection.query('INSERT INTO `hashes` (`hash`,`salt`) VALUES(?,?)',[password,salt]);
+  return password,salt;
 }
 
 router.get('/',function(req,res){
   res.render('createAccount.ejs');
 });
-router.post('/join', function(req,res){
+router.post('/', function(req,res){
   var eMail = req.body.email;
   var userName = req.body.user_name;
   var password = req.body.password;
   hashPassword(password);
+  var eMailExistsQuery = 'SELECT `mail` FROM `users` WHERE `mail` = ?';
   var query = 'INSERT INTO `users` (`user_name`,`mail`) VALUES(?, ?)';
-  connection.query(query,[userName,eMail],function(err,rows){
-    res.redirect('/PHH_Bookmark/login');
+  connection.query(eMailExistsQuery,[eMail],function(err,result){
+    console.log(eMail);
+    console.log(result);
+    var eMailExists = result.length === 1;
+    if(eMailExists){
+      res.render('createAccount.ejs',{
+        emailExists: '既に登録されているメールアドレスです。'
+      });
+    }else{
+      connection.query('INSERT INTO `hashes` (`hash`,`salt`) VALUES(?,?)',[password,salt]);
+      connection.query(query,[userName,eMail],function(err,rows){
+        res.redirect('/PHH_Bookmark/login');
+      });
+    }
   });
 });
 
