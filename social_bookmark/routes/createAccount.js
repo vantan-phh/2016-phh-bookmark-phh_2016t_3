@@ -30,7 +30,10 @@ function hashPassword(password){
     a = b;
   }
   password = b;
-  return password,salt;
+  var passwordAndHash = [];
+  passwordAndHash.push(password);
+  passwordAndHash.push(salt);
+  return passwordAndHash;
 }
 
 router.get('/',function(req,res){
@@ -40,7 +43,7 @@ router.post('/', function(req,res){
   var eMail = req.body.email;
   var userName = req.body.user_name;
   var password = req.body.password;
-  hashPassword(password);
+  var passwordAndHash = hashPassword(password);
   var eMailExistsQuery = 'SELECT `mail` FROM `users` WHERE `mail` = ?';
   var query = 'INSERT INTO `users` (`user_name`,`mail`) VALUES(?, ?)';
   connection.query(eMailExistsQuery,[eMail],function(err,result){
@@ -52,6 +55,9 @@ router.post('/', function(req,res){
         emailExists: '既に登録されているメールアドレスです。'
       });
     }else{
+      console.log(passwordAndHash);
+      password = passwordAndHash[0];
+      var salt = passwordAndHash[1];
       connection.query('INSERT INTO `hashes` (`hash`,`salt`) VALUES(?,?)',[password,salt]);
       connection.query(query,[userName,eMail],function(err,rows){
         res.redirect('/PHH_Bookmark/login');
