@@ -20,11 +20,11 @@ function toHash(password,salt){
 }
 
 router.get('/', function(req, res) {
-  // if (req.session.id) {
-  //   res.redirect('/PHH_Bookmark/view');
-  // } else {
+  if (req.session.id) {
+    res.redirect('/PHH_Bookmark/topPage');
+  } else {
     res.render('login.ejs');
-//   }
+  }
 });
 router.post('/', function(req, res){
   var eMailOrUserName = req.body.email_or_user_name;
@@ -43,10 +43,10 @@ router.post('/', function(req, res){
         connection.query('SELECT `hash` FROM `hashes` WHERE `id` = ?',[idFromMail],function(err,result){
           hashFromId = result[0].hash;
           if(password === hashFromId){
-            //req.session.id = idFromMail;
+            req.session.id = idFromMail;
             res.redirect('/PHH_Bookmark/topPage');
           }else{
-            //req.session.id = false;
+            req.session.id = false;
             res.render('login.ejs',{
               noUser:'入力した値からユーザーが探せません。'
             });
@@ -68,10 +68,10 @@ router.post('/', function(req, res){
         connection.query('SELECT `hash` FROM `hashes` WHERE `id` = ?',[idFromUserName],function(err,result){
           hashFromId = result[0].hash;
           if(password === hashFromId){
-            //req.session.id = idFromUserName;
+            req.session.id = idFromUserName;
             res.redirect('/PHH_Bookmark/topPage');
           }else{
-            //req.session.id = false;
+            req.session.id = false;
             res.render('login.ejs',{
               noUser:'入力した値からユーザーが探せません。'
             });

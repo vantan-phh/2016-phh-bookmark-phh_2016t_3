@@ -55,7 +55,6 @@ router.post('/', function(req,res){
         emailExists: '既に登録されているメールアドレスです。'
       });
     }else{
-      console.log(passwordAndHash);
       password = passwordAndHash[0];
       var salt = passwordAndHash[1];
       connection.query('INSERT INTO `hashes` (`hash`,`salt`) VALUES(?,?)',[password,salt]);

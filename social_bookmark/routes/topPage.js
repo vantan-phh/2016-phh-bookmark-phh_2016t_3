@@ -2,7 +2,6 @@ var express = require('express');
 var router = express.Router();
 var connection = require('../mysqlConnection');
 
-
 router.get('/',function(req,res){
   var a = 1;
   var query = 'SELECT * FROM `user_bookmarks` WHERE `id` = ?';
