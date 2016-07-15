@@ -20,7 +20,8 @@ function toHash(password,salt){
 }
 
 router.get('/', function(req, res) {
-  if (req.session.id) {
+  console.log(req.session.user_id);
+  if (req.session.user_id) {
     res.redirect('/PHH_Bookmark/topPage');
   } else {
     res.render('login.ejs');
@@ -34,19 +35,20 @@ router.post('/', function(req, res){
     var eMail = eMailOrUserName;
     var idFromMail;
     var saltFromId;
-    connection.query('SELECT `id` FROM `users` WHERE `mail` = ?',[eMail],function(err,result){
-      idFromMail = result[0].id;
-      connection.query('SELECT `salt` FROM `hashes` WHERE `id` = ?',[idFromMail],function(err,result){
+    connection.query('SELECT `user_id` FROM `users` WHERE `mail` = ?',[eMail],function(err,result){
+      idFromMail = result[0].user_id;
+      connection.query('SELECT `salt` FROM `hashes` WHERE `user_id` = ?',[idFromMail],function(err,result){
         saltFromId = result[0].salt;
         var password = req.body.password;
         password = toHash(password,saltFromId);
-        connection.query('SELECT `hash` FROM `hashes` WHERE `id` = ?',[idFromMail],function(err,result){
+        connection.query('SELECT `hash` FROM `hashes` WHERE `user_id` = ?',[idFromMail],function(err,result){
           hashFromId = result[0].hash;
           if(password === hashFromId){
-            req.session.id = idFromMail;
+            req.session.user_id = idFromMail;
+            console.log(req.session.user_id);
             res.redirect('/PHH_Bookmark/topPage');
           }else{
-            req.session.id = false;
+            req.session.user_id = false;
             res.render('login.ejs',{
               noUser:'入力した値からユーザーが探せません。'
             });
@@ -59,19 +61,19 @@ router.post('/', function(req, res){
     var idFromUserName;
     var saltFromId;
     var a = 1;
-    connection.query('SELECT `id` FROM `users` WHERE `user_name` = ?',[userName],function(err,result){
-      idFromUserName = result[0].id;
-      connection.query('SELECT `salt` FROM `hashes` WHERE `id` = ?',[idFromUserName],function(err,result){
+    connection.query('SELECT `user_id` FROM `users` WHERE `user_name` = ?',[userName],function(err,result){
+      idFromUserName = result[0].user_id;
+      connection.query('SELECT `salt` FROM `hashes` WHERE `user_id` = ?',[idFromUserName],function(err,result){
         saltFromId = result[0].salt;
         var password = req.body.password;
         password = toHash(password,saltFromId);
-        connection.query('SELECT `hash` FROM `hashes` WHERE `id` = ?',[idFromUserName],function(err,result){
+        connection.query('SELECT `hash` FROM `hashes` WHERE `user_id` = ?',[idFromUserName],function(err,result){
           hashFromId = result[0].hash;
           if(password === hashFromId){
-            req.session.id = idFromUserName;
+            req.session.user_id = idFromUserName;
             res.redirect('/PHH_Bookmark/topPage');
           }else{
-            req.session.id = false;
+            req.session.user_id = false;
             res.render('login.ejs',{
               noUser:'入力した値からユーザーが探せません。'
             });

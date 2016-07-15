@@ -9,6 +9,7 @@ var topPage = require('./routes/topPage.js');
 var createAccount = require('./routes/createAccount.js');
 var login = require('./routes/login.js');
 var setUser = require('./routes/setUser.js');
+var logout = require('./routes/logout.js');
 
 var app = express();
 
@@ -22,7 +23,6 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(logger('dev'));
-//app.use(express.static(__dirname + '/PHH_Bookmark'));
 app.use(express.static(__dirname + '/PHH_Bookmark/view'));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname,'public')));
@@ -31,20 +31,21 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   cookie: {
-    maxAge: 30*24*60*60*1000
+    maxAge: 30*24*60*60*1000 //屹度30日。
   }
 }));
 
 var sessionCheck = function(req, res, next){
-  if(req.session.id){
+  if(req.session.user_id){
     next();
   }else{
     res.redirect('/PHH_Bookmark/login');
   }
 }
-app.use('/PHH_Bookmark',sessionCheck,createAccount);
+app.use('/PHH_Bookmark',/*sessionCheck,*/createAccount);
 app.use('/PHH_Bookmark/topPage',setUser,topPage);
 app.use('/PHH_Bookmark/login',login);
+app.use('/PHH_Bookmark/logout',logout);
 app.use(function(req,res,next){
   console.log('my custom middleware!');
   next();
