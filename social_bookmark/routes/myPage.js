@@ -13,12 +13,8 @@ router.get('/',function(req,res){
 });
 router.post('/',function(req,res){
   var newBookmarkUrl = req.body.new_bookmark_url;
-  //var newBookmarkTitle = req.body.title;
-  //var newBookmarkDescription = req.body.description;
-  var query = 'INSERT INTO `user_bookmarks` (`title`,`url`,`description`) VALUES(?, ? ,?)';
-  connection.query(query,[newBookmarkTitle,newBookmarkUrl,newBookmarkDescription],function(err,rows){
-    res.redirect('/myPage');
-  });
+  req.session.url = newBookmarkUrl;
+  res.redirect('/PHH_Bookmark/myBookmarkEdit');
 });
 
 module.exports = router;
