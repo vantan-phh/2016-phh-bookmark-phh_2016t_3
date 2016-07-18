@@ -11,6 +11,7 @@ var login = require('./routes/login.js');
 var setUser = require('./routes/setUser.js');
 var logout = require('./routes/logout.js');
 var myPage = require('./routes/myPage.js');
+var myBookmarkEdit = require('./routes/myBookmarkEdit.js');
 
 var app = express();
 
@@ -36,18 +37,13 @@ app.use(session({
   }
 }));
 
-var sessionCheck = function(req, res, next){
-  if(req.session.user_id){
-    next();
-  }else{
-    res.redirect('/PHH_Bookmark/login');
-  }
-}
 app.use('/PHH_Bookmark',/*sessionCheck,*/createAccount);
 app.use('/PHH_Bookmark/topPage',setUser,topPage);
 app.use('/PHH_Bookmark/login',login);
 app.use('/PHH_Bookmark/logout',logout);
 app.use('/PHH_Bookmark/myPage',setUser,myPage);
+app.use('/PHH_Bookmark/myBookmarkEdit',setUser,myBookmarkEdit);
+
 app.use(function(req,res,next){
   console.log('my custom middleware!');
   next();

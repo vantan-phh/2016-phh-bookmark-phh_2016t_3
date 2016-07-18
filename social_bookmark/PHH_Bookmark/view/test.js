@@ -3,10 +3,10 @@ $(function(){
   var $organization = $('#organization');
   var $myBookmark = $('#my-bookmark');
   var $search = $('#search');
-  var $submit = $('#submit');
+  var $submitURL = $('#submit-URL');
   var $url = $('#url');
   var $name = $('#name');
-  var $title = $('#title');
+//  var $title = $('#title');
 
   var testArr = ['1','2','3','4'];
   var testOrganization = 'PHH';
@@ -20,6 +20,18 @@ $(function(){
       left:width
     });
   }
+
+  function getTitle(url,callback){
+    var xhr=new XMLHttpRequest();
+    xhr.onload = function() {
+      var title=this.responseXML.title||"no title";
+      callback(url,title);
+    }
+    xhr.open("GET", url ,true);
+    xhr.responseType="document";
+    xhr.send();
+  }
+
   window_load();
 
   // for(var i = 0; i < testArr.length; i++){
@@ -34,14 +46,14 @@ $(function(){
   // }
   $organization.html(testOrganization);
 
-  $submit.click(function(){
-    var url = $url.val();
-    var title = $title.val();
-    if(url === '' || title === ''){
+  $submitURL.click(function(){
+    var checkurl = $url.val();
+    if(url === '' ){
       alert("なんか入れて");
     }else{
-      //ブックマークはユーザー情報と関連付けてDBに保存？
-      //そのあとDBからブックマーク情報を読み取って表示？
+      getTitle(checkUrl, function(url, title) {
+        var $title = $('<input type="text" value=' + title + '>');
+      });
     }
   });
 });

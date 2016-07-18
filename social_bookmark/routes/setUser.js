@@ -9,6 +9,8 @@ module.exports = function(req,res,next){
         res.locals.user = result.length? result[0]:false;
       }
     });
+  }else{
+    res.redirect('/PHH_Bookmark/login');
   }
   next();
 }
