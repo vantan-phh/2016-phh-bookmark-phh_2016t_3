@@ -3,6 +3,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var session = require('express-session');
 var path = require('path');
+var client = require('cheerio-httpcli');
 
 var topPage = require('./routes/topPage.js');
 //var users = require('./routes/users.js');

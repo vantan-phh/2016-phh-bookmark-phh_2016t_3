@@ -47,8 +47,6 @@ router.post('/', function(req,res){
   var eMailExistsQuery = 'SELECT `mail` FROM `users` WHERE `mail` = ?';
   var query = 'INSERT INTO `users` (`user_name`,`mail`) VALUES(?, ?)';
   connection.query(eMailExistsQuery,[eMail],function(err,result){
-    console.log(eMail);
-    console.log(result);
     var eMailExists = result.length === 1;
     if(eMailExists){
       res.render('createAccount.ejs',{

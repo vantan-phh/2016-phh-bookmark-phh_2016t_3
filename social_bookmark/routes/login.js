@@ -20,7 +20,6 @@ function toHash(password,salt){
 }
 
 router.get('/', function(req, res) {
-  console.log(req.session.user_id);
   if (req.session.user_id) {
     res.redirect('/PHH_Bookmark/topPage');
   } else {
@@ -45,7 +44,6 @@ router.post('/', function(req, res){
           hashFromId = result[0].hash;
           if(password === hashFromId){
             req.session.user_id = idFromMail;
-            console.log(req.session.user_id);
             res.redirect('/PHH_Bookmark/topPage');
           }else{
             req.session.user_id = false;
