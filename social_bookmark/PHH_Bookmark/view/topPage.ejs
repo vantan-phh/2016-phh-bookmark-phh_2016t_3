@@ -6,12 +6,21 @@
   position:absolute;
   top:30px;
 }
+#logout{
+  position:absolute;
+  top:0;right:0
+}
+#form{
+  position:absolute;
+  left:0px;
+}
 
 </style>
 <body>
   <div id="organization"></div>
   <div id="search"><button>検索</button><input type="text"></div>
-  <form accept-charset="UTF-8" action="/submit" method="post">
+  <div id="logout"><button type=button onclick="alert('ログアウトしました')">ログアウト</button></div>
+  <form id="form" accept-charset="UTF-8" action="/submit" method="post">
   <div id="list">
   <input type="text" placeholder="URLを入力" id="url" name="new_bookmark_url">
   <input type="text" placeholder="タイトル" id="title" name="title">

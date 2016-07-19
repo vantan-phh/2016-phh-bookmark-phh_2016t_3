@@ -39,7 +39,7 @@ app.use(session({
 }));
 
 app.use('/PHH_Bookmark',createAccount);
-app.use('/PHH_Bookmark/topPage',setUser,topPage);
+app.use('/PHH_Bookmark/topPage',/*setUser,*/topPage);
 app.use('/PHH_Bookmark/login',login);
 app.use('/PHH_Bookmark/logout',logout);
 app.use('/PHH_Bookmark/myPage',setUser,myPage);
