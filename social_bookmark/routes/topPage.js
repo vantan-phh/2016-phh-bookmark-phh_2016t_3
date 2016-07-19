@@ -4,7 +4,7 @@ var connection = require('../mysqlConnection');
 
 router.get('/',function(req,res){
   var a = 1;
-  var query = 'SELECT * FROM `user_bookmarks` WHERE `id` = ?';
+  var query = 'SELECT * FROM `bookmarks` WHERE `user_id` = ?';
   connection.query(query,[a],function(err,rows){
     res.render('topPage.ejs',{
       list : rows

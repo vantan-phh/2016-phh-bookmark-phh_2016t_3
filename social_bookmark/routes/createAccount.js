@@ -45,7 +45,7 @@ router.post('/', function(req,res){
   var password = req.body.password;
   var passwordAndHash = hashPassword(password);
   var eMailExistsQuery = 'SELECT `mail` FROM `users` WHERE `mail` = ?';
-  var query = 'INSERT INTO `users` (`user_name`,`mail`) VALUES(?, ?)';
+  var query = 'INSERT INTO `users` (`name`,`mail`,`salt`,`hash`) VALUES(?, ?, ?, ?)';
   connection.query(eMailExistsQuery,[eMail],function(err,result){
     var eMailExists = result.length === 1;
     if(eMailExists){
@@ -55,8 +55,7 @@ router.post('/', function(req,res){
     }else{
       password = passwordAndHash[0];
       var salt = passwordAndHash[1];
-      connection.query('INSERT INTO `hashes` (`hash`,`salt`) VALUES(?,?)',[password,salt]);
-      connection.query(query,[userName,eMail],function(err,rows){
+      connection.query(query,[userName,eMail,salt,password],function(err,rows){
         res.redirect('/PHH_Bookmark/login');
       });
     }

@@ -2,7 +2,7 @@ var mysql      = require('mysql');
 var connection = mysql.createConnection({
   host     : 'localhost',
   user     : 'root',
-  database : `social_bookmark`
+  database : `phh_social_bookmark_proto`
 });
 
 module.exports = connection;

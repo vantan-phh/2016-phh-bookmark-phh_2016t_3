@@ -36,11 +36,11 @@ router.post('/', function(req, res){
     var saltFromId;
     connection.query('SELECT `user_id` FROM `users` WHERE `mail` = ?',[eMail],function(err,result){
       idFromMail = result[0].user_id;
-      connection.query('SELECT `salt` FROM `hashes` WHERE `user_id` = ?',[idFromMail],function(err,result){
+      connection.query('SELECT `salt` FROM `users` WHERE `user_id` = ?',[idFromMail],function(err,result){
         saltFromId = result[0].salt;
         var password = req.body.password;
         password = toHash(password,saltFromId);
-        connection.query('SELECT `hash` FROM `hashes` WHERE `user_id` = ?',[idFromMail],function(err,result){
+        connection.query('SELECT `hash` FROM `users` WHERE `id` = ?',[idFromMail],function(err,result){
           hashFromId = result[0].hash;
           if(password === hashFromId){
             req.session.user_id = idFromMail;
@@ -59,13 +59,13 @@ router.post('/', function(req, res){
     var idFromUserName;
     var saltFromId;
     var a = 1;
-    connection.query('SELECT `user_id` FROM `users` WHERE `user_name` = ?',[userName],function(err,result){
+    connection.query('SELECT `user_id` FROM `users` WHERE `name` = ?',[userName],function(err,result){
       idFromUserName = result[0].user_id;
-      connection.query('SELECT `salt` FROM `hashes` WHERE `user_id` = ?',[idFromUserName],function(err,result){
+      connection.query('SELECT `salt` FROM `users` WHERE `user_id` = ?',[idFromUserName],function(err,result){
         saltFromId = result[0].salt;
         var password = req.body.password;
         password = toHash(password,saltFromId);
-        connection.query('SELECT `hash` FROM `hashes` WHERE `user_id` = ?',[idFromUserName],function(err,result){
+        connection.query('SELECT `hash` FROM `users` WHERE `user_id` = ?',[idFromUserName],function(err,result){
           hashFromId = result[0].hash;
           if(password === hashFromId){
             req.session.user_id = idFromUserName;

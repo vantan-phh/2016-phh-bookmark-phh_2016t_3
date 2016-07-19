@@ -19,13 +19,13 @@
   <input type="submit"></input>
 </form>
 <div id="name"></div>
-<% list.forEach(function(list) { %>
-  <li class="main-list__item">
-    <div id="my-bookmark"><%= list.url%><%= list.title %><%= list.description %></div>
-  </li>
-<% }); %>
+  <% list.forEach(function(list) { %>
+    <li class="main-list__item">
+      <div id="my-bookmark"><%= list.url%><%= list.title %><%= list.description %></div>
+    </li>
+  <% }); %>
 <% if (typeof user !== 'undefined') { %>
-      <span class="login-user"><%= user.user_name %>さんとしてログインしています</span>
+      <span class="login-user"><%= user.name %>さんとしてログインしています</span>
     <% } %>
 </div>
 </body>
