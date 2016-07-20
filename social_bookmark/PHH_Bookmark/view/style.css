@@ -11,7 +11,7 @@ body {
   font-family: Helvetica, arial, nimbussansl, liberationsans, freesans, clean, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   font-size: 13px;
   line-height: 1.4;
-  color: #333;
+  color: #334;
 }
 h1, h2, h3, h4, h5, h6 {
     margin-top: 0;
@@ -193,11 +193,9 @@ label {
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
-    background-color: #eee;
-    background-image: -webkit-linear-gradient(#fcfcfc, #eee);
-    background-image: linear-gradient(#fcfcfc, #eee);
+    background-color: #999999;
     border: 1px solid #d5d5d5;
-    border-radius: 3px;
+    border-radius: 5px;
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
@@ -216,6 +214,7 @@ label {
 .site-header-actions-btn {
     float: right;
     font-weight: 500;
+    background-color: white;
 }
 .mr-2 {
     margin-right: 6px !important;
