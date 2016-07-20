@@ -35,24 +35,31 @@ router.post('/', function(req, res){
     var idFromMail;
     var saltFromId;
     connection.query('SELECT `user_id` FROM `users` WHERE `mail` = ?',[eMail],function(err,result){
-      idFromMail = result[0].user_id;
-      connection.query('SELECT `salt` FROM `users` WHERE `user_id` = ?',[idFromMail],function(err,result){
-        saltFromId = result[0].salt;
-        var password = req.body.password;
-        password = toHash(password,saltFromId);
-        connection.query('SELECT `hash` FROM `users` WHERE `id` = ?',[idFromMail],function(err,result){
-          hashFromId = result[0].hash;
-          if(password === hashFromId){
-            req.session.user_id = idFromMail;
-            res.redirect('/PHH_Bookmark/topPage');
-          }else{
-            req.session.user_id = false;
-            res.render('login.ejs',{
-              noUser:'入力した値からユーザーが探せません。'
-            });
-          }
+      if(result.length === 1){
+        idFromMail = result[0].user_id;
+        connection.query('SELECT `salt` FROM `users` WHERE `user_id` = ?',[idFromMail],function(err,result){
+          saltFromId = result[0].salt;
+          var password = req.body.password;
+          password = toHash(password,saltFromId);
+          connection.query('SELECT `hash` FROM `users` WHERE `id` = ?',[idFromMail],function(err,result){
+            hashFromId = result[0].hash;
+            if(password === hashFromId){
+              req.session.user_id = idFromMail;
+              res.redirect('/PHH_Bookmark/topPage');
+            }else{
+              req.session.user_id = false;
+              res.render('login.ejs',{
+                noUser:'入力した値からユーザーが探せません。'
+              });
+            }
+          });
         });
-      });
+      }else{
+        req.session.user_id = false;
+        res.render('login.ejs',{
+          noUser:'入力した値からユーザーが探せません。'
+        });
+      }
     });
   }else{
     var userName = eMailOrUserName;
@@ -60,24 +67,31 @@ router.post('/', function(req, res){
     var saltFromId;
     var a = 1;
     connection.query('SELECT `user_id` FROM `users` WHERE `name` = ?',[userName],function(err,result){
-      idFromUserName = result[0].user_id;
-      connection.query('SELECT `salt` FROM `users` WHERE `user_id` = ?',[idFromUserName],function(err,result){
-        saltFromId = result[0].salt;
-        var password = req.body.password;
-        password = toHash(password,saltFromId);
-        connection.query('SELECT `hash` FROM `users` WHERE `user_id` = ?',[idFromUserName],function(err,result){
-          hashFromId = result[0].hash;
-          if(password === hashFromId){
-            req.session.user_id = idFromUserName;
-            res.redirect('/PHH_Bookmark/topPage');
-          }else{
-            req.session.user_id = false;
-            res.render('login.ejs',{
-              noUser:'入力した値からユーザーが探せません。'
-            });
-          }
+      if(result.length === 1){
+        idFromUserName = result[0].user_id;
+        connection.query('SELECT `salt` FROM `users` WHERE `user_id` = ?',[idFromUserName],function(err,result){
+          saltFromId = result[0].salt;
+          var password = req.body.password;
+          password = toHash(password,saltFromId);
+          connection.query('SELECT `hash` FROM `users` WHERE `user_id` = ?',[idFromUserName],function(err,result){
+            hashFromId = result[0].hash;
+            if(password === hashFromId){
+              req.session.user_id = idFromUserName;
+              res.redirect('/PHH_Bookmark/topPage');
+            }else{
+              req.session.user_id = false;
+              res.render('login.ejs',{
+                noUser:'入力した値からユーザーが探せません。'
+              });
+            }
+          });
         });
-      });
+      }else{
+        req.session.user_id = false;
+        res.render('login.ejs',{
+          noUser:'入力した値からユーザーが探せません。'
+        });
+      }
     });
   }
 });

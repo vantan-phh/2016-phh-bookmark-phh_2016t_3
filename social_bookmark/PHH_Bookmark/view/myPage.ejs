@@ -21,7 +21,7 @@
 <div id="name"></div>
 <% list.forEach(function(list) { %>
   <li class="main_list_item">
-    <div id="my-bookmark"><%= list.url%><%= list.title %><%= list.description %></div>
+    <div id="my-bookmark"><a href="<%= list.url %>"><%= list.title %></a><%= list.description %></div>
   </li>
 <% }); %>
 <% if (typeof user !== 'undefined') { %>
