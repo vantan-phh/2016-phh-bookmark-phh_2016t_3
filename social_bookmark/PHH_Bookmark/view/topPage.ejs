@@ -9,25 +9,30 @@
 
 </style>
 <body>
-  <div id="organization"></div>
-  <div id="search"><button>検索</button><input type="text"></div>
-  <form accept-charset="UTF-8" action="/submit" method="post">
-  <div id="list">
-  <input type="text" placeholder="URLを入力" id="url" name="new_bookmark_url">
-  <input type="text" placeholder="タイトル" id="title" name="title">
-  <input type="text" placeholder="コメント" id="description" name="description">
-  <input type="submit"></input>
-</form>
-<div id="name"></div>
-<% list.forEach(function(list) { %>
-  <li class="main-list__item">
-    <div id="my-bookmark"><%= list.url%><%= list.title %><%= list.description %></div>
-  </li>
-<% }); %>
-<% if (typeof user !== 'undefined') { %>
-      <span class="login-user"><%= user.user_name %>さんとしてログインしています</span>
-    <% } %>
-</div>
+
+  <!-- logout button here-->
+<h2>TOP PAGE</h2>
+  <div id="link_to_myPage">
+    <button>Go myPage</button>
+  </div>
+
+  <div id="organization_list">
+    <div>links to organization</div>
+    <a href="somewhere">org</a>
+    <a href="somewhere">org</a>
+    <a href="somewhere">org</a>
+  </div>
+
+  <div id="organization_some_new_bookmarks">
+    <div>organization some new bookmarks</div>
+    <div>comments</div>
+  </div>
+
+  <div id="my_some_new_bookmarks">
+    <div>my some new bookmarks</div>
+    <div>comments</div>
+  </div>
+
 </body>
 </html>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
