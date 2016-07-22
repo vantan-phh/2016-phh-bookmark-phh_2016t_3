@@ -19,7 +19,8 @@
 <body>
   <div id="organization"></div>
   <div id="search"><button>検索</button><input type="text"></div>
-  <div id="logout"><button type=button onclick="alert('ログアウトしました')">ログアウト</button></div>
+  <form action="/PHH_Bookmark/logout" method="get">
+  <div id="logout"><button type="submit">ログアウト</button></div></form>
   <form id="form" accept-charset="UTF-8" action="/submit" method="post">
   <div id="list">
   <input type="text" placeholder="URLを入力" id="url" name="new_bookmark_url">

@@ -41,7 +41,7 @@ router.post('/', function(req, res){
           saltFromId = result[0].salt;
           var password = req.body.password;
           password = toHash(password,saltFromId);
-          connection.query('SELECT `hash` FROM `users` WHERE `id` = ?',[idFromMail],function(err,result){
+          connection.query('SELECT `hash` FROM `users` WHERE `user_id` = ?',[idFromMail],function(err,result){
             hashFromId = result[0].hash;
             if(password === hashFromId){
               req.session.user_id = idFromMail;
