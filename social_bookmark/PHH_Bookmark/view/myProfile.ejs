@@ -6,7 +6,9 @@
   </head>
   <body>
     <p><%= nickName %></p>
-    <img src="<%= thumbnail %>" >
+    <% if(thumbnailPath) {%>
+      <img src="<%= thumbnailPath %>" width="128" height="128"></img>
+    <% } %>
     <p><%= introduction %></p>
   </body>
 </html>
