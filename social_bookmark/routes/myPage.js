@@ -1,14 +1,12 @@
 var express = require('express');
 var router = express.Router();
 var connection = require('../mysqlConnection');
-var len;
 
 router.get('/',function(req,res){
   var userId = req.session.user_id;
   var query = 'SELECT * FROM `bookmarks` WHERE `user_id` = ?';
   connection.query(query,[userId],function(err,result){
     var bookmarkId = new Array(result.length);
-    len = result.length;
     for(var i = 0; i < result.length; i++){
       bookmarkId[i] = result[i].bookmark_id;
     }
@@ -25,13 +23,19 @@ router.post('/',function(req,res){
 });
 
 router.post('/delete',function(req,res){
-  var hoge = req.body;
-  for(var x in hoge){
-    x = x.split('id');
+  var ids = req.body;
+  for(var x in ids){
     var query = 'DELETE FROM `bookmarks` WHERE `bookmark_id` = ?'
-    connection.query(query,[x[1]]);
+    connection.query(query,[x]);
   }
   res.redirect('/PHH_Bookmark/myPage');
 });
 
+router.post('/edit',function(req,res){
+  var id = req.body.result;
+  id = id.split('id');
+  id = id[1];
+  req.session.edit_id = id;
+  res.redirect('/PHH_Bookmark/myBookmarkEdit/exist');
+});
 module.exports = router;

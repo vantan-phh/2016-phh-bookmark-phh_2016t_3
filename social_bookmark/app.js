@@ -47,7 +47,7 @@ app.use('/PHH_Bookmark/logout',setUser,logout);
 app.use('/PHH_Bookmark/myPage',setUser,myPage);
 app.use('/PHH_Bookmark/myBookmarkEdit',setUser,myBookmarkEdit);
 app.use('/PHH_Bookmark/myProfile',setUser,myProfile);
-app.use('/PHH_Bookmark/myProfileEdit',setUser,myProfileEdit)
+app.use('/PHH_Bookmark/myProfileEdit',setUser,myProfileEdit);
 
 app.use(function(req,res,next){
   console.log('my custom middleware!');
