@@ -19,13 +19,15 @@
   <input type="submit" value="送信">
 </form>
 <form name="my_bookmark" action="/PHH_Bookmark/myPage/delete" method="post">
-<% for(var i = 0; i < list.length; i++){ %>
-  <div>
-    <input type="checkbox" class="checkbox" name="<%= bookmark_id[i] %>">
-    <a href="<%= list[i].url %>"><%= list[i].title %></a><%= list[i].description %>
-    <input type="button" value="編集" name="id<%= bookmark_id[i] %>">
-  </div>
-<% }; %>
+<% if(typeof list !== 'undefined'){ %>
+  <% for(var i = 0; i < list.length; i++){ %>
+    <div>
+      <input type="checkbox" class="checkbox" name="<%= bookmark_id[i] %>">
+      <a href="<%= list[i].url %>"><%= list[i].title %></a><%= list[i].description %>
+      <input type="button" value="編集" name="id<%= bookmark_id[i] %>">
+    </div>
+  <% }; %>
+<% } %>
 <button type="submit">削除</button>
 </form>
 <form name="toEdit" action="/PHH_Bookmark/myPage/edit" method="post">

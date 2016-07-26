@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+    <form action="/PHH_Bookmark/createOrganization/create" method="post" enctype="multipart/form-data">
+      <input type="text" placeholder="組織名" name="orgName">
+      <input type="text" placeholder="description" name="orgDescription">
+      <input type="file" accept="image/*">
+      <input type="text" placeholder="招待メンバー" name="invitedUser" id="invitedUser">
+      <input type="button" value="検索" id="searchUser">
+      <% if(typeof userList !== 'undefined'){%>
+        <% for(var i = 0; i < userList.length; i++){ %>
+          <%= userList[i].nick_name %> <%= userList[i].name %>
+        <% } %>
+      <% } %>
+      <% if(typeof noUser !== 'undefined'){ %>
+        <%= noUser %>
+      <% } %>
+      <input type="submit" value="作成">
+    </form>
+    <form action="/PHH_Bookmark/createOrganization/searchUser" method="post" name="searchUser">
+      <input type="hidden" name="result" value="">
+    </form>
+  </body>
+</html>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script>
+$(function(){
+  var $searchUser = $('#searchUser');
+  var $invitedUser = $('#invitedUser');
+  $searchUser.click(function(){
+    $invitedUser = $invitedUser.val();
+    document.searchUser.result.value = $invitedUser;
+    document.searchUser.submit();
+  });
+});
+</script>

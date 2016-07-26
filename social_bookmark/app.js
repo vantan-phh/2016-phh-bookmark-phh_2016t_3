@@ -15,6 +15,8 @@ var myPage = require('./routes/myPage.js');
 var myBookmarkEdit = require('./routes/myBookmarkEdit.js');
 var myProfile = require('./routes/myProfile.js');
 var myProfileEdit = require('./routes/myProfileEdit.js');
+var organizationPage = require('./routes/organizationPage.js');
+var createOrganization = require('./routes/createOrganization.js');
 
 var app = express();
 
@@ -48,6 +50,8 @@ app.use('/PHH_Bookmark/myPage',setUser,myPage);
 app.use('/PHH_Bookmark/myBookmarkEdit',setUser,myBookmarkEdit);
 app.use('/PHH_Bookmark/myProfile',setUser,myProfile);
 app.use('/PHH_Bookmark/myProfileEdit',setUser,myProfileEdit);
+app.use('/PHH_Bookmark/organizationPage',setUser,organizationPage);
+app.use('/PHH_Bookmark/createOrganization',setUser,createOrganization);
 
 app.use(function(req,res,next){
   console.log('my custom middleware!');
