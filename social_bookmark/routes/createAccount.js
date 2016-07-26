@@ -40,6 +40,9 @@ router.get('/',function(req,res){
   res.render('createAccount.ejs');
 });
 router.post('/', function(req,res){
+  if(req.session.user_id){
+    delete req.session.user_id;
+  }
   var eMail = req.body.email;
   var userName = req.body.user_name;
   var password = req.body.password;
