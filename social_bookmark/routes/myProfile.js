@@ -2,7 +2,6 @@ var express = require('express');
 var router = express.Router();
 var connection = require('../mysqlConnection');
 var multer = require('multer');
-var upload = multer({dest:'./PHH_Bookmark/view/img/uploads/'});
 var cloudinary = require('cloudinary');
 cloudinary.config({
   cloud_name: 'dy4f7hul5',
@@ -18,14 +17,13 @@ router.get('/',function(req,res){
     var thumbnailPath = result[0].image_path;
     var introduction = result[0].introduction;
     var userName = result[0].name;
-    console.log(thumbnailPath);
     if(nickName === null){
       nickName = userName;
     }
     if(thumbnailPath === null){
-      thumbnailPath = 'img/favicon_Prototype.ico';
+      thumbnailPath = 'http://res.cloudinary.com/dy4f7hul5/image/upload/v1469220623/sample.jpg';
     }
-    if(introduction === null){
+    if(introduction === null || introduction === ''){
       introduction = '自己紹介';
     }
     res.render('myProfile.ejs',{

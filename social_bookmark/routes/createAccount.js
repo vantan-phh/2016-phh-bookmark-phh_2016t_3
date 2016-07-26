@@ -45,7 +45,7 @@ router.post('/', function(req,res){
   var password = req.body.password;
   var passwordAndHash = hashPassword(password);
   var eMailExistsQuery = 'SELECT `mail` FROM `users` WHERE `mail` = ?';
-  var query = 'INSERT INTO `users` (`name`,`mail`,`salt`,`hash`) VALUES(?, ?, ?, ?)';
+  var query = 'INSERT INTO `users` (`name`,`mail`,`salt`,`hash`,`nick_name`,`image_path`) VALUES(?, ?, ?, ?, ?, ?)';
   connection.query(eMailExistsQuery,[eMail],function(err,result){
     var eMailExists = result.length === 1;
     if(eMailExists){
@@ -55,7 +55,7 @@ router.post('/', function(req,res){
     }else{
       password = passwordAndHash[0];
       var salt = passwordAndHash[1];
-      connection.query(query,[userName,eMail,salt,password],function(err,rows){
+      connection.query(query,[userName,eMail,salt,password,userName,'http://res.cloudinary.com/dy4f7hul5/image/upload/v1469220623/sample.jpg'],function(err,rows){
         res.redirect('/PHH_Bookmark/login');
       });
     }
