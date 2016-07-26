@@ -16,8 +16,7 @@
         <% if(imagePath) { %>
           <img src="<%= imagePath %>" width="128" height="128"></img>
         <% } %>
-        <input type="button" value="画像を変更" id="changeThumbnail">
-        <div id="changeButton"></div>
+        <input type="file" name="image_file" accept="image/*">
 
         <% if(introduction) { %>
           <input type="text" name="introduction" placeholder="自己紹介文" value="<%= introduction %>">
@@ -30,15 +29,3 @@
     </form>
   </body>
 </html>
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-<script>
-$(function(){
-  var $changeThumbnail = $('#changeThumbnail');
-  var $changeButton = $('#changeButton');
-  $changeThumbnail.click(function(){
-    var $selectFile = $('<input type="file" name="image_file" accept="image/*">');
-    $changeButton.append($selectFile);
-    $changeThumbnail.remove();
-  });
-});
-</script>
