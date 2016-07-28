@@ -1,29 +1,216 @@
+'use strict';
 var express = require('express');
 var router = express.Router();
 var connection = require('../mysqlConnection');
+var multer = require('multer');
+var upload = multer({dest:'./PHH_Bookmark/view/img/uploads/'});
+var cloudinary = require('cloudinary');
+cloudinary.config({
+  cloud_name: 'dy4f7hul5',
+  api_key: '925664739655858',
+  api_secret: 'sbP8YsyWrhbf-vyZDsq4-6Izd_8'
+});
+var beSetUsers = [];
+var selectedUserNames = [];
+var selectedUserNickNames = [];
 
 router.get('/',function(req,res){
+  selectedUserNames = [];
+  selectedUserNickNames = [];
   res.render('createOrganization.ejs');
 });
+
 router.post('/searchUser',function(req,res){
   var invitedUser = req.body.result;
-  if(invitedUser === ''){
-    res.redirect('/PHH_Bookmark/createOrganization');
-  }else{
-    invitedUser = '.*' + invitedUser + '.*';
-    var query = 'SELECT * FROM `users` WHERE `name` REGEXP ?';
-    connection.query(query,[invitedUser],function(err,result){
-      if(result.length >= 1){
-        res.render('createOrganization',{
-          userList : result
+  var orgName = req.body.orgName;
+  var orgIntroduction = req.body.orgIntroduction;
+  var userId = req.session.user_id;
+  var selectOwnName = 'SELECT `name` FROM `users` WHERE `user_id` = ?';
+  var overlapUsers = [];
+  connection.query(selectOwnName,[userId],function(err,result){
+    var ownUserName = result[0].name;
+    if(invitedUser === ''){
+      res.render('createOrganization',{
+        orgName : orgName,
+        orgIntroduction : orgIntroduction,
+        selectedUserNames : selectedUserNames,
+        selectedUserNickNames : selectedUserNickNames
+      });
+    }else{ // when invitedUser contains any charactor
+      if(selectedUserNames.length > 0){
+        var selectOverlapUser = 'SELECT `user_id` FROM `users` WHERE `name` = ?';
+        for(var i = 0; i < selectedUserNames.length; i++){
+          connection.query(selectOverlapUser,[selectedUserNames[i]],function(err,result){
+            overlapUsers.push(result[0].user_id);
+            if(overlapUsers.length === selectedUserNames.length){
+              overlapUsers.push(userId);
+              var excludeOverlapUsers = 'SELECT `name` FROM `users` WHERE `user_id` NOT IN (?)';
+              connection.query(excludeOverlapUsers,[overlapUsers],function(err,result){
+                if(result.length >= 1){
+                  var searchedUserName = [];
+                  invitedUser = new RegExp('.*' + invitedUser + '.*');
+                  for(var i = 0; i < result.length; i++){
+                    var invitedUserName = result[i].name;
+                    if(invitedUser.test(invitedUserName)){
+                      searchedUserName.push(result[i].name);
+                    }
+                  }
+                  var selectNickName = 'SELECT `nick_name` FROM `users` WHERE `name` = ?';
+                  var searchedUserNickName = [];
+                  for(var i = 0; i < searchedUserName.length; i++){
+                    connection.query(selectNickName,[searchedUserName[i]],function(err,result){
+                      searchedUserNickName.push(result[0].nick_name);
+                      if(searchedUserName.length === searchedUserNickName.length){
+                        res.render('createOrganization',{
+                          orgName : orgName,
+                          orgIntroduction : orgIntroduction,
+                          searchedUserName : searchedUserName,
+                          searchedUserNickName : searchedUserNickName,
+                          selectedUserNames : selectedUserNames,
+                          selectedUserNickNames : selectedUserNickNames
+                        });
+                      }
+                    });
+                  }
+                }else{ // when no user hits
+                  res.render('createOrganization',{
+                    orgName : orgName,
+                    orgIntroduction : orgIntroduction,
+                    selectedUserNames : selectedUserNames,
+                    selectedUserNickNames : selectedUserNickNames,
+                    noUser : '該当するユーザーが見つかりません。'
+                  });
+                }
+              });
+            }
+          });
+        }
+      }else{ // when still no one selected
+        var excludeOwnData = 'SELECT `name` FROM `users` WHERE `name` NOT IN (?)';
+        connection.query(excludeOwnData,[ownUserName],function(err,result){
+          if(result.length >= 1){
+            var searchedUserName = [];
+            invitedUser = new RegExp('.*' + invitedUser + '.*');
+            for(var i = 0; i < result.length; i++){
+              var invitedUserName = result[i].name;
+              if(invitedUser.test(invitedUserName)){
+                searchedUserName.push(result[i].name);
+              }
+            }
+            var selectNickName = 'SELECT `nick_name` FROM `users` WHERE `name` = ?';
+            var searchedUserNickName = [];
+            for(var i = 0; i < searchedUserName.length; i++){
+              connection.query(selectNickName,[searchedUserName[i]],function(err,result){
+                searchedUserNickName.push(result[0].nick_name);
+                if(searchedUserName.length === searchedUserNickName.length){
+                  res.render('createOrganization',{
+                    orgName : orgName,
+                    orgIntroduction : orgIntroduction,
+                    searchedUserName : searchedUserName,
+                    searchedUserNickName : searchedUserNickName,
+                    selectedUserNames : selectedUserNames,
+                    selectedUserNickNames : selectedUserNickNames
+                  });
+                }
+              });
+            }
+          }else{ // when no user hit
+            res.render('createOrganization',{
+              orgName : orgName,
+              orgIntroduction : orgIntroduction,
+              selectedUserNames : selectedUserNames,
+              selectedUserNickNames : selectedUserNickNames,
+              noUser : '該当するユーザーが見つかりません。'
+            });
+          }
         });
-      }else{
-        res.render('createOrganization',{
-          noUser : '該当するユーザーが見つかりません。'
+      };
+    }
+  })
+});
+
+router.post('/create',upload.single('image_file'),function(req,res){
+  var orgName = req.body.orgName;
+  var orgIntroduction = req.body.orgIntroduction;
+  var myId = req.session.user_id;
+  var selectMyUserName = 'SELECT `name` FROM `users` WHERE `user_id` = ?';
+  connection.query(selectMyUserName,[myId],function(err,result){
+    var myUserName = result[0].name;
+    selectedUserNames.push(myUserName);
+    if(req.file){
+      var path = req.file.path;
+      cloudinary.uploader.upload(path,function(result){
+        var orgThumbnail = result.url;
+        var createOrgQuery = 'INSERT INTO `organizations` (`name`,`image_path`,`introduction`) VALUES(?, ?, ?)';
+        connection.query(createOrgQuery,[orgName,orgThumbnail,orgIntroduction],function(err,result){
+          console.log(result);
+          var selectOrgId = 'SELECT `id` FROM `organizations` WHERE `name` = ?';
+          connection.query(selectOrgId,[orgName],function(err,result){
+            console.log(result);
+            var orgId = result[0].id;
+            var selectUserId = 'SELECT `user_id` FROM `users` WHERE `name` = ?';
+            for(var i = 0; i < selectedUserNames.length; i++){
+              connection.query(selectUserId,[selectedUserNames[i]],function(err,result){
+                var userId = result[0].user_id;
+                var intoMembershipsQuery = 'INSERT INTO `organization_memberships` (`user_id`,`org_id`,`is_admin`) VALUES(?, ?, ?)';
+                if(userId !== req.session.user_id){
+                  connection.query(intoMembershipsQuery,[userId,orgId,false],function(err,result){
+                  });
+                } else if(userId === req.session.user_id){
+                  connection.query(intoMembershipsQuery,[userId,orgId,true],function(err,result){
+                    res.redirect('/PHH_Bookmark/organizationPage');
+                  });
+                }
+              });
+            }
+          });
         });
+      });
+    }else{
+      console.log('まだ。');
+    }
+  });
+});
+
+router.post('/selectUser',function(req,res){
+  var selectedUser = req.body.result;
+  var orgName = req.body.orgName;
+  var orgIntroduction = req.body.orgIntroduction;
+  selectedUser = selectedUser.split(',');
+  selectedUserNames.push(selectedUser[0]);
+  selectedUserNickNames.push(selectedUser[1]);
+  res.render('createOrganization',{
+    orgName : orgName,
+    orgIntroduction :orgIntroduction,
+    selectedUserNames : selectedUserNames,
+    selectedUserNickNames : selectedUserNickNames
+  });
+});
+
+router.post('/excludeUser',function(req,res){
+  var orgName = req.body.orgName;
+  var orgIntroduction = req.body.orgIntroduction;
+  var excludeUser = req.body.result;
+  var selectNickName = 'SELECT `nick_name` FROM `users` WHERE `name` = ?';
+  connection.query(selectNickName,[excludeUser],function(err,result){
+    var excludeUserNickName = result[0].nick_name;
+    selectedUserNames.some(function(v,i){
+      if(v === excludeUser){
+        selectedUserNames.splice(i,1);
       }
     });
-  }
+    selectedUserNickNames.some(function(v,i){
+      if(v == excludeUserNickName){
+        selectedUserNickNames.splice(i,1);
+      }
+    });
+    res.render('createOrganization',{
+      orgName : orgName,
+      orgIntroduction : orgIntroduction,
+      selectedUserNickNames :selectedUserNickNames,
+      selectedUserNames : selectedUserNames
+    });
+  });
 });
 
 module.exports = router;

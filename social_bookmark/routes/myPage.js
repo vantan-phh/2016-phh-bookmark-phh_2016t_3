@@ -32,6 +32,9 @@ router.post('/delete',function(req,res){
 });
 
 router.post('/edit',function(req,res){
+  if(req.session.edit_id){
+    delete req.session.edit_id;
+  }
   var id = req.body.result;
   id = id.split('id');
   id = id[1];

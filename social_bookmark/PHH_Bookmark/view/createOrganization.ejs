@@ -5,25 +5,61 @@
     <title></title>
   </head>
   <body>
-    <form action="/PHH_Bookmark/createOrganization/create" method="post" enctype="multipart/form-data">
-      <input type="text" placeholder="組織名" name="orgName">
-      <input type="text" placeholder="description" name="orgDescription">
-      <input type="file" accept="image/*">
+    <form action="/PHH_Bookmark/createOrganization/create" method="post" enctype="multipart/form-data" name="mainForm" id="mainFrom">
+      <% if(typeof orgName !== 'undefined') { %>
+        <input type="text" placeholder="組織名" name="orgName" id="orgName" value="<%= orgName %>">
+      <% } else { %>
+        <input type="text" placeholder="組織名" name="orgName" id="orgName">
+      <% } %>
+      <% if(typeof orgIntroduction !== 'undefined') { %>
+        <input type="text" placeholder="description" name="orgIntroduction" id="orgIntroduction" value="<%= orgIntroduction %>">
+      <% } else {%>
+        <input type="text" placeholder="description" name="orgIntroduction" id="orgIntroduction">
+      <% } %>
+      <input type="file" accept="image/*" name="image_file">
       <input type="text" placeholder="招待メンバー" name="invitedUser" id="invitedUser">
       <input type="button" value="検索" id="searchUser">
-      <% if(typeof userList !== 'undefined'){%>
-        <% for(var i = 0; i < userList.length; i++){ %>
-          <%= userList[i].nick_name %> <%= userList[i].name %>
+      <% if(typeof searchedUserName !== 'undefined'){%>
+        <div>検索にヒットしたユーザー</div>
+        <% for(var i = 0; i < searchedUserName.length; i++){ %>
+          <div><%= searchedUserNickName[i] %> <%= searchedUserName[i] %>
+            <input type="button" value="決定" class="set" name="<%= searchedUserName[i] %>,<%= searchedUserNickName[i] %>">
+          </div>
         <% } %>
       <% } %>
       <% if(typeof noUser !== 'undefined'){ %>
         <%= noUser %>
       <% } %>
-      <input type="submit" value="作成">
-    </form>
-    <form action="/PHH_Bookmark/createOrganization/searchUser" method="post" name="searchUser">
+      <input type="submit" value="作成" id="createOrg" name="createOrg">
       <input type="hidden" name="result" value="">
     </form>
+    <div id="memberList">
+      <% if(typeof selectedUserNickNames !== 'undefined') { %>
+        選択されたユーザー
+        <% for(var i = 0; i < selectedUserNickNames.length; i++){ %>
+          <div><%= selectedUserNickNames[i] %><%= selectedUserNames[i] %><input type="button" value="削除" name="<%= selectedUserNames[i] %>" class="deleteButton"></div>
+        <% } %>
+      <% } %>
+    </div>
+
+    <form action="/PHH_Bookmark/createOrganization/searchUser" method="post" name="searchUser">
+      <input type="hidden" name="result">
+      <input type="hidden" name="orgName">
+      <input type="hidden" name="orgIntroduction">
+    </form>
+
+    <form action="/PHH_Bookmark/createOrganization/selectUser" method="post" name="selectUser">
+      <input type="hidden" name="result">
+      <input type="hidden" name="orgName">
+      <input type="hidden" name="orgIntroduction">
+    </form>
+
+    <form action="/PHH_Bookmark/createOrganization/excludeUser" method="post" name="excludeUser">
+      <input type="hidden" name="result">
+      <input type="hidden" name="orgName">
+      <input type="hidden" name="orgIntroduction">
+    </form>
+
   </body>
 </html>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
@@ -31,10 +67,37 @@
 $(function(){
   var $searchUser = $('#searchUser');
   var $invitedUser = $('#invitedUser');
+  var $set = $('.set');
+  var $orgName = $('#orgName');
+  var $orgIntroduction = $('#orgIntroduction');
+  var $mainForm = $('#mainForm');
+  var $createOrg = $('#createOrg');
+  var $deleteButton = $('.deleteButton');
+  var beSetUsers = [];
   $searchUser.click(function(){
     $invitedUser = $invitedUser.val();
+    $orgName = $orgName.val();
+    $orgIntroduction = $orgIntroduction.val();
     document.searchUser.result.value = $invitedUser;
+    document.searchUser.orgName.value = $orgName;
+    document.searchUser.orgIntroduction.value = $orgIntroduction;
     document.searchUser.submit();
+  });
+  $set.click(function(){
+    var beSetUser = this.name;
+    $orgName = $orgName.val();
+    $orgIntroduction = $orgIntroduction.val();
+    beSetUser = beSetUser.split(',');
+    document.selectUser.result.value = beSetUser;
+    document.selectUser.orgName.value = $orgName;
+    document.selectUser.orgIntroduction.value = $orgIntroduction;
+    document.selectUser.submit();
+  });
+  $deleteButton.click(function(){
+    document.excludeUser.result.value = this.name;
+    document.excludeUser.orgName.value = $orgName.val();
+    document.excludeUser.orgIntroduction.value = $orgIntroduction.val();
+    document.excludeUser.submit();
   });
 });
 </script>
