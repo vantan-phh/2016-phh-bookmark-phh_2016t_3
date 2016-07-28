@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
     <title>My Page - PHHB</title>
-    <style>
-      #list{
-        position:absolute;
-        top:30px;
-      }
-    </style>
   </head>
+  <style>
+    #list{
+      position:absolute;
+      top:30px;
+    }
+  </style>
   <body>
     <div id="organization"></div>
     <div id="search">
@@ -17,7 +17,7 @@
       <input type="text">
     </div>
     <div id="list">
-      <form accept-charset="UTF-8" action="/PHH_Bookmark/myPage" method="post">
+      <form action="/PHH_Bookmark/myPage" method="post">
         <input type="text" placeholder="URLを入力" id="url" name="new_bookmark_url">
         <!--<input type="text" placeholder="タイトル" id="title" name="title">
         <input type="text" placeholder="コメント" id="description" name="description">-->
@@ -25,11 +25,11 @@
       </form>
       <form name="my_bookmark" action="/PHH_Bookmark/myPage/delete" method="post">
         <% for(var i = 0; i < list.length; i++){ %>
-        <div>
-          <input type="checkbox" class="checkbox" name="<%= bookmark_id[i] %>">
-          <a href="<%= list[i].url %>"><%= list[i].title %></a><%= list[i].description %>
-          <input type="button" value="編集" name="id<%= bookmark_id[i] %>">
-        </div>
+          <div>
+            <input type="checkbox" class="checkbox" name="<%= bookmark_id[i] %>">
+            <a href="<%= list[i].url %>"><%= list[i].title %></a><%= list[i].description %>
+            <input type="button" value="編集" name="id<%= bookmark_id[i] %>">
+          </div>
         <% }; %>
         <button type="submit">削除</button>
       </form>
@@ -38,7 +38,7 @@
       </form>
       <% if (typeof user !== 'undefined') { %>
         <span class="login-user"><%= user.name %>さんとしてログインしています</span>
-        <% } %>
+      <% } %>
     </div>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <script>
