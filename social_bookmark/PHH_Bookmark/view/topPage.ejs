@@ -7,33 +7,43 @@
   </head>
   <body>
     <header>
-      <button><a href="/PHH_Bookmark/logout">Logout</a></button>
+      <div id="openMenu" onclick="obj=document.getElementById('menuList').style; obj.display=(obj.display=='none')?'block':'none';">
+        <a style="cursor:pointer;">▼</a>
+      </div>
+      <div id="menuList" style="display:none;clear:both;">
+        <a id="logout" href="/PHH_Bookmark/logout"><li>Logout</li></a>
+      </div>
     </header>
-    <h2>TOP PAGE</h2>
-    <div id="link_to_myPage">
-      <button><a href="/PHH_Bookmark/myPage">Go myPage</a></button>
-    </div>
-    <div id="organization_list">
-      <div>
-        <h3>links to organization</h3>
+    <div id="main">
+      <h2>TOP PAGE</h2>
+      <div id="link_to_myPage">
+        <a id="goMyPage" href="/PHH_Bookmark/myPage">Go myPage</a>
       </div>
-      <a href="">org</a>
-      <a href="">org2</a>
-      <a href="">org3</a>
-    </div>
-    <div id="organization_some_new_bookmarks">
-      <div>
-        <h3>organization some new bookmarks</h3>
+      <div id="organization_list">
+        <div>
+          <h3>links to organization</h3>
+        </div>
+        <div>
+          <a href="">org</a>
+          <a href="">org2</a>
+          <a href="">org3</a>
+        </div>
       </div>
-      <div>
-        <h4>comments</h4>
+      <div id="organization_some_new_bookmarks">
+        <div>
+          <h3>organization some new bookmarks</h3>
+        </div>
+        <div>
+          <h4>comments</h4>
+        </div>
       </div>
-    </div>
-    <div id="my_some_new_bookmarks">
-      <div>
-        <h3>my some new bookmarks</h3>
-      </div>
-        <h4>comments</h4>
+      <div id="my_some_new_bookmarks">
+        <div>
+          <h3>my some new bookmarks</h3>
+        </div>
+        <div>
+          <h4>comments</h4>
+        </div>
       </div>
     </div>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>

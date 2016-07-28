@@ -1,15 +1,50 @@
-#list{
-  position:absolute;
-  top:30px;
+body{
+  background-color: #fafafa;
+  margin: 0px;
+}
+header{
+  background-color: white;
+  border-bottom: solid #ccc 1px;
+  padding: 20px;
+}
+#openMenu{
+  text-align: right;
+}
+#menuList{
+  background-color: white;
+  border: solid black 1px;
+  height: 100px;
+  position: absolute;
+  right: 15px;
+  top: 50px;
+  width: 80px;
+}
+li{
+  list-style: none;
+  padding: 5px 5px 5px 7px;
+}
+li:hover{
+  background-color: #e1e1e1;
 }
 #logout{
-  position:absolute;
-  top:0;right:0
+  color: black;
+  font-family: sans-serif;
+  text-decoration: none;
 }
-#form{
-  position:absolute;
-  left:0px;
+#main{
+  background-color: #fafafa;
+  margin-left: 20px;
 }
-body{
-  
+#goMyPage{
+  background-color: #e1e1e1;
+  border-radius: 2px;
+  color: green;
+  font-family: monospace;
+  font-size: 15px;
+  padding: 5px;
+  text-decoration: none;
+}
+#goMyPage:hover{
+  background-color: black;
+  color: #00ff00;
 }
