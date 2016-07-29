@@ -10,10 +10,11 @@ header{
   border-bottom: solid #ccc 1px;
   padding: 10px;
   height: 60px;
+  width: 1279px;
 }
 #headerOpenMenu{
   position: absolute;
-  right: 200px;
+  left: 1040px;
   top: 20px;
   width: 10px;
 }
@@ -24,23 +25,29 @@ header{
 }
 #headerSearch{
   border: solid #e1e1e1 2px;
-  position: absolute;
-  right: 350px;
-  top: 15px;
+  position: relative;
+  left: 700px;
+  top: 5px;
   padding: 5px;
   outline-color: green;
 }
 #headerLoginUser{
+  white-space: nowrap;
   font-family: sans-serif;
   font-size: 15px;
-  letter-spacing: 0px;
   position: absolute;
-  right: 265px;
+  left: 900px;
   top: 20px;
+}
+#headerUserName{
+  color: gray;
+  font-size: 14px;
+  position: absolute;
+  top: 17px;
 }
 #headerMyImg img{
   position: absolute;
-  right: 220px;
+  left: 1000px;
   top: 12px;
   width: 30px;
   height: 30px;
@@ -50,7 +57,7 @@ header{
   border: solid black 1px;
   height: 120px;
   position: absolute;
-  right: 194px;
+  left: 910px;
   top: 50px;
   width: 150px;
 }
@@ -69,7 +76,8 @@ header{
 #mainContent{
   background-color: #fafafa;
   border: solid #e1e1e1 1px;
-  margin: 0 auto;
+  position: absolute;
+  left: 400px;
   margin-top: 50px;
   padding-left: 20px;
   width: 500px;
