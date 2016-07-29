@@ -33,6 +33,9 @@
       <input type="submit" value="作成" id="createOrg" name="createOrg">
       <input type="hidden" name="result" value="">
     </form>
+    <% if(typeof orgNameExists !== 'undefined'){%>
+      <div><%= orgNameExists %></div>
+    <% } %>
     <div id="memberList">
       <% if(typeof selectedUserNickNames !== 'undefined') { %>
         選択されたユーザー
