@@ -1,41 +1,42 @@
 <!DOCTYPE html>
 <html>
-<meta charset="utf-8">
-<style>
-#list{
-  position:absolute;
-  top:30px;
-}
-
-</style>
-<body>
-  <div id="organization"></div>
-  <div id="search"><button>検索</button><input type="text"></div>
-  <form accept-charset="UTF-8" action="/PHH_Bookmark/myBookmarkEdit" method="post">
-  <div id="list">
-  <!--<input type="text" placeholder="URLを入力" id="url" name="new_bookmark_url">-->
-  <% if(typeof tooLongTitle !== 'undefined'){ %>
-    <input type="text" placeholder="タイトル" value="<%= title %>" id="title" name="title">
-    <p><%= tooLongTitle %></p>
-  <% }else{ %>
-    <input type="text" placeholder="タイトル" value="<%= title %>" id="title" name="title">
-  <% }%>
-  <% if(typeof description !== 'undefined'){ %>
-    <input type="text" placeholder="説明" value="<%= description %>" name="description">
-  <% }else{ %>
-    <input type="text" placeholder="説明" id="description" name="description">
-  <% }%>
-  <% if(typeof tooLongDescription !== 'undefined'){ %>
-    <p><%= tooLongDescription %></p>
-  <% }%>
-  <input type="submit" value="送信">
-</form>
-
-<% if (typeof user !== 'undefined') { %>
-    <span class="login-user"><%= user.name %>さんとしてログインしています</span>
-<% } %>
-</div>
-</body>
+  <head>
+    <meta charset="utf-8">
+    <title>myBookmarkEdit - PHHB</title>
+  </head>
+  <style>
+    #list{
+      position:absolute;
+      top:30px;
+    }
+  </style>
+  <body>
+    <div id="organization"></div>
+    <div id="search"><button>検索</button><input type="text"></div>
+    <div id="list">
+      <form accept-charset="UTF-8" action="/PHH_Bookmark/myBookmarkEdit" method="post">
+          <!--<input type="text" placeholder="URLを入力" id="url" name="new_bookmark_url">-->
+        <% if(typeof tooLongTitle !== 'undefined'){ %>
+          <input type="text" placeholder="タイトル" value="<%= title %>" id="title" name="title">
+          <p><%= tooLongTitle %></p>
+        <% }else{ %>
+          <input type="text" placeholder="タイトル" value="<%= title %>" id="title" name="title">
+        <% }%>
+        <% if(typeof description !== 'undefined'){ %>
+            <input type="text" placeholder="説明" value="<%= description %>" name="description">
+        <% }else{ %>
+          <input type="text" placeholder="説明" id="description" name="description">
+        <% }%>
+        <% if(typeof tooLongDescription !== 'undefined'){ %>
+          <p><%= tooLongDescription %></p>
+        <% }%>
+        <input type="submit" value="送信">
+      </form>
+      <% if (typeof user !== 'undefined') { %>
+        <span class="login-user"><%= user.name %>さんとしてログインしています</span>
+      <% } %>
+    </div>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="/test.js"></script>
+  </body>
 </html>
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-<script src="/test.js"></script>

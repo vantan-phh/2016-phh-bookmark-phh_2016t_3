@@ -1,52 +1,55 @@
 <!DOCTYPE html>
 <html>
-<meta charset="utf-8">
-<style>
-#list{
-  position:absolute;
-  top:30px;
-}
-
-</style>
-<body>
-  <div id="organization"></div>
-  <div id="search"><button>検索</button><input type="text"></div>
-  <form accept-charset="UTF-8" action="/PHH_Bookmark/myPage" method="post">
-    <div id="list">
-    <input type="text" placeholder="URLを入力" id="url" name="new_bookmark_url">
-    <!--<input type="text" placeholder="タイトル" id="title" name="title">
-    <input type="text" placeholder="コメント" id="description" name="description">-->
-  <input type="submit" value="送信">
-</form>
-<form name="my_bookmark" action="/PHH_Bookmark/myPage/delete" method="post">
-<% if(typeof list !== 'undefined'){ %>
-  <% for(var i = 0; i < list.length; i++){ %>
-    <div>
-      <input type="checkbox" class="checkbox" name="<%= bookmark_id[i] %>">
-      <a href="<%= list[i].url %>"><%= list[i].title %></a><%= list[i].description %>
-      <input type="button" value="編集" name="id<%= bookmark_id[i] %>">
+  <head>
+    <meta charset="utf-8">
+    <title>My Page - PHHB</title>
+  </head>
+  <style>
+    #list{
+      position:absolute;
+      top:30px;
+    }
+  </style>
+  <body>
+    <div id="organization"></div>
+    <div id="search">
+      <button>検索</button>
+      <input type="text">
     </div>
-  <% }; %>
-<% } %>
-<button type="submit">削除</button>
-</form>
-<form name="toEdit" action="/PHH_Bookmark/myPage/edit" method="post">
-  <input type="hidden" name="result" value="">
-</form>
-<% if (typeof user !== 'undefined') { %>
-    <span class="login-user"><%= user.name %>さんとしてログインしています</span>
-<% } %>
-</div>
-</body>
+    <div id="list">
+      <form action="/PHH_Bookmark/myPage" method="post">
+        <input type="text" placeholder="URLを入力" id="url" name="new_bookmark_url">
+        <!--<input type="text" placeholder="タイトル" id="title" name="title">
+        <input type="text" placeholder="コメント" id="description" name="description">-->
+        <input type="submit" value="送信">
+      </form>
+      <form name="my_bookmark" action="/PHH_Bookmark/myPage/delete" method="post">
+        <% for(var i = 0; i < list.length; i++){ %>
+          <div>
+            <input type="checkbox" class="checkbox" name="<%= bookmark_id[i] %>">
+            <a href="<%= list[i].url %>"><%= list[i].title %></a><%= list[i].description %>
+            <input type="button" value="編集" name="id<%= bookmark_id[i] %>">
+          </div>
+        <% }; %>
+        <button type="submit">削除</button>
+      </form>
+      <form name="toEdit" action="/PHH_Bookmark/myPage/edit" method="post">
+        <input type="hidden" name="result" value="">
+      </form>
+      <% if (typeof user !== 'undefined') { %>
+        <span class="login-user"><%= user.name %>さんとしてログインしています</span>
+      <% } %>
+    </div>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script>
+      $(function(){
+        var $edit = $("[name^='id']");
+        console.log($edit);
+        $edit.click(function(){
+          document.toEdit.result.value = this.name;
+          document.toEdit.submit();
+        });
+      });
+    </script>
+  </body>
 </html>
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-<script>
-$(function(){
-  var $edit = $("[name^='id']");
-  console.log($edit);
-  $edit.click(function(){
-    document.toEdit.result.value = this.name;
-    document.toEdit.submit();
-  });
-});
-</script>

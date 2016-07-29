@@ -27,5 +27,17 @@
         <input type="submit" value="送信">
       </div>
     </form>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script>
+      $(function(){
+        var $changeThumbnail = $('#changeThumbnail');
+        var $changeButton = $('#changeButton');
+        $changeThumbnail.click(function(){
+          var $selectFile = $('<input type="file" name="image_file" accept="image/*">');
+          $changeButton.append($selectFile);
+          $changeThumbnail.remove();
+        });
+      });
+    </script>
   </body>
 </html>
