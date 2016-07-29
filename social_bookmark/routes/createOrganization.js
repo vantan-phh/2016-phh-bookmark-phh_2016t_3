@@ -159,6 +159,10 @@ router.post('/create',upload.single('image_file'),function(req,res){
                       });
                     } else if(userId === req.session.user_id){
                       connection.query(intoMembershipsQuery,[userId,orgId,true],function(err,result){
+                        if(req.session.org_id){
+                          delete req.session.org_id;
+                        }
+                        req.session.org_id = orgId;
                         res.redirect('/PHH_Bookmark/organizationPage');
                       });
                     }
@@ -184,6 +188,10 @@ router.post('/create',upload.single('image_file'),function(req,res){
                     });
                   } else if(userId === req.session.user_id){
                     connection.query(intoMembershipsQuery,[userId,orgId,true],function(err,result){
+                      if(req.session.org_id){
+                        delete req.session.org_id;
+                      }
+                      req.session.org_id = orgId;
                       res.redirect('/PHH_Bookmark/organizationPage');
                     });
                   }

@@ -18,6 +18,9 @@ router.get('/',function(req,res){
 });
 router.post('/',function(req,res){
   var newBookmarkUrl = req.body.new_bookmark_url;
+  if(req.session.url){
+    delete req.session.url;
+  }
   req.session.url = newBookmarkUrl;
   res.redirect('/PHH_Bookmark/myBookmarkEdit');
 });
