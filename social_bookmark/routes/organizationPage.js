@@ -12,7 +12,7 @@ router.get('/',function(req,res){
     var orgThumbnail = result[0].image_path;
     var selectBookmarkData = 'SELECT * FROM `bookmarks` WHERE `org_id` = ?';
     connection.query(selectBookmarkData,[orgId],function(err,result){
-      if(result.length > 1){
+      if(result.length > 0){
         var result = result;
         res.render('organizationPage.ejs',{
           orgName : orgName,
