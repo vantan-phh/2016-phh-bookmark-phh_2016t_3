@@ -143,10 +143,8 @@ router.post('/create',upload.single('image_file'),function(req,res){
         var orgThumbnail = result.url;
         var createOrgQuery = 'INSERT INTO `organizations` (`name`,`image_path`,`introduction`) VALUES(?, ?, ?)';
         connection.query(createOrgQuery,[orgName,orgThumbnail,orgIntroduction],function(err,result){
-          console.log(result);
           var selectOrgId = 'SELECT `id` FROM `organizations` WHERE `name` = ?';
           connection.query(selectOrgId,[orgName],function(err,result){
-            console.log(result);
             var orgId = result[0].id;
             var selectUserId = 'SELECT `user_id` FROM `users` WHERE `name` = ?';
             for(var i = 0; i < selectedUserNames.length; i++){
@@ -166,9 +164,31 @@ router.post('/create',upload.single('image_file'),function(req,res){
           });
         });
       });
-    }else{
-      console.log('まだ。');
-    }
+    }else{ //when file data wasn't submitted
+      var orgThumbnail = 'http://res.cloudinary.com/dy4f7hul5/image/upload/v1469755753/y7mekcjoe7zptq7zl3ti.png';
+      var createOrgQuery = 'INSERT INTO `organizations` (`name`,`image_path`,`introduction`) VALUES(?, ?, ?)';
+      connection.query(createOrgQuery,[orgName,orgThumbnail,orgIntroduction],function(err,result){
+        var selectOrgId = 'SELECT `id` FROM `organizations` WHERE `name` = ?';
+        connection.query(selectOrgId,[orgName],function(err,result){
+          var orgId = result[0].id;
+          var selectUserId = 'SELECT `user_id` FROM `users` WHERE `name` = ?';
+          for(var i = 0; i < selectedUserNames.length; i++){
+            connection.query(selectUserId,[selectedUserNames[i]],function(err,result){
+              var userId = result[0].user_id;
+              var intoMembershipsQuery = 'INSERT INTO `organization_memberships` (`user_id`,`org_id`,`is_admin`) VALUES(?, ?, ?)';
+              if(userId !== req.session.user_id){
+                connection.query(intoMembershipsQuery,[userId,orgId,false],function(err,result){
+                });
+              } else if(userId === req.session.user_id){
+                connection.query(intoMembershipsQuery,[userId,orgId,true],function(err,result){
+                  res.redirect('/PHH_Bookmark/organizationPage');
+                });
+              }
+            });
+          }
+        });
+      });
+    };
   });
 });
 
