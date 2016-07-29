@@ -38,6 +38,9 @@
       <div>my some new bookmarks</div>
       <div>comments</div>
     </div>
+    <% if (typeof user !== 'undefined') { %>
+      <span class="login-user"><%= user.name %>さんとしてログインしています</span>
+    <% } %>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <script src="/test.js"></script>
   </body>
