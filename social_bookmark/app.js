@@ -2,6 +2,7 @@ var express = require('express');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var session = require('express-session');
+var MySQLStore = require('express-mysql-session')(session);
 var path = require('path');
 var client = require('cheerio-httpcli');
 
@@ -22,6 +23,14 @@ var app = express();
 
 var logger = require('morgan');
 
+var options = {
+  host : 'localhost',
+  port : 3306,
+  user : 'root',
+  database : 'phh_social_bookmark_proto'
+}
+var sessionStore = new MySQLStore(options);
+
 
 app.set('views', path.join(__dirname + '/PHH_Bookmark/view'));
 app.set('view engine', 'ejs');
@@ -34,11 +43,12 @@ app.use(express.static(__dirname + '/PHH_Bookmark/view'));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname,'public')));
 app.use(session({
-  secret: 'keyboard cat',
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    maxAge: 30*24*60*60*1000 //屹度30日。
+  secret : 'keyboard cat',
+  store : sessionStore,
+  resave : false,
+  saveUninitialized : false,
+  cookie : {
+    maxAge : 30*24*60*60*1000 //屹度30日。
   }
 }));
 
