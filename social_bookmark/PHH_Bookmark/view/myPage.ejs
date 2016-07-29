@@ -36,8 +36,8 @@
       <form name="toEdit" action="/PHH_Bookmark/myPage/edit" method="post">
         <input type="hidden" name="result" value="">
       </form>
-      <% if (typeof user !== 'undefined') { %>
-        <span class="login-user"><%= user.name %>さんとしてログインしています</span>
+      <% if (typeof userName !== 'undefined' && typeof nickName !== 'undefined') { %>
+        <span class="login-user"><%= nickName %>(<%= userName %>)</span>
       <% } %>
     </div>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
