@@ -3,7 +3,7 @@ var client = require('cheerio-httpcli');
 var router = express.Router();
 var connection = require('../mysqlConnection');
 
-var exist;
+var exist = false;
 
 router.get('/',function(req,res){
   var checkUrl = req.session.url;

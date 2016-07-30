@@ -62,4 +62,13 @@ router.post('/',function(req,res){
     res.redirect('/PHH_Bookmark/organizationPage');
   });
 });
+
+router.post('/toOrgBookmarkEdit',function(req,res){
+  var bookmarkId = req.body.result;
+  if(req.session.edit_org_bookmark_id){
+    delete req.session.edit_org_bookmark_id;
+  }
+  req.session.edit_org_bookmark_id = bookmarkId;
+  res.redirect('/PHH_Bookmark/orgBookmarkEdit');
+});
 module.exports = router;

@@ -34,13 +34,18 @@
     <% if(typeof result !== 'undefined'){%>
       <% for(var i = 0; i < result.length; i++){%>
         <div>
-          <input type="checkbox" class="checkbox" name="<%= result[i].id %>">
+          <input type="checkbox" class="checkbox" name="<%= result[i].bookmark_id %>">
           <a href="/PHH_Bookmark/bookmarkPage"><%= result[i].title %></a><a href="<%= result[i].url %>"><%= result[i].url %></a><%= result[i].description %>
-          <input type="button" value="編集" name="id<%= result[i].id %>">
+          <input type="button" value="編集" name="<%= result[i].bookmark_id %>" class="edit">
         </div>
       <% }; %>
     <% } %>
     <button type="submit">削除</button>
+
+    <form action="/PHH_Bookmark/organizationPage/toOrgBookmarkEdit" method="post" name="toOrgBookmarkEdit">
+      <input type="hidden" name="result">
+    </form>
+
     <a href="/PHH_Bookmark/organizationMembers">メンバー一覧へ</a>
   </body>
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
@@ -48,10 +53,15 @@
   $(function(){
     var $url = $('#url');
     var $submitUrlButton = $('#submitUrl');
+    var $edit = $('.edit');
     $submitUrlButton.click(function(){
       var url = $url.val();
       document.submitUrl.result.value = url;
       document.submitUrl.submit();
+    });
+    $edit.click(function(){
+      document.toOrgBookmarkEdit.result.value = this.name;
+      document.toOrgBookmarkEdit.submit();
     });
   });
   </script>
