@@ -6,24 +6,7 @@
     <link rel="stylesheet" type="text/css" href="/myProfileEdit.css">
   </head>
   <body>
-    <header>
-      <div id="headerMenu">
-        <a id="headerFavicon" href="/PHH_Bookmark/topPage"><img src="/img/favicon.png"></a>
-        <input id="headerSearch" type="text" placeholder="Search Bookmarks">
-        <% if (typeof userName !== 'undefined' && typeof nickName !== 'undefined') { %>
-          <span id="headerLoginUser"><%= nickName%><div id="headerUserName">(<%= userName %>)</div></span>
-        <% } %>
-        <a id="headerMyImg" href="/PHH_Bookmark/myProfile"><img src="http://res.cloudinary.com/dy4f7hul5/image/upload/v1469676799/iucwtxf12o9ztvb3tm14.png"></a>
-        <div id="headerOpenMenu" onclick="obj=document.getElementById('headerMenuList').style; obj.display=(obj.display=='none')?'block':'none';">
-          <a style="cursor:pointer;">▼</a>
-        </div>
-        <div id="headerMenuList" style="display:none;clear:both;">
-          <a id="headerMyPage" href="/PHH_Bookmark/myPage"><li>My page</li></a>
-          <a id="headerSettings" href="/PHH_Bookmark/myProfileEdit"><li>Settings</li></a>
-          <a id="headerLogout" href="/PHH_Bookmark/logout"><li>Logout</li></a>
-        </div>
-      </div>
-    </header>
+    <% include layout %>
     <main>
       <form action="/PHH_Bookmark/myProfileEdit" method="post" enctype="multipart/form-data">
         <div>
