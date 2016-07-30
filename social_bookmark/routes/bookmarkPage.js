@@ -5,17 +5,29 @@ var connection = require('../mysqlConnection');
 router.get('/', function(req, res){
   var userId = req.session.user_id;
   var bookmarkId = req.session.bookmark_id;
+  var commentNickNameArr = [];
   var query = 'SELECT * FROM `comments` WHERE `bookmark_id` = ?';
   connection.query(query, [bookmarkId], function(err, result){
     var queryResult = result;
-    var pullBookmark = 'SELECT * FROM `bookmarks` WHERE `bookmark_id` = ?';
-    connection.query(pullBookmark, [bookmarkId], function(err, result){
-      res.render('bookmarkPage.ejs',{
-        comments : queryResult,
-        bookmark : result,
-        browsingUserId : userId
+    for(var i = 0; i < queryResult.length; i++){
+      var commentUserId = queryResult[i].user_id;
+      var pullUserName = 'SELECT `nick_name` FROM `users` WHERE `user_id` = ?'
+      connection.query(pullUserName, [commentUserId],function(err, result){
+        var nickName = result[0].nick_name;
+        commentNickNameArr.push(nickName);
+        if(commentNickNameArr.length === queryResult.length){
+          var pullBookmark = 'SELECT * FROM `bookmarks` WHERE `bookmark_id` = ?';
+          connection.query(pullBookmark, [bookmarkId], function(err, result){
+            res.render('bookmarkPage.ejs',{
+              comments : queryResult,
+              bookmark : result,
+              browsingUserId : userId,
+              commentNickName : commentNickNameArr
+            })
+          })
+        }
       })
-    })
+    }
   })
 });
 
