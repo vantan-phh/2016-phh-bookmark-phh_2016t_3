@@ -31,16 +31,18 @@
     </form>
 
     <div>組織に追加されたブックマーク</div>
-    <% if(typeof result !== 'undefined'){%>
-      <% for(var i = 0; i < result.length; i++){%>
-        <div>
-          <input type="checkbox" class="checkbox" name="<%= result[i].bookmark_id %>">
-          <a href="/PHH_Bookmark/bookmarkPage"><%= result[i].title %></a><a href="<%= result[i].url %>"><%= result[i].url %></a><%= result[i].description %>
-          <input type="button" value="編集" name="<%= result[i].bookmark_id %>" class="edit">
-        </div>
-      <% }; %>
-    <% } %>
-    <button type="submit">削除</button>
+    <form action="/PHH_Bookmark/orgBookmarkEdit/delete" method="post">
+      <% if(typeof result !== 'undefined'){%>
+        <% for(var i = 0; i < result.length; i++){%>
+          <div>
+            <input type="checkbox" class="checkbox" name="<%= result[i].bookmark_id %>">
+            <a href="/PHH_Bookmark/bookmarkPage"><%= result[i].title %></a><a href="<%= result[i].url %>"><%= result[i].url %></a><%= result[i].description %>
+            <input type="button" value="編集" name="<%= result[i].bookmark_id %>" class="edit">
+          </div>
+        <% }; %>
+        <button type="submit">削除</button>
+      <% } %>
+    </form>
 
     <form action="/PHH_Bookmark/organizationPage/toOrgBookmarkEdit" method="post" name="toOrgBookmarkEdit">
       <input type="hidden" name="result">

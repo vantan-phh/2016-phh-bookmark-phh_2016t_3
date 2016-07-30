@@ -35,4 +35,13 @@ router.post('/',function(req,res){
   });
 });
 
+router.post('/delete',function(req,res){
+  var ids = req.body;
+  for(var x in ids){
+    var query = 'DELETE FROM `bookmarks` WHERE `bookmark_id` = ?'
+    connection.query(query,[x]);
+  }
+  res.redirect('/PHH_Bookmark/organizationPage');
+});
+
 module.exports = router;

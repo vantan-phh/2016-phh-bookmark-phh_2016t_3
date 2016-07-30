@@ -155,8 +155,7 @@ router.post('/create',upload.single('image_file'),function(req,res){
                     var userId = result[0].user_id;
                     var intoMembershipsQuery = 'INSERT INTO `organization_memberships` (`user_id`,`org_id`,`is_admin`) VALUES(?, ?, ?)';
                     if(userId !== req.session.user_id){
-                      connection.query(intoMembershipsQuery,[userId,orgId,false],function(err,result){
-                      });
+                      connection.query(intoMembershipsQuery,[userId,orgId,false]);
                     } else if(userId === req.session.user_id){
                       connection.query(intoMembershipsQuery,[userId,orgId,true],function(err,result){
                         if(req.session.org_id){
@@ -184,8 +183,7 @@ router.post('/create',upload.single('image_file'),function(req,res){
                   var userId = result[0].user_id;
                   var intoMembershipsQuery = 'INSERT INTO `organization_memberships` (`user_id`,`org_id`,`is_admin`) VALUES(?, ?, ?)';
                   if(userId !== req.session.user_id){
-                    connection.query(intoMembershipsQuery,[userId,orgId,false],function(err,result){
-                    });
+                    connection.query(intoMembershipsQuery,[userId,orgId,false]);
                   } else if(userId === req.session.user_id){
                     connection.query(intoMembershipsQuery,[userId,orgId,true],function(err,result){
                       if(req.session.org_id){
