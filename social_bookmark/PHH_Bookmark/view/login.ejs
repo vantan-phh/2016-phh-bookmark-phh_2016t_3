@@ -3,36 +3,23 @@
   <head>
     <meta charset="utf-8">
     <title>Login - PHHB</title>
-    <!-- <link rel="stylesheet" type="text/css" href="style.css"> -->
+    <link rel="stylesheet" type="text/css" href="/login.css">
   </head>
   <body>
-    <header>
-      <a href="">
-        <!-- <img src="img/favicon.ico"> -->
-      </a>
-      <div id="">
-        <a href=""> Bookmark</a>
-        <a href=""> Menu2</a>
-        <a href=""> メニュー3</a>
-      </div>
-      <div id="">
-        <a href="">Sign up</a>
-        <a href="">Sign in</a>
-      </div>
-    </header>
-    <form action="/PHH_Bookmark/login" method="post">
-      <h2 class="form-title">Sign In</h2>
-      <p>Email Address</p>
-      <input name="email_or_user_name" size="30" type="text">
-      <p>メールアドレスまたはユーザーネームを入力してください。</p>
-      <p>Password</p>
-      <input name="password" size="30" type="password">
-      <p>パスワードを入力してください。</p>
-      <input type="submit" value="Sign In">
-        <% if (typeof noUser !== 'undefined') { %>
-      <p><%= noUser %></p>
-        <% } %>
-    </form>
+    <% include layout %>
+    <main>
+      <form action="/PHH_Bookmark/login" method="post">
+        <h2 class="form-title">Login</h2>
+        <label><p>Email Address or Username</p>
+        <input class="input" name="email_or_user_name" size="30" type="text"></label>
+        <label><p>Password</p>
+        <input class="input" name="password" size="30" type="password"></label>
+        <input id="submitButton" type="submit" value="Login">
+      </form>
+      <% if (typeof noUser !== 'undefined') { %>
+        <p id="noUser"><%= noUser %></p>
+      <% } %>
+    </main>
     <footer>
       <a href="http://www.vantan-hs.com/index.php">
         <!-- <img src="img/vantan_logo.png"> -->

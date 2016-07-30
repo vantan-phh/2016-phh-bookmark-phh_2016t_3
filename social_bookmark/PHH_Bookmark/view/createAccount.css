@@ -331,6 +331,11 @@ button, input, select, textarea {
   font-size: 12px;
   color: #000;
 }
+.error{
+  font-weight: bold;
+  font-size: 75px;
+  color: red;
+}
 /* 最後の確認的な部分 */
 .tos-info {
   padding: 15px 0;

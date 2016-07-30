@@ -3,45 +3,51 @@
   <head>
     <meta charset="utf-8">
     <title>topPage - PHHB</title>
+    <link rel="stylesheet" type="text/css" href="/topPage.css" >
   </head>
-  <style>
-    #list{
-      position:absolute;
-      top:30px;
-    }
-    #logout{
-      position:absolute;
-      top:0;right:0
-    }
-    #form{
-      position:absolute;
-      left:0px;
-    }
-  </style>
   <body>
-    <!-- logout button here-->
-    <h2>TOP PAGE</h2>
-    <div id="link_to_myPage">
-      <button><a href="/PHH_Bookmark/myPage">Go myPage</a></button>
-    </div>
-    <div id="organization_list">
-      <div>links to organization</div>
-      <a href="somewhere">org</a>
-      <a href="somewhere">org</a>
-      <a href="somewhere">org</a>
-    </div>
-    <div id="organization_some_new_bookmarks">
-      <div>organization some new bookmarks</div>
-      <div>comments</div>
-    </div>
-    <div id="my_some_new_bookmarks">
-      <div>my some new bookmarks</div>
-      <div>comments</div>
-    </div>
-    <% if (typeof userName !== 'undefined' && typeof nickName !== 'undefined') { %>
-      <span class="login-user"><%= nickName %>(<%= userName %>)</span>
-    <% } %>
+    <% include layout %>
+    <main>
+      <h2>TOP PAGE</h2>
+      <div id="link_to_myPage">
+        <a id="goMyPage" href="/PHH_Bookmark/myPage">Go myPage</a>
+      </div>
+      <div id="organization_list">
+        <div>
+          <h3>links to organization</h3>
+        </div>
+        <div>
+          <a href="">org</a>
+          <a href="">org2</a>
+          <a href="">org3</a>
+        </div>
+      </div>
+      <div id="organization_some_new_bookmarks">
+        <div>
+          <h3>organization some new bookmarks</h3>
+        </div>
+        <div>
+          <h4>comments</h4>
+        </div>
+      </div>
+      <div id="my_some_new_bookmarks">
+        <div>
+          <h3>my some new bookmarks</h3>
+        </div>
+        <div>
+          <h4>comments</h4>
+        </div>
+      </div>
+    </main>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-    <script src="/test.js"></script>
+    <!--script src="/test.js"></script-->
+    <script>
+      document.body.addEventListener('click',function(e){
+        var mouseX = e.pageX;
+        var mouseY = e.pageY;
+        console.log("x" + mouseX);
+        console.log("y" + mouseY);
+      })
+    </script>
   </body>
 </html>

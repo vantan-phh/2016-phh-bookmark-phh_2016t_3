@@ -1,0 +1,140 @@
+*{
+  box-sizing: border-box;
+}
+body{
+  background-color: #fafafa;
+  margin: 0px;
+}
+/*----------------------------/
+            ヘッダー
+-----------------------------*/
+header{
+  background-color: white;
+  border-bottom: solid #ccc 1px;
+  padding: 10px;
+  width: 1279px;
+  height: 60px;
+}
+
+#headerFavicon img{
+  position: absolute;
+  left: 140px;
+  top: 5px;
+}
+
+#headerSearch{
+  border: solid #e1e1e1 2px;
+  outline-color: green;
+  position: relative;
+  left: 700px;
+  top: 5px;
+  padding: 5px;
+}
+
+#headerCreateAccount{
+  background-color: #00e100;
+  text-align: center;
+  text-decoration: none;
+  position: absolute;
+  left: 1000px;
+  top: 15px;
+  padding: 5px 0;
+  width: 120px;
+  height: 30px;
+}
+
+#headerLoginUser{
+  white-space: nowrap;
+  font-family: sans-serif;
+  font-size: 15px;
+  position: absolute;
+  left: 900px;
+  top: 20px;
+}
+#headerUserName{
+  color: gray;
+  font-size: 14px;
+  position: absolute;
+  top: 17px;
+}
+#headerMyImg img{
+  position: absolute;
+  left: 1000px;
+  top: 12px;
+  width: 30px;
+  height: 30px;
+}
+#headerOpenMenu{
+  position: absolute;
+  left: 1040px;
+  top: 20px;
+  width: 10px;
+}
+  #headerMenuList{
+    background-color: white;
+    border: solid black 1px;
+    position: absolute;
+    left: 910px;
+    top: 50px;
+    width: 150px;
+    height: 120px;
+  }
+  #headerMenuList a{
+    text-decoration: none;
+  }
+  #headerMenuList li{
+    color: black;
+    font-family: sans-serif;
+    list-style: none;
+    padding: 6px 5px 6px 20px;
+  }
+    #headerMenuList li:hover{
+      background-color: #e1e1e1;
+    }
+/*----------------------------/
+          コンテンツ
+-----------------------------*/
+main{
+  background-color: #fafafa;
+  border: solid #e1e1e1 1px;
+  position: absolute;
+  left: 500px;
+  margin-top: 50px;
+  padding: 20px;
+  width: 250px;
+  height: 250px;
+}
+
+h2{
+  text-align: center;
+  margin: 0 0 15px 0;
+}
+label p{
+  margin: 0 0 9px 0;
+}
+.input{
+  outline-color: green;
+  padding: 5px;
+  margin-bottom: 5px;
+  width: 200px;
+}
+#submitButton{
+  border-style: none;
+  background-color: #00e100;
+  color: white;
+  font-size: 15px;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.15);
+  width: 200px;
+  height: 30px;
+  margin-top: 10px;
+}
+  #submitButton:hover{
+    background-color: green;
+  }
+
+#noUser{
+  margin-top: 50px;
+  position:absolute;
+  left: -15px;
+  width: 300px;
+}

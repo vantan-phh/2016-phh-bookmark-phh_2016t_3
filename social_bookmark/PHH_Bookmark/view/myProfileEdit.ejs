@@ -3,30 +3,34 @@
   <head>
     <meta charset="utf-8">
     <title></title>
+    <link rel="stylesheet" type="text/css" href="/myProfileEdit.css">
   </head>
   <body>
-    <form action="/PHH_Bookmark/myProfileEdit" method="post" enctype="multipart/form-data">
-      <div>
-        <% if(nickName) { %>
-          <input type="text" name="nick_name" placeholder="ニックネーム" value="<%= nickName %>">
-        <% } else { %>
-          <input type="text" name="nick_name" placeholder="ニックネーム">
-        <% } %>
+    <% include layout %>
+    <main>
+      <form action="/PHH_Bookmark/myProfileEdit" method="post" enctype="multipart/form-data">
+        <div>
+          <% if(nickName) { %>
+            <input type="text" name="nick_name" placeholder="ニックネーム" value="<%= nickName %>">
+          <% } else { %>
+            <input type="text" name="nick_name" placeholder="ニックネーム">
+          <% } %>
 
-        <% if(imagePath) { %>
-          <img src="<%= imagePath %>" width="128" height="128"></img>
-        <% } %>
-        <input type="file" name="image_file" accept="image/*">
+          <% if(imagePath) { %>
+            <img src="<%= imagePath %>" width="128" height="128"></img>
+          <% } %>
+          <input type="file" name="image_file" accept="image/*">
 
-        <% if(introduction) { %>
-          <input type="text" name="introduction" placeholder="自己紹介文" value="<%= introduction %>">
-        <% } else { %>
-          <input type="text" name="introduction" placeholder="自己紹介文">
-        <% } %>
+          <% if(introduction) { %>
+            <input type="text" name="introduction" placeholder="自己紹介文" value="<%= introduction %>">
+          <% } else { %>
+            <input type="text" name="introduction" placeholder="自己紹介文">
+          <% } %>
 
-        <input type="submit" value="送信">
-      </div>
-    </form>
+          <input type="submit" value="送信">
+        </div>
+      </form>
+    </main>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <script>
       $(function(){
