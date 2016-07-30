@@ -19,6 +19,7 @@ var myProfileEdit = require('./routes/myProfileEdit.js');
 var organizationPage = require('./routes/organizationPage.js');
 var createOrganization = require('./routes/createOrganization.js');
 var orgBookmarkEdit = require('./routes/orgBookmarkEdit.js');
+var membersManagement = require('./routes/membersManagement.js');
 
 var app = express();
 
@@ -64,6 +65,7 @@ app.use('/PHH_Bookmark/myProfileEdit',setUser,myProfileEdit);
 app.use('/PHH_Bookmark/organizationPage',setUser,organizationPage);
 app.use('/PHH_Bookmark/createOrganization',setUser,createOrganization);
 app.use('/PHH_Bookmark/orgBookmarkEdit',setUser,orgBookmarkEdit);
+app.use('/PHH_Bookmark/membersManagement',setUser,membersManagement);
 
 app.use(function(req,res,next){
   console.log('my custom middleware!');

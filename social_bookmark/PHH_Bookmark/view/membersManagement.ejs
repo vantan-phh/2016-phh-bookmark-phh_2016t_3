@@ -5,6 +5,13 @@
     <title></title>
   </head>
   <body>
-
+    <h2><%= orgName %></h2>
+    <img src="<%= orgThumbnail %>">
+    <div><%= orgIntroduction %></div>
+    <% if(typeof memberUserNames !== 'undefined'){%>
+      <% for(var i = 0; i < memberUserNames.length; i ++){ %>
+        <div><%= memberNickNames[i] %><%= memberUserNames[i] %></div>
+      <% } %>
+    <% } %>
   </body>
 </html>

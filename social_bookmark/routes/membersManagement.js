@@ -11,10 +11,25 @@ router.get('/',function(req,res){
     var orgName = result[0].name;
     var orgIntroduction = result[0].introduction;
     var orgThumbnail = result[0].image_path;
-    var selectMembers = 'SELECT * FROM `organization_memberships` WHERE `org_id` = ?';
+    var selectMembers = 'SELECT `user_id` FROM `organization_memberships` WHERE `org_id` = ?';
     connection.query(selectMembers,[orgId],function(err,result){
-      for(var i = 0; i < result.length; i++){
-
+      var selectMemberData = 'SELECT * FROM `users` WHERE `user_id` = ?';
+      var len = result.length;
+      for(var i = 0; i < len; i++){
+        var memberId = result[i].user_id;
+        connection.query(selectMemberData,[memberId],function(err,result){
+          memberUserNames.push(result[0].name);
+          memberNickNames.push(result[0].nick_name);
+          if(memberUserNames.length === len){
+            res.render('membersManagement.ejs',{
+              memberUserNames : memberUserNames,
+              memberNickNames : memberNickNames,
+              orgName : orgName,
+              orgThumbnail :orgThumbnail,
+              orgIntroduction : orgIntroduction
+            });
+          }
+        });
       }
     });
   });
