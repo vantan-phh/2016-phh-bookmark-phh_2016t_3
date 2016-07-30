@@ -1,6 +1,3 @@
-/*----------------------------/
-            タグ
------------------------------*/
 *{
   box-sizing: border-box;
 }
@@ -8,25 +5,17 @@ body{
   background-color: #fafafa;
   margin: 0px;
 }
+/*----------------------------/
+            ヘッダー
+-----------------------------*/
 header{
   background-color: white;
   border-bottom: solid #ccc 1px;
   padding: 10px;
-  height: 60px;
   width: 1279px;
+  height: 60px;
 }
-main{
-  background-color: #fafafa;
-  border: solid #e1e1e1 1px;
-  position: absolute;
-  left: 400px;
-  margin-top: 50px;
-  padding-left: 20px;
-  width: 500px;
-}
-/*----------------------------/
-            ヘッダー
------------------------------*/
+
 #headerFavicon img{
   position: absolute;
   left: 140px;
@@ -35,11 +24,11 @@ main{
 
 #headerSearch{
   border: solid #e1e1e1 2px;
+  outline-color: green;
   position: relative;
   left: 700px;
   top: 5px;
   padding: 5px;
-  outline-color: green;
 }
 
 #headerLoginUser{
@@ -50,13 +39,12 @@ main{
   left: 900px;
   top: 20px;
 }
-  #headerUserName{
-    color: gray;
-    font-size: 14px;
-    position: absolute;
-    top: 17px;
-  }
-
+#headerUserName{
+  color: gray;
+  font-size: 14px;
+  position: absolute;
+  top: 17px;
+}
 #headerMyImg img{
   position: absolute;
   left: 1000px;
@@ -64,7 +52,6 @@ main{
   width: 30px;
   height: 30px;
 }
-
 #headerOpenMenu{
   position: absolute;
   left: 1040px;
@@ -74,11 +61,11 @@ main{
   #headerMenuList{
     background-color: white;
     border: solid black 1px;
-    height: 120px;
     position: absolute;
     left: 910px;
     top: 50px;
     width: 150px;
+    height: 120px;
   }
   #headerMenuList a{
     text-decoration: none;
@@ -95,6 +82,16 @@ main{
 /*----------------------------/
           コンテンツ
 -----------------------------*/
+main{
+  background-color: #fafafa;
+  border: solid #e1e1e1 1px;
+  position: absolute;
+  left: 400px;
+  margin-top: 50px;
+  padding-left: 20px;
+  width: 500px;
+}
+
 #goMyPage{
   background-color: #e1e1e1;
   border-radius: 2px;
