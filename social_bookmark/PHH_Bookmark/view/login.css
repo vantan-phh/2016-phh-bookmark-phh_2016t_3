@@ -31,6 +31,18 @@ header{
   padding: 5px;
 }
 
+#headerCreateAccount{
+  background-color: #00e100;
+  text-align: center;
+  text-decoration: none;
+  position: absolute;
+  left: 1000px;
+  top: 15px;
+  padding: 5px 0;
+  width: 120px;
+  height: 30px;
+}
+
 #headerLoginUser{
   white-space: nowrap;
   font-family: sans-serif;
@@ -119,3 +131,10 @@ label p{
   #submitButton:hover{
     background-color: green;
   }
+
+#noUser{
+  margin-top: 50px;
+  position:absolute;
+  left: -15px;
+  width: 300px;
+}
