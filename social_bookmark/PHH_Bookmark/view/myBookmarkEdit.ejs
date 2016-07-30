@@ -3,40 +3,58 @@
   <head>
     <meta charset="utf-8">
     <title>myBookmarkEdit - PHHB</title>
+    <link rel="stylesheet" type="text/css" href="/myBookmarkEdit.css">
   </head>
-  <style>
-    #list{
-      position:absolute;
-      top:30px;
-    }
-  </style>
   <body>
-    <div id="organization"></div>
-    <div id="search"><button>検索</button><input type="text"></div>
-    <div id="list">
-      <form accept-charset="UTF-8" action="/PHH_Bookmark/myBookmarkEdit" method="post">
-          <!--<input type="text" placeholder="URLを入力" id="url" name="new_bookmark_url">-->
-        <% if(typeof tooLongTitle !== 'undefined'){ %>
-          <input type="text" placeholder="タイトル" value="<%= title %>" id="title" name="title">
-          <p><%= tooLongTitle %></p>
-        <% }else{ %>
-          <input type="text" placeholder="タイトル" value="<%= title %>" id="title" name="title">
-        <% }%>
-        <% if(typeof description !== 'undefined'){ %>
-            <input type="text" placeholder="説明" value="<%= description %>" name="description">
-        <% }else{ %>
-          <input type="text" placeholder="説明" id="description" name="description">
-        <% }%>
-        <% if(typeof tooLongDescription !== 'undefined'){ %>
-          <p><%= tooLongDescription %></p>
-        <% }%>
-        <input type="submit" value="送信">
-      </form>
-      <% if (typeof user !== 'undefined') { %>
-        <span class="login-user"><%= user.name %>さんとしてログインしています</span>
-      <% } %>
+    <header>
+      <div id="headerMenu">
+        <a id="headerFavicon" href="/PHH_Bookmark/topPage"><img src="/img/favicon.png"></a>
+        <input id="headerSearch" type="text" placeholder="Search Bookmarks">
+        <% if (typeof userName !== 'undefined' && typeof nickName !== 'undefined') { %>
+          <span id="headerLoginUser"><%= nickName%><div id="headerUserName">(<%= userName %>)</div></span>
+        <% } %>
+        <a id="headerMyImg" href="/PHH_Bookmark/myProfile"><img src="http://res.cloudinary.com/dy4f7hul5/image/upload/v1469676799/iucwtxf12o9ztvb3tm14.png"></a>
+        <div id="headerOpenMenu" onclick="obj=document.getElementById('headerMenuList').style; obj.display=(obj.display=='none')?'block':'none';">
+          <a style="cursor:pointer;">▼</a>
+        </div>
+        <div id="headerMenuList" style="display:none;clear:both;">
+          <a id="headerMyPage" href="/PHH_Bookmark/myPage"><li>My page</li></a>
+          <a id="headerSettings" href="/PHH_Bookmark/myProfileEdit"><li>Settings</li></a>
+          <a id="headerLogout" href="/PHH_Bookmark/logout"><li>Logout</li></a>
+        </div>
+      </div>
+    </header>
+    <div id="search">
+      <button>検索</button>
+      <input type="text">
     </div>
+    <main>
+      <div id="organization"></div>
+      <div id="list">
+        <form accept-charset="UTF-8" action="/PHH_Bookmark/myBookmarkEdit" method="post">
+            <!--<input type="text" placeholder="URLを入力" id="url" name="new_bookmark_url">-->
+          <% if(typeof tooLongTitle !== 'undefined'){ %>
+            <input type="text" placeholder="タイトル" value="<%= title %>" id="title" name="title">
+            <p><%= tooLongTitle %></p>
+          <% }else{ %>
+            <input type="text" placeholder="タイトル" value="<%= title %>" id="title" name="title">
+          <% }%>
+          <% if(typeof description !== 'undefined'){ %>
+              <input type="text" placeholder="説明" value="<%= description %>" name="description">
+          <% }else{ %>
+            <input type="text" placeholder="説明" id="description" name="description">
+          <% }%>
+          <% if(typeof tooLongDescription !== 'undefined'){ %>
+            <p><%= tooLongDescription %></p>
+          <% }%>
+          <input type="submit" value="送信">
+        </form>
+        <% if (typeof user !== 'undefined') { %>
+          <span class="login-user"><%= user.name %>さんとしてログインしています</span>
+        <% } %>
+      </div>
+    </main>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-    <script src="/test.js"></script>
+    <!-- <script src="/test.js"></script> -->
   </body>
 </html>
