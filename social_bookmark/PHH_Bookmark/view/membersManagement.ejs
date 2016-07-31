@@ -18,6 +18,10 @@
       <input type="submit" value="検索">
     </form>
 
+    <% if(typeof noUser !== 'undefined'){ %>
+      <%= noUser %>
+    <% } %>
+
     <% if(typeof searchedUserNames !== 'undefined'){ %>
       <div>検索にヒットしたユーザー</div>
       <% for(var i = 0; i < searchedUserNames.length; i++){ %>

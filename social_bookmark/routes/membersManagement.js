@@ -52,7 +52,7 @@ router.post('/searchUser',function(req,res){
     var orgIntroduction = result[0].introduction;
     var orgThumbnail = result[0].image_path;
     if(searchedUser === ''){
-      res.render('organizationPage.ejs',{
+      res.render('membersManagement.ejs',{
         orgName : orgName,
         orgIntroduction : orgIntroduction,
         orgThumbnail : orgThumbnail,
@@ -61,8 +61,15 @@ router.post('/searchUser',function(req,res){
       });
     } else { // searchedUser contain any charactors
       if(selectedUserNames.length > 0){
-        var excludeSelectedUsers = 'SELECT `name` FROM `users` WHERE `name` NOT IN (?)';
-        connection.query(excludeSelectedUsers,[selectedUserNames],function(err,result){
+        var exclude = 'SELECT `name` FROM `users` WHERE `name` NOT IN (?)';
+        var excludeUsers = [];
+        for(var i = 0; i < memberUserNames.length; i++){
+          excludeUsers.push(memberUserNames[i]);
+        }
+        for(var i = 0; i < selectedUserNames.length; i++){
+          excludeUsers.push(selectedUserNames[i]);
+        }
+        connection.query(exclude,[excludeUsers],function(err,result){
           if(result.length > 0){
             var searchedUserNames = [];
             var searchedUserNickNames = [];
@@ -100,8 +107,12 @@ router.post('/searchUser',function(req,res){
         var selectMyUserName = 'SELECT `name` FROM `users` WHERE `user_id` = ?';
         connection.query(selectMyUserName,[myId],function(err,result){
           var myUserName = result[0].name;
-          var excludeOwnData = 'SELECT `name` FROM `users` WHERE `name` NOT IN(?)';
-          connection.query(excludeOwnData,[myUserName],function(err,result){
+          var exclude = 'SELECT `name` FROM `users` WHERE `name` NOT IN (?)';
+          var excludeUsers = [];
+          for(var i = 0; i < memberUserNames.length; i++){
+            excludeUsers.push(memberUserNames[i]);
+          }
+          connection.query(exclude,[excludeUsers],function(err,result){
             if(result.length > 0){
               var searchedUserNames = [];
               searchedUser = new RegExp('.*' + searchedUser + '.*');
@@ -133,7 +144,7 @@ router.post('/searchUser',function(req,res){
                 });
               }
             } else { // when no users hit
-              res.render('organizationPage.ejs',{
+              res.render('membersManagement.ejs',{
                 memberUserNames : memberUserNames,
                 memberNickNames : memberNickNames,
                 selectedUserNames : selectedUserNames,
