@@ -50,8 +50,8 @@ router.post('/', function(req,res){
   var checkEmail = /^([a-zA-Z0-9])+([a-zA-Z0-9\._-])*@([a-zA-Z0-9_-])+([a-zA-Z0-9\._-]+)+$/;
   var checkInjection = /[%+-\\(\\)"'\\*\\/\\;]+/g;
   if(checkEmail.test(eMail)){
-    if(checkForm.test(userName)){
-      if(checkForm.test(password)){
+    if(checkForm.test(userName) && userName.length <= 16){
+      if(checkForm.test(password) && password.length >= 8){
         var passwordAndHash = hashPassword(password);
         var eMailExistsQuery = 'SELECT `mail` FROM `users` WHERE `mail` = ?';
         var query = 'INSERT INTO `users` (`name`,`mail`,`salt`,`hash`,`nick_name`,`image_path`) VALUES(?, ?, ?, ?, ?, ?)';
@@ -71,12 +71,12 @@ router.post('/', function(req,res){
         });
       }else{
         res.render('createAccount.ejs', {
-          passwordNotice: 'パスワードは半角英数です'
+          passwordNotice: 'パスワードは半角英数8文字以上です'
         });
       }
     }else{
       res.render('createAccount.ejs', {
-        usernameNotice: 'ユーザーネームは半角英数です'
+        usernameNotice: 'ユーザーネームは半角英数16文字以下です'
       });
     }
   }else{
