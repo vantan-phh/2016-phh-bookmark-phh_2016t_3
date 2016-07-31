@@ -12,8 +12,18 @@
         <h2 class="form-title">Login</h2>
         <label><p>Email Address or Username</p>
         <input class="input" name="email_or_user_name" size="30" type="text"></label>
+        <% if (typeof mailNotice !== 'undefined') { %>
+          <p><%= mailNotice %></p>
+        <% } %>
+        <% if (typeof usernameNotice !== 'undefined') { %>
+          <p><%= usernameNotice %></p>
+        <% } %>
         <label><p>Password</p>
         <input class="input" name="password" size="30" type="password"></label>
+        <% if (typeof passwordNotice !== 'undefined') { %>
+          <p><%= passwordNotice %></p>
+        <% } %>
+
         <input id="submitButton" type="submit" value="Login">
       </form>
       <% if (typeof noUser !== 'undefined') { %>
