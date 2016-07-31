@@ -35,7 +35,7 @@
       <div> 選択したユーザー</div>
       <% for(var i = 0; i < selectedUserNames.length; i++){ %>
         <div><%= selectedUserNickNames[i] %><%= selectedUserNames[i] %>
-          <input type="button" value="削除" class="delete" name="selectedUserNames[i]">
+          <input type="button" value="削除" class="delete" name="<%= selectedUserNames[i] %>,<%= selectedUserNickNames[i] %>">
         </div>
       <% } %>
     <% }%>
@@ -43,14 +43,24 @@
     <form action="/PHH_Bookmark/membersManagement/selectUser" method="post" name="selectUser">
       <input type="hidden" name="result">
     </form>
+
+    <form action="/PHH_Bookmark/membersManagement/excludeUser" method="post" name="excludeUser">
+      <input type="hidden" name="result">
+    </form>
+
   </body>
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
   <script>
   $(function(){
     var $selectButton = $('.select');
+    var $deleteButton = $('.delete');
     $selectButton.click(function(){
       document.selectUser.result.value = this.name;
       document.selectUser.submit();
+    });
+    $deleteButton.click(function(){
+      document.excludeUser.result.value = this.name;
+      document.excludeUser.submit();
     });
   });
   </script>

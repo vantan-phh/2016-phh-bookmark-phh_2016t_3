@@ -180,9 +180,43 @@ router.post('/selectUser',function(req,res){
       orgIntroduction : orgIntroduction,
       orgThumbnail : orgThumbnail,
       selectedUserNames : selectedUserNames,
-      selectedUserNickNames : selectedUserNickNames
+      selectedUserNickNames : selectedUserNickNames,
+      memberNickNames : memberNickNames,
+      memberUserNames : memberUserNames
     });
   });
 });
 
+router.post('/excludeUser',function(req,res){
+  var results = req.body.result;
+  results.split(',');
+  var excludeUserName = results[0];
+  var excludeUserNickName = results[1];
+  var orgId = req.session.org_id;
+  var specifyOrg = 'SELECT * FROM `oraganizations` WHERE `id` = ?';
+  connection.query(specifyOrg,[orgId],function(err,result){
+    var orgName = result[0].name;
+    var orgIntroduction = result[0].introduction;
+    var orgThumbnail = result[0].image_path;
+    selectedUserNames.some(function(v,i){
+      if(v === excludeUserName){
+        selectedUserNames.splice(i,1);
+      }
+    });
+    selectedUserNickNames.some(function(v,i){
+      if(v == excludeUserNickName){
+        selectedUserNickNames.splice(i,1);
+      }
+    });
+    res.render('membersManagement.ejs',{
+      orgName : orgName,
+      orgIntroduction : orgIntroduction,
+      orgThumbnail : orgThumbnail,
+      selectedUserNames : selectedUserNames,
+      selectedUserNickNames : selectedUserNickNames,
+      memberUserNames : memberUserNames,
+      memberNickNames : memberNickNames
+    })
+  });
+});
 module.exports = router;
