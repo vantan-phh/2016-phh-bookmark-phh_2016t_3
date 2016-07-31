@@ -19,6 +19,9 @@
           <!--<input type="text" placeholder="タイトル" id="title" name="title">
           <input type="text" placeholder="コメント" id="description" name="description">-->
           <input type="submit" value="送信">
+          <% if (typeof urlNotice !== 'undefined') { %>
+            <p><%= urlNotice %></p>
+          <% } %>
         </form>
         <form name="my_bookmark" action="/PHH_Bookmark/myPage/delete" method="post">
           <% for(var i = 0; i < list.length; i++){ %>

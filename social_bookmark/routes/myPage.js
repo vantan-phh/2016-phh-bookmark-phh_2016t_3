@@ -17,12 +17,29 @@ router.get('/',function(req,res){
   });
 });
 router.post('/',function(req,res){
+  var checkUrl = /^(https?)(:\/\/[-_.!~*\'()a-zA-Z0-9;\/?:\@&=+\$,%#]+)$/;
   var newBookmarkUrl = req.body.new_bookmark_url;
-  if(req.session.url){
-    delete req.session.url;
+  if(checkUrl.test(newBookmarkUrl)){
+    if(req.session.url){
+      delete req.session.url;
+    }
+    req.session.url = newBookmarkUrl;
+    res.redirect('/PHH_Bookmark/myBookmarkEdit');
+  }else{
+    var userId = req.session.user_id;
+    var query = 'SELECT * FROM `bookmarks` WHERE `user_id` = ?';
+    connection.query(query,[userId],function(err,result){
+      var bookmarkId = new Array(result.length);
+      for(var i = 0; i < result.length; i++){
+        bookmarkId[i] = result[i].bookmark_id;
+      }
+      res.render('myPage.ejs',{
+        list : result,
+        bookmark_id : bookmarkId,
+        urlNotice: 'httpもしくはhttpsから始まるurlを入力してください'
+      });
+    });
   }
-  req.session.url = newBookmarkUrl;
-  res.redirect('/PHH_Bookmark/myBookmarkEdit');
 });
 
 router.post('/delete',function(req,res){
