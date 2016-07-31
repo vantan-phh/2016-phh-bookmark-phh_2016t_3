@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+<<<<<<< HEAD
   <head>
     <meta charset="utf-8">
     <title>My Page - PHHB</title>
@@ -24,7 +25,8 @@
           <% for(var i = 0; i < list.length; i++){ %>
             <div>
               <input type="checkbox" class="checkbox" name="<%= bookmark_id[i] %>">
-              <a href="<%= list[i].url %>"><%= list[i].title %></a><%= list[i].description %>
+              <a name="bookmarkId<%= bookmark_id[i]%>">%>"><%= list[i].title %></a>
+              <a href="<%= list[i].url %>"><%= list[i].url %></a><%= list[i].description %>
               <input type="button" value="編集" name="id<%= bookmark_id[i] %>">
             </div>
           <% }; %>
@@ -32,6 +34,9 @@
         </form>
         <form name="toEdit" action="/PHH_Bookmark/myPage/edit" method="post">
           <input type="hidden" name="result" value="">
+        </form>
+        <form name="toSubmitBookmarkData" action="/PHH_Bookmark/submitBookmarkData" method="post">
+          <input type="hidden" name="result">
         </form>
         <% if (typeof user !== 'undefined') { %>
           <span class="login-user"><%= user.name %>さんとしてログインしています</span>
@@ -42,10 +47,15 @@
     <script>
       $(function(){
         var $edit = $("[name^='id']");
+        var $bookmarkId = $("[name^='bookmarkId']");
         console.log($edit);
         $edit.click(function(){
           document.toEdit.result.value = this.name;
           document.toEdit.submit();
+        });
+        $bookmarkId.click(function(){
+          document.toSubmitBookmarkData.result.value = this.name;
+          document.toSubmitBookmarkData.submit();
         });
       });
     </script>

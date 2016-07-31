@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>bookmarkComment</title>
+  </head>
+  <body>
+    <div><%= bookmark[0].title %></div>
+    <a href="<%= bookmark[0].url %>"><%= bookmark[0].url%></a>
+    <div><%= bookmark[0].description %></div>
+    <% for(var i = 0; i < comments.length; i++){ %>
+      <div><%= comments[i].body %></div>
+      <div><%= commentNickName[i] %></div>
+      <% if(browsingUserId === comments[i].user_id){ %>
+        <input type="button" value="削除" name="<%= comments[i].comment_id %>" class="delete">
+      <% } %>
+    <% } %>
+    <form action="/PHH_Bookmark/bookmarkPage/delete" method="post" name="deleteComment">
+      <input type="hidden" name="result">
+    </form>
+    <form action="/PHH_Bookmark/bookmarkPage" method="post">
+      <input type="text" placeholder="コメントを入力" name="comment_text">
+      <button type="submit">投稿</button>
+    </form>
+  </body>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>
+  $(function(){
+    var $deleteComment = $(".delete");
+    $deleteComment.click(function(){
+      document.deleteComment.result.value = this.name;
+      document.deleteComment.submit();
+    });
+  });
+  </script>
+</html>
