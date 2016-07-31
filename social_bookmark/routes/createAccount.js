@@ -46,23 +46,44 @@ router.post('/', function(req,res){
   var eMail = req.body.email;
   var userName = req.body.user_name;
   var password = req.body.password;
-  var passwordAndHash = hashPassword(password);
-  var eMailExistsQuery = 'SELECT `mail` FROM `users` WHERE `mail` = ?';
-  var query = 'INSERT INTO `users` (`name`,`mail`,`salt`,`hash`,`nick_name`,`image_path`) VALUES(?, ?, ?, ?, ?, ?)';
-  connection.query(eMailExistsQuery,[eMail],function(err,result){
-    var eMailExists = result.length === 1;
-    if(eMailExists){
-      res.render('createAccount.ejs',{
-        emailExists: '既に登録されているメールアドレスです。'
-      });
+  var checkForm = /^[a-zA-Z0-9]+$/;
+  var checkEmail = /^([a-zA-Z0-9])+([a-zA-Z0-9\._-])*@([a-zA-Z0-9_-])+([a-zA-Z0-9\._-]+)+$/;
+  var checkInjection = /[%+-\\(\\)"'\\*\\/\\;]+/g;
+  if(checkEmail.test(eMail)){
+    if(checkForm.test(userName)){
+      if(checkForm.test(password)){
+        var passwordAndHash = hashPassword(password);
+        var eMailExistsQuery = 'SELECT `mail` FROM `users` WHERE `mail` = ?';
+        var query = 'INSERT INTO `users` (`name`,`mail`,`salt`,`hash`,`nick_name`,`image_path`) VALUES(?, ?, ?, ?, ?, ?)';
+        connection.query(eMailExistsQuery,[eMail],function(err,result){
+          var eMailExists = result.length === 1;
+          if(eMailExists){
+            res.render('createAccount.ejs',{
+              emailExists: '既に登録されているメールアドレスです。'
+            });
+          }else{
+            password = passwordAndHash[0];
+            var salt = passwordAndHash[1];
+            connection.query(query,[userName,eMail,salt,password,userName,'http://res.cloudinary.com/dy4f7hul5/image/upload/v1469220623/sample.jpg'],function(err,rows){
+              res.redirect('/PHH_Bookmark/login');
+            });
+          }
+        });
+      }else{
+        res.render('createAccount.ejs', {
+          passwordNotice: 'パスワードは半角英数です'
+        });
+      }
     }else{
-      password = passwordAndHash[0];
-      var salt = passwordAndHash[1];
-      connection.query(query,[userName,eMail,salt,password,userName,'http://res.cloudinary.com/dy4f7hul5/image/upload/v1469220623/sample.jpg'],function(err,rows){
-        res.redirect('/PHH_Bookmark/login');
+      res.render('createAccount.ejs', {
+        usernameNotice: 'ユーザーネームは半角英数です'
       });
     }
-  });
+  }else{
+    res.render('createAccount.ejs', {
+      mailNotice: '正しいメールアドレスを入力してください'
+    })
+  }
 });
 
 module.exports = router;

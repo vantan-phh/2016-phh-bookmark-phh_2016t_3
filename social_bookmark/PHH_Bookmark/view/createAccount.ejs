@@ -68,6 +68,9 @@
                       <% if (typeof emailExists !== 'undefined') { %>
                         <p class="error"><%= emailExists %></p>
                       <% } %>
+                      <% if (typeof mailNotice !== 'undefined') { %>
+                        <p class="error"><%= mailNotice %></p>
+                      <% } %>
                   </dl>
                   <dl class="form-group">
                     <dt class="input-label">
@@ -77,6 +80,9 @@
                       <input autocapitalize="off" autofocus="autofocus" class="form-control" data-autocheck-url="/signup_check/username"
                         id="user_login" name="user_name" size="30" type="text" data-throttle-wait="300">
                       <p class="post-lead">ユーザーネームを入力してください。</p>
+                      <% if (typeof usernameNotice !== 'undefined') { %>
+                        <p class="error"><%= usernameNotice %></p>
+                      <% } %>
                   </dl>
                   <dl class="form-group">
                     <dt class="input-label">
@@ -86,6 +92,9 @@
                       <input autocapitalize="off" autofocus="autofocus" class="form-control" data-autocheck-url="/signup_check/password"
                         id="user_password" name="password" size="30" type="text" data-throttle-wait="300">
                       <p class="post-lead">パスワードを入力してください。</p>
+                      <% if (typeof passwordNotice !== 'undefined') { %>
+                        <p class="error"><%= passwordNotice %></p>
+                      <% } %>
                   </dl>
                   <input type="hidden" name="source" class="未設定!!!!!" value="header">
 
