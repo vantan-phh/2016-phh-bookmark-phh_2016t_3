@@ -36,7 +36,7 @@ router.post('/',function(req,res){
       res.render('myPage.ejs',{
         list : result,
         bookmark_id : bookmarkId,
-        urlNotice: 'httpもしくはhttpsから始まるurlを入力してください'
+        urlNotice: 'httpもしくはhttpsから始まる正しいurlを入力してください'
       });
     });
   }

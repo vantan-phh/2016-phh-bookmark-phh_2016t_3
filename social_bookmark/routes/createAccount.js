@@ -48,7 +48,7 @@ router.post('/', function(req,res){
   var password = req.body.password;
   var checkForm = /^[a-zA-Z0-9]+$/;
   var checkEmail = /^([a-zA-Z0-9])+([a-zA-Z0-9\._-])*@([a-zA-Z0-9_-])+([a-zA-Z0-9\._-]+)+$/;
-  var checkInjection = /[%+-\\(\\)"'\\*\\/\\;]+/g;
+  var checkInjection = /[%;+-]+/g;
   if(checkEmail.test(eMail)){
     if(checkForm.test(userName) && userName.length <= 16){
       if(checkForm.test(password) && password.length >= 8){

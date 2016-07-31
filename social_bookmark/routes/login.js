@@ -32,7 +32,7 @@ router.post('/', function(req, res){
   var re = /@/g;
   var checkForm = /^[a-zA-Z0-9]+$/;
   var checkEmail = /^([a-zA-Z0-9])+([a-zA-Z0-9\._-])*@([a-zA-Z0-9_-])+([a-zA-Z0-9\._-]+)+$/;
-  var checkInjection = /[%+-\\(\\)"'\\*\\/\\;]+/g;
+  var checkInjection = /[%;+-]+/g;
   if(re.test(eMailOrUserName)){
     var eMail = eMailOrUserName;
     if(checkEmail.test(eMail)){
