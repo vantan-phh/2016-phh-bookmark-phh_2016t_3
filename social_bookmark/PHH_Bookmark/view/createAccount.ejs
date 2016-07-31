@@ -12,15 +12,16 @@
     <main>
       <form action="/PHH_Bookmark" method="post">
         <h2>Create an Account</h2>
-        <label><p class="read">Email Address</p><input type="text"><p class="readInput">メールアドレスを入力してください。</p></label>
+        <label><p class="read">Email Address</p><input type="text"><p class="readInput">メールアドレスを入力してください</p></label>
         <% if (typeof eMailExists !== 'undefined') { %>
           <p><%= eMailExists %></p>
         <% } %>
-        <label><p class="read">Username</p><input type="text"><p class="readInput">ユーザーネームを入力してください。</p></label>
+        <label><p class="read">Username</p><input type="text"><p class="readInput">ユーザーネームを入力してください</p></label>
         <% if(typeof userNameExists !== 'undefined'){ %>
           <p><%= userNameExists %></p>
         <% } %>
-        <label><p class="read">Password</p><input type="password"><p class="readInput">パスワードを入力してください。</p></label>
+        <label><p class="read">Password</p><input type="password"><p class="readInput">パスワードを入力してください</p></label>
+        <label><p class="read">Again Password</p><input type="password"><p class="readInput">もう一度パスワードを入力してください</p></label>
         <input id="submitBtn" type="submit" value="Create an account">
       </form>
     </main>
