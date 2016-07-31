@@ -1,2 +1,4 @@
 node_modules
 .DS_Store
+PHH_Bookmark/view/img/uploads
+npm-debug.log

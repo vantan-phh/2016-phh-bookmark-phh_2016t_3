@@ -13,5 +13,17 @@
         <div><%= memberNickNames[i] %><%= memberUserNames[i] %></div>
       <% } %>
     <% } %>
+    <form action="/PHH_Bookmark/membersManagement/searchUser" method="post">
+      <input type="text" placeholder="ユーザー名を入力" name="searchedUser">
+      <input type="submit" value="検索">
+    </form>
+    <% if(typeof searchedUserNames !== 'undefined'){ %>
+      <div>検索にヒットしたユーザー</div>
+      <% for(var i = 0; i < searchedUserNames.length; i++){ %>
+        <div><%= searchedUserNickNames[i] %><%= searchedUserNames[i] %>
+        <input type="button" value="決定" class="select" name="<%= searchedUserNames[i] %>,<%= searchedUserNickNames[i] %>">
+        </div>
+      <% } %>
+    <% } %>
   </body>
 </html>

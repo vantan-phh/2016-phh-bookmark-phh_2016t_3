@@ -46,7 +46,7 @@ router.post('/searchUser',function(req,res){
               overlapUsers.push(userId);
               var excludeOverlapUsers = 'SELECT `name` FROM `users` WHERE `user_id` NOT IN (?)';
               connection.query(excludeOverlapUsers,[overlapUsers],function(err,result){
-                if(result.length >= 1){
+                if(result.length > 0){
                   var searchedUserName = [];
                   invitedUser = new RegExp('.*' + invitedUser + '.*');
                   for(var i = 0; i < result.length; i++){
