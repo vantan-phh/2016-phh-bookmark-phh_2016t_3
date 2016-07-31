@@ -88,7 +88,7 @@ router.post('/searchUser',function(req,res){
       }else{ // when still no one selected
         var excludeOwnData = 'SELECT `name` FROM `users` WHERE `name` NOT IN (?)';
         connection.query(excludeOwnData,[ownUserName],function(err,result){
-          if(result.length >= 1){
+          if(result.length > 0){
             var searchedUserName = [];
             invitedUser = new RegExp('.*' + invitedUser + '.*');
             for(var i = 0; i < result.length; i++){

@@ -65,7 +65,6 @@ router.post('/', function(req, res){
     var userName = eMailOrUserName;
     var idFromUserName;
     var saltFromId;
-    var a = 1;
     connection.query('SELECT `user_id` FROM `users` WHERE `name` = ?',[userName],function(err,result){
       if(result.length === 1){
         idFromUserName = result[0].user_id;
