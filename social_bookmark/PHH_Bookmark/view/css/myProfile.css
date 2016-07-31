@@ -22,12 +22,20 @@ header{
   top: 5px;
 }
 
+#headerMenu1{
+  text-decoration: none;
+  color: orange;
+  position: absolute;
+  left: 230px;
+  top: 20px;
+}
+
 #headerSearch{
   border: solid #e1e1e1 2px;
   outline-color: green;
-  position: relative;
+  position: absolute;
   left: 700px;
-  top: 5px;
+  top: 15px;
   padding: 5px;
 }
 
