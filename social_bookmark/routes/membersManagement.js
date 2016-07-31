@@ -55,7 +55,9 @@ router.post('/searchUser',function(req,res){
       res.render('organizationPage.ejs',{
         orgName : orgName,
         orgIntroduction : orgIntroduction,
-        orgThumbnail : orgThumbnail
+        orgThumbnail : orgThumbnail,
+        selectedUserNames : selectedUserNames,
+        selectedUserNickNames : selectedUserNickNames
       });
     } else { // searchedUser contain any charactors
       if(selectedUserNames.length > 0){
@@ -85,7 +87,9 @@ router.post('/searchUser',function(req,res){
                     memberUserNames : memberUserNames,
                     memberNickNames : memberNickNames,
                     searchedUserNames : searchedUserNames,
-                    searchedUserNickNames : searchedUserNickNames
+                    searchedUserNickNames : searchedUserNickNames,
+                    selectedUserNames : selectedUserNames,
+                    selectedUserNickNames : selectedUserNickNames
                   });
                 }
               });
@@ -98,19 +102,15 @@ router.post('/searchUser',function(req,res){
           var myUserName = result[0].name;
           var excludeOwnData = 'SELECT `name` FROM `users` WHERE `name` NOT IN(?)';
           connection.query(excludeOwnData,[myUserName],function(err,result){
-            console.log(err);
-            console.log(result);
             if(result.length > 0){
               var searchedUserNames = [];
               searchedUser = new RegExp('.*' + searchedUser + '.*');
               for(var i = 0; i < result.length; i++){
                 var searchedUserName = result[i].name;
-                console.log(searchedUser);
                 if(searchedUser.test(searchedUserName)){
                   searchedUserNames.push(searchedUserName);
                 }
               }
-              console.log(searchedUserNames);
               var searchedUserNickNames = [];
               var selectNickName = 'SELECT `nick_name` FROM `users` WHERE `name` = ?';
               for(var i = 0; i < searchedUserNames.length; i++){
@@ -125,7 +125,9 @@ router.post('/searchUser',function(req,res){
                       searchedUserNames : searchedUserNames,
                       searchedUserNickNames : searchedUserNickNames,
                       memberUserNames : memberUserNames,
-                      memberNickNames : memberNickNames
+                      memberNickNames : memberNickNames,
+                      selectedUserNames : selectedUserNames,
+                      selectedUserNickNames : selectedUserNickNames
                     });
                   }
                 });
@@ -134,6 +136,8 @@ router.post('/searchUser',function(req,res){
               res.render('organizationPage.ejs',{
                 memberUserNames : memberUserNames,
                 memberNickNames : memberNickNames,
+                selectedUserNames : selectedUserNames,
+                selectedUserNickNames : selectedUserNickNames,
                 orgName : orgName,
                 orgIntroduction : orgIntroduction,
                 orgThumbnail : orgThumbnail,
@@ -144,6 +148,29 @@ router.post('/searchUser',function(req,res){
         });
       }
     };
+  });
+});
+
+router.post('/selectUser',function(req,res){
+  var results = req.body.result;
+  results = results.split(',');
+  var selectedUserName = results[0];
+  var selectedUserNickName = results[1];
+  selectedUserNames.push(selectedUserName);
+  selectedUserNickNames.push(selectedUserNickName);
+  var orgId = req.session.org_id;
+  var specifyOrg = 'SELECT * FROM `organizations` WHERE `id` = ?';
+  connection.query(specifyOrg,[orgId],function(err,result){
+    var orgName = result[0].name;
+    var orgIntroduction = result[0].introduction;
+    var orgThumbnail = result[0].image_path;
+    res.render('membersManagement.ejs',{
+      orgName : orgName,
+      orgIntroduction : orgIntroduction,
+      orgThumbnail : orgThumbnail,
+      selectedUserNames : selectedUserNames,
+      selectedUserNickNames : selectedUserNickNames
+    });
   });
 });
 

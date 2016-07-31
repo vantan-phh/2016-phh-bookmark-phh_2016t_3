@@ -17,6 +17,7 @@
       <input type="text" placeholder="ユーザー名を入力" name="searchedUser">
       <input type="submit" value="検索">
     </form>
+
     <% if(typeof searchedUserNames !== 'undefined'){ %>
       <div>検索にヒットしたユーザー</div>
       <% for(var i = 0; i < searchedUserNames.length; i++){ %>
@@ -25,5 +26,28 @@
         </div>
       <% } %>
     <% } %>
+
+    <% if(typeof selectedUserNames !== 'undefined'){ %>
+      <div> 選択したユーザー</div>
+      <% for(var i = 0; i < selectedUserNames.length; i++){ %>
+        <div><%= selectedUserNickNames[i] %><%= selectedUserNames[i] %>
+          <input type="button" value="削除" class="delete" name="selectedUserNames[i]">
+        </div>
+      <% } %>
+    <% }%>
+
+    <form action="/PHH_Bookmark/membersManagement/selectUser" method="post" name="selectUser">
+      <input type="hidden" name="result">
+    </form>
   </body>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>
+  $(function(){
+    var $selectButton = $('.select');
+    $selectButton.click(function(){
+      document.selectUser.result.value = this.name;
+      document.selectUser.submit();
+    });
+  });
+  </script>
 </html>
