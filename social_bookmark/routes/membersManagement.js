@@ -5,11 +5,13 @@ var selectedUserNames = [];
 var selectedUserNickNames = [];
 var memberUserNames = [];
 var memberNickNames = [];
+var myUserName;
 
 router.get('/',function(req,res){
   selectedUserNames = [];
   selectedUserNickNames = [];
   var orgId = req.session.org_id;
+  var myId = req.session.user_id;
   var specifyOrg = 'SELECT * FROM `organizations` WHERE `id` = ?';
   memberUserNames = [];
   memberNickNames = [];
@@ -27,12 +29,17 @@ router.get('/',function(req,res){
           memberUserNames.push(result[0].name);
           memberNickNames.push(result[0].nick_name);
           if(memberUserNames.length === len){
-            res.render('membersManagement.ejs',{
-              memberUserNames : memberUserNames,
-              memberNickNames : memberNickNames,
-              orgName : orgName,
-              orgThumbnail :orgThumbnail,
-              orgIntroduction : orgIntroduction
+            var selectMyUserName = 'SELECT `name` FROM `users` WHERE `user_id` = ?';
+            connection.query(selectMyUserName,[myId],function(err,result){
+              myUserName = result[0].name;
+              res.render('membersManagement.ejs',{
+                memberUserNames : memberUserNames,
+                memberNickNames : memberNickNames,
+                orgName : orgName,
+                orgThumbnail :orgThumbnail,
+                orgIntroduction : orgIntroduction,
+                myUserName : myUserName
+              });
             });
           }
         });
@@ -96,7 +103,8 @@ router.post('/searchUser',function(req,res){
                     searchedUserNames : searchedUserNames,
                     searchedUserNickNames : searchedUserNickNames,
                     selectedUserNames : selectedUserNames,
-                    selectedUserNickNames : selectedUserNickNames
+                    selectedUserNickNames : selectedUserNickNames,
+                    myUserName : myUserName
                   });
                 }
               });
@@ -138,7 +146,8 @@ router.post('/searchUser',function(req,res){
                       memberUserNames : memberUserNames,
                       memberNickNames : memberNickNames,
                       selectedUserNames : selectedUserNames,
-                      selectedUserNickNames : selectedUserNickNames
+                      selectedUserNickNames : selectedUserNickNames,
+                      myUserName : myUserName
                     });
                   }
                 });
@@ -152,7 +161,8 @@ router.post('/searchUser',function(req,res){
                 orgName : orgName,
                 orgIntroduction : orgIntroduction,
                 orgThumbnail : orgThumbnail,
-                noUser : '該当するユーザーが見つかりません。'
+                noUser : '該当するユーザーが見つかりません。',
+                myUserName : myUserName
               });
             }
           });
@@ -182,7 +192,8 @@ router.post('/selectUser',function(req,res){
       selectedUserNames : selectedUserNames,
       selectedUserNickNames : selectedUserNickNames,
       memberNickNames : memberNickNames,
-      memberUserNames : memberUserNames
+      memberUserNames : memberUserNames,
+      myUserName : myUserName
     });
   });
 });
@@ -215,7 +226,8 @@ router.post('/excludeUser',function(req,res){
       selectedUserNames : selectedUserNames,
       selectedUserNickNames : selectedUserNickNames,
       memberUserNames : memberUserNames,
-      memberNickNames : memberNickNames
+      memberNickNames : memberNickNames,
+      myUserName : myUserName
     });
   });
 });

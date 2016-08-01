@@ -11,7 +11,11 @@
     <% if(typeof memberUserNames !== 'undefined'){%>
       <% for(var i = 0; i < memberUserNames.length; i ++){ %>
         <div><%= memberNickNames[i] %><%= memberUserNames[i] %>
-          <input type="button" value="除名" class="expel" name="<%= memberUserNames[i] %>">
+          <% if(memberUserNames[i] === myUserName){ %>
+            <input type="button" value="脱退" class="leave">
+          <% } else { %>
+            <input type="button" value="除名" class="expel" name="<%= memberUserNames[i] %>">
+          <% } %>
         </div>
       <% } %>
     <% } %>
