@@ -38,6 +38,7 @@
           <input type="button" value="削除" class="delete" name="<%= selectedUserNames[i] %>,<%= selectedUserNickNames[i] %>">
         </div>
       <% } %>
+      <input type="button" value="招待" id="makeJoin">
     <% }%>
 
     <form action="/PHH_Bookmark/membersManagement/selectUser" method="post" name="selectUser">
@@ -48,12 +49,16 @@
       <input type="hidden" name="result">
     </form>
 
+    <form action="/PHH_Bookmark/membersManagement/makeJoin" method="post" name="makeJoin">
+    </form>
+
   </body>
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
   <script>
   $(function(){
     var $selectButton = $('.select');
     var $deleteButton = $('.delete');
+    var $makeJoinButton = $('#makeJoin');
     $selectButton.click(function(){
       document.selectUser.result.value = this.name;
       document.selectUser.submit();
@@ -61,6 +66,9 @@
     $deleteButton.click(function(){
       document.excludeUser.result.value = this.name;
       document.excludeUser.submit();
+    });
+    $makeJoinButton.click(function(){
+      document.makeJoin.submit();
     });
   });
   </script>

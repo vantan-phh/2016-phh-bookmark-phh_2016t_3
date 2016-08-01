@@ -216,7 +216,26 @@ router.post('/excludeUser',function(req,res){
       selectedUserNickNames : selectedUserNickNames,
       memberUserNames : memberUserNames,
       memberNickNames : memberNickNames
-    })
+    });
   });
+});
+
+router.post('/makeJoin',function(req,res){
+  var orgId = req.session.org_id;
+  var specifyOrg = 'SELECT * FROM `organizations` WHERE `id` = ?';
+  var selectUserId = 'SELECT `user_id` FROM `users` WHERE `name` = ?';
+  var makeJoinUsers = [];
+  for(var i = 0; i < selectedUserNames.length; i++){
+    connection.query(selectUserId,[selectedUserNames[i]],function(err,result){
+      makeJoinUsers.push(result[0].user_id);
+      if(selectedUserNames.length === makeJoinUsers.length){
+        var makeJoin = 'INSERT INTO `organization_memberships` (`user_id`,`org_id`) VALUES (?, ?)';
+        for(var i = 0; i < makeJoinUsers.length; i++){
+          connection.query(makeJoin,[makeJoinUsers[i],orgId]);
+        }
+        res.redirect('/PHH_Bookmark/membersManagement');
+      }
+    });
+  }
 });
 module.exports = router;

@@ -243,7 +243,7 @@ router.post('/excludeUser',function(req,res){
         selectedUserNickNames.splice(i,1);
       }
     });
-    res.render('createOrganization',{
+    res.render('createOrganization.ejs',{
       orgName : orgName,
       orgIntroduction : orgIntroduction,
       selectedUserNickNames :selectedUserNickNames,
