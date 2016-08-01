@@ -22,6 +22,7 @@ var orgBookmarkEdit = require('./routes/orgBookmarkEdit.js');
 var membersManagement = require('./routes/membersManagement.js');
 var bookmarkPage = require('./routes/bookmarkPage.js');
 var submitBookmarkData = require('./routes/submitBookmarkData.js');
+var switchAuthority = require('./routes/switchAuthority.js');
 
 var app = express();
 
@@ -70,6 +71,7 @@ app.use('/PHH_Bookmark/orgBookmarkEdit',setUser,orgBookmarkEdit);
 app.use('/PHH_Bookmark/membersManagement',setUser,membersManagement);
 app.use('/PHH_Bookmark/bookmarkPage',setUser,bookmarkPage);
 app.use('/PHH_Bookmark/submitBookmarkData',setUser,submitBookmarkData);
+app.use('/PHH_Bookmark/switchAuthority',setUser,switchAuthority);
 
 app.use(function(req,res,next){
   console.log('my custom middleware!');

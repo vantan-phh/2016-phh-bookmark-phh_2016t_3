@@ -49,6 +49,8 @@ router.get('/',function(req,res){
           }
         });
       });
+    } else { // the user is not belong to the organization
+      res.redirect('/PHH_Bookmark/topPage');
     }
   });
 });

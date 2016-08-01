@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+    <div>管理者リスト</div>
+    <% if(typeof adminUserNames !== 'undefined'){ %>
+      <% for(var i = 0; i < adminUserNames.length; i++){ %>
+        <div><%= adminNickNames[i] %><%= adminUserNames[i] %></div>
+      <% } %>
+    <% } %>
+    <div>一般メンバーリスト</div>
+    <% if(typeof notAdminUserNames !== 'undefined'){ %>
+      <% for(var i = 0; i < notAdminUserNames.length; i++){ %>
+        <div><%= notAdminNickNames[i] %><%= notAdminUserNames[i] %></div>
+      <% } %>
+    <% } %>
+  </body>
+</html>
