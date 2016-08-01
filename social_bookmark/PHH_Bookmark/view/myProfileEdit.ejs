@@ -15,6 +15,9 @@
           <% } else { %>
             <input type="text" name="nick_name" placeholder="ニックネーム">
           <% } %>
+          <% if(typeof nickNameNotice !== 'undefined'){ %>
+            <p><%= nickNameNotice %></p>
+          <% } %>
 
           <% if(imagePath) { %>
             <img src="<%= imagePath %>" width="128" height="128"></img>

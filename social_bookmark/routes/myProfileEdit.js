@@ -27,37 +27,53 @@ router.get('/',function(req,res){
 
 router.post('/',upload.single('image_file'),function(req,res){
   var userId = req.session.user_id;
-  if(req.file !== undefined){
-    var path = req.file.path;
-    var nickName = req.body.nick_name;
-    if(nickName === ''){
-      var query = 'SELECT `name` FROM `users` WHERE `user_id` = ?';
-      connection.query(query,[userId],function(err,result){
-        nickName = result[0].name;
+  var nickName = req.body.nick_name;
+  var checkInjection = /[%;+-]+/g;
+  if(!checkInjection.test(nickName)){
+    if(req.file !== undefined){
+      var path = req.file.path;
+      if(nickName === ''){
+        var query = 'SELECT `name` FROM `users` WHERE `user_id` = ?';
+        connection.query(query,[userId],function(err,result){
+          nickName = result[0].name;
+        });
+      }
+      var introduction = req.body.introduction;
+      cloudinary.uploader.upload(path, function(result){
+        var imagePath = result.url;
+        console.log(imagePath);
+        var query = 'UPDATE `users` SET `nick_name` = ?,`image_path` = ?,`introduction` = ? WHERE `user_id` = ?';
+        connection.query(query,[nickName,imagePath,introduction,userId],function(err,result){
+          res.redirect('/PHH_Bookmark/myProfile');
+        });
       });
-    }
-    var introduction = req.body.introduction;
-    cloudinary.uploader.upload(path, function(result){
-      var imagePath = result.url;
-      console.log(imagePath);
-      var query = 'UPDATE `users` SET `nick_name` = ?,`image_path` = ?,`introduction` = ? WHERE `user_id` = ?';
-      connection.query(query,[nickName,imagePath,introduction,userId],function(err,result){
+    }else{
+      if(nickName === ''){
+        var query = 'SELECT `name` FROM `users` WHERE `user_id` = ?';
+        connection.query(query,[userId],function(err,result){
+          nickName = result[0].name;
+        });
+      }
+      var introduction = req.body.introduction;
+      var query = 'UPDATE `users` SET `nick_name` = ?, `introduction` = ? WHERE `user_id` = ?';
+      connection.query(query,[nickName,introduction,userId],function(err,result){
         res.redirect('/PHH_Bookmark/myProfile');
       });
-    });
-  }else{
-    var nickName = req.body.nick_name;
-    if(nickName === ''){
-      var query = 'SELECT `name` FROM `users` WHERE `user_id` = ?';
-      connection.query(query,[userId],function(err,result){
-        nickName = result[0].name;
-      });
     }
+  }else{
     var introduction = req.body.introduction;
-    var query = 'UPDATE `users` SET `nick_name` = ?, `introduction` = ? WHERE `user_id` = ?';
-    connection.query(query,[nickName,introduction,userId],function(err,result){
-      res.redirect('/PHH_Bookmark/myProfile');
-    });
+    var userId = req.session.user_id;
+    var query = 'SELECT * FROM `users` WHERE `user_id` = ?';
+    connection.query(query,[userId],function(err,result){
+      var nickName = result[0].nick_name;
+      var imagePath = result[0].image_path;
+      res.render('myProfileEdit.ejs',{
+        nickName : nickName,
+        imagePath : imagePath,
+        introduction : introduction,
+        nickNameNotice : 'セキュリティ上の観点からニックネームに「+, -, %, ;」は使えません'
+      });
+    })
   }
 });
 
