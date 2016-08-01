@@ -262,4 +262,12 @@ router.post('/expelUser',function(req,res){
     res.redirect('/PHH_Bookmark/membersManagement');
   });
 });
+
+router.post('/leave',function(req,res){
+  var orgId = req.session.org_id;
+  var myId = req.session.user_id;
+  var leave = 'DELETE FROM `organization_memberships` WHERE `user_id` = ?';
+  connection.query(leave,[myId]);
+  res.redirect('/PHH_Bookmark/topPage');
+});
 module.exports = router;
