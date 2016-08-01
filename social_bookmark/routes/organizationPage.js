@@ -4,30 +4,38 @@ var client = require('cheerio-httpcli');
 var connection = require('../mysqlConnection');
 
 router.get('/',function(req,res){
+  var myId = req.session.user_id;
   var orgId = req.session.org_id;
-  var specifyOrg = 'SELECT * FROM `organizations` WHERE `id` = ?';
-  connection.query(specifyOrg,[orgId],function(err,result){
-    var orgName = result[0].name;
-    var orgIntroduction = result[0].introduction;
-    var orgThumbnail = result[0].image_path;
-    var selectBookmarkData = 'SELECT * FROM `bookmarks` WHERE `org_id` = ?';
-    connection.query(selectBookmarkData,[orgId],function(err,result){
-      if(result.length > 0){
-        var result = result;
-        res.render('organizationPage.ejs',{
-          orgName : orgName,
-          orgIntroduction : orgIntroduction,
-          orgThumbnail : orgThumbnail,
-          result : result
+  var checkMembership = 'SELECT `user_id` FROM `organization_memberships` WHERE `user_id` = ? AND `org_id` = ?';
+  connection.query(checkMembership,[myId,orgId],function(err,result){
+    if(result.length > 0){
+      var specifyOrg = 'SELECT * FROM `organizations` WHERE `id` = ?';
+      connection.query(specifyOrg,[orgId],function(err,result){
+        var orgName = result[0].name;
+        var orgIntroduction = result[0].introduction;
+        var orgThumbnail = result[0].image_path;
+        var selectBookmarkData = 'SELECT * FROM `bookmarks` WHERE `org_id` = ?';
+        connection.query(selectBookmarkData,[orgId],function(err,result){
+          if(result.length > 0){
+            var result = result;
+            res.render('organizationPage.ejs',{
+              orgName : orgName,
+              orgIntroduction : orgIntroduction,
+              orgThumbnail : orgThumbnail,
+              result : result
+            });
+          }else{ // when no bookmarks saved in DB with the org_id.
+            res.render('organizationPage.ejs',{
+              orgName : orgName,
+              orgIntroduction : orgIntroduction,
+              orgThumbnail : orgThumbnail
+            });
+          }
         });
-      }else{ // when no bookmarks saved in DB with the org_id.
-        res.render('organizationPage.ejs',{
-          orgName : orgName,
-          orgIntroduction : orgIntroduction,
-          orgThumbnail : orgThumbnail
-        });
-      }
-    });
+      });
+    } else { // when the user is not belong to the organization
+      res.redirect('/PHH_Bookmark/topPage');
+    }
   });
 });
 

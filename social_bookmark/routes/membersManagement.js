@@ -12,39 +12,44 @@ router.get('/',function(req,res){
   selectedUserNickNames = [];
   var orgId = req.session.org_id;
   var myId = req.session.user_id;
-  var specifyOrg = 'SELECT * FROM `organizations` WHERE `id` = ?';
-  memberUserNames = [];
-  memberNickNames = [];
-  connection.query(specifyOrg,[orgId],function(err,result){
-    var orgName = result[0].name;
-    var orgIntroduction = result[0].introduction;
-    var orgThumbnail = result[0].image_path;
-    var selectMembers = 'SELECT `user_id` FROM `organization_memberships` WHERE `org_id` = ?';
-    connection.query(selectMembers,[orgId],function(err,result){
-      var selectMemberData = 'SELECT * FROM `users` WHERE `user_id` = ?';
-      var len = result.length;
-      for(var i = 0; i < len; i++){
-        var memberId = result[i].user_id;
-        connection.query(selectMemberData,[memberId],function(err,result){
-          memberUserNames.push(result[0].name);
-          memberNickNames.push(result[0].nick_name);
-          if(memberUserNames.length === len){
-            var selectMyUserName = 'SELECT `name` FROM `users` WHERE `user_id` = ?';
-            connection.query(selectMyUserName,[myId],function(err,result){
-              myUserName = result[0].name;
-              res.render('membersManagement.ejs',{
-                memberUserNames : memberUserNames,
-                memberNickNames : memberNickNames,
-                orgName : orgName,
-                orgThumbnail :orgThumbnail,
-                orgIntroduction : orgIntroduction,
-                myUserName : myUserName
-              });
+  var checkMembership = 'SELECT `user_id` FROM `organization_memberships` WHERE `user_id` = ? AND `org_id` = ?';
+  connection.query(checkMembership,[myId,orgId],function(err,result){
+    if(result.length > 0){
+      var specifyOrg = 'SELECT * FROM `organizations` WHERE `id` = ?';
+      memberUserNames = [];
+      memberNickNames = [];
+      connection.query(specifyOrg,[orgId],function(err,result){
+        var orgName = result[0].name;
+        var orgIntroduction = result[0].introduction;
+        var orgThumbnail = result[0].image_path;
+        var selectMembers = 'SELECT `user_id` FROM `organization_memberships` WHERE `org_id` = ?';
+        connection.query(selectMembers,[orgId],function(err,result){
+          var selectMemberData = 'SELECT * FROM `users` WHERE `user_id` = ?';
+          var len = result.length;
+          for(var i = 0; i < len; i++){
+            var memberId = result[i].user_id;
+            connection.query(selectMemberData,[memberId],function(err,result){
+              memberUserNames.push(result[0].name);
+              memberNickNames.push(result[0].nick_name);
+              if(memberUserNames.length === len){
+                var selectMyUserName = 'SELECT `name` FROM `users` WHERE `user_id` = ?';
+                connection.query(selectMyUserName,[myId],function(err,result){
+                  myUserName = result[0].name;
+                  res.render('membersManagement.ejs',{
+                    memberUserNames : memberUserNames,
+                    memberNickNames : memberNickNames,
+                    orgName : orgName,
+                    orgThumbnail :orgThumbnail,
+                    orgIntroduction : orgIntroduction,
+                    myUserName : myUserName
+                  });
+                });
+              }
             });
           }
         });
-      }
-    });
+      });
+    }
   });
 });
 
@@ -257,8 +262,8 @@ router.post('/expelUser',function(req,res){
   var selectUserId = 'SELECT `user_id` FROM `users` WHERE `name` = ?';
   connection.query(selectUserId,[expelUserName],function(err,result){
     var expelUserId = result[0].user_id;
-    var expelUser = 'DELETE FROM `organization_memberships` WHERE `user_id` = ?';
-    connection.query(expelUser,[expelUserId]);
+    var expelUser = 'DELETE FROM `organization_memberships` WHERE `user_id` = ? AND `org_id` = ?';
+    connection.query(expelUser,[expelUserId,orgId]);
     res.redirect('/PHH_Bookmark/membersManagement');
   });
 });
@@ -266,8 +271,8 @@ router.post('/expelUser',function(req,res){
 router.post('/leave',function(req,res){
   var orgId = req.session.org_id;
   var myId = req.session.user_id;
-  var leave = 'DELETE FROM `organization_memberships` WHERE `user_id` = ?';
-  connection.query(leave,[myId]);
+  var leave = 'DELETE FROM `organization_memberships` WHERE `user_id` = ? AND `org_id` = ?';
+  connection.query(leave,[myId,orgId]);
   res.redirect('/PHH_Bookmark/topPage');
 });
 module.exports = router;
