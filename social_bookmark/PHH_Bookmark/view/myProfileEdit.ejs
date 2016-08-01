@@ -29,7 +29,9 @@
           <% } else { %>
             <input type="text" name="introduction" placeholder="自己紹介文">
           <% } %>
-
+          <% if(typeof introductionNotice !== 'undefined'){ %>
+            <p><%= introductionNotice %></p>
+          <% } %>
           <input type="submit" value="送信">
         </div>
       </form>
