@@ -189,11 +189,11 @@ router.post('/selectUser',function(req,res){
 
 router.post('/excludeUser',function(req,res){
   var results = req.body.result;
-  results.split(',');
+  results = results.split(',');
   var excludeUserName = results[0];
   var excludeUserNickName = results[1];
   var orgId = req.session.org_id;
-  var specifyOrg = 'SELECT * FROM `oraganizations` WHERE `id` = ?';
+  var specifyOrg = 'SELECT * FROM `organizations` WHERE `id` = ?';
   connection.query(specifyOrg,[orgId],function(err,result){
     var orgName = result[0].name;
     var orgIntroduction = result[0].introduction;
