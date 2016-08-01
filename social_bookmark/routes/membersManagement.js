@@ -238,4 +238,16 @@ router.post('/makeJoin',function(req,res){
     });
   }
 });
+
+router.post('/expelUser',function(req,res){
+  var orgId = req.session.org_id;
+  var expelUserName = req.body.result;
+  var selectUserId = 'SELECT `user_id` FROM `users` WHERE `name` = ?';
+  connection.query(selectUserId,[expelUserName],function(err,result){
+    var expelUserId = result[0].user_id;
+    var expelUser = 'DELETE FROM `organization_memberships` WHERE `user_id` = ?';
+    connection.query(expelUser,[expelUserId]);
+    res.redirect('/PHH_Bookmark/membersManagement');
+  });
+});
 module.exports = router;

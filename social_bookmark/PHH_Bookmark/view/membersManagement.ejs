@@ -10,7 +10,9 @@
     <div><%= orgIntroduction %></div>
     <% if(typeof memberUserNames !== 'undefined'){%>
       <% for(var i = 0; i < memberUserNames.length; i ++){ %>
-        <div><%= memberNickNames[i] %><%= memberUserNames[i] %></div>
+        <div><%= memberNickNames[i] %><%= memberUserNames[i] %>
+          <input type="button" value="除名" class="expel" name="<%= memberUserNames[i] %>">
+        </div>
       <% } %>
     <% } %>
     <form action="/PHH_Bookmark/membersManagement/searchUser" method="post">
@@ -31,11 +33,11 @@
       <% } %>
     <% } %>
 
-    <% if(typeof selectedUserNames !== 'undefined'){ %>
+    <% if(typeof selectedUserNames !== 'undefined' && selectedUserNames.length > 0){ %>
       <div> 選択したユーザー</div>
       <% for(var i = 0; i < selectedUserNames.length; i++){ %>
         <div><%= selectedUserNickNames[i] %><%= selectedUserNames[i] %>
-          <input type="button" value="削除" class="delete" name="<%= selectedUserNames[i] %>,<%= selectedUserNickNames[i] %>">
+          <input type="button" value="削除" class="exclude" name="<%= selectedUserNames[i] %>,<%= selectedUserNickNames[i] %>">
         </div>
       <% } %>
       <input type="button" value="招待" id="makeJoin">
@@ -52,23 +54,32 @@
     <form action="/PHH_Bookmark/membersManagement/makeJoin" method="post" name="makeJoin">
     </form>
 
+    <form action="/PHH_Bookmark/membersManagement/expelUser" method="post" name="expelUser">
+      <input type="hidden" name="result">
+    </form>
+
   </body>
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
   <script>
   $(function(){
     var $selectButton = $('.select');
-    var $deleteButton = $('.delete');
+    var $excludeButton = $('.exclude');
     var $makeJoinButton = $('#makeJoin');
+    var $expelButton = $('.expel');
     $selectButton.click(function(){
       document.selectUser.result.value = this.name;
       document.selectUser.submit();
     });
-    $deleteButton.click(function(){
+    $excludeButton.click(function(){
       document.excludeUser.result.value = this.name;
       document.excludeUser.submit();
     });
     $makeJoinButton.click(function(){
       document.makeJoin.submit();
+    });
+    $expelButton.click(function(){
+      document.expelUser.result.value = this.name;
+      document.expelUser.submit();
     });
   });
   </script>
