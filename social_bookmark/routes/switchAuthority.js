@@ -1,9 +1,11 @@
 var express = require('express');
 var router = express.Router();
 var connection = require('../mysqlConnection');
+var myUserName;
 
 router.get('/',function(req,res){
   var orgId = req.session.org_id;
+  var myId = req.session.user_id;
   var selectAdmins = 'SELECT `user_id` FROM `organization_memberships` WHERE `org_id` = ? AND `is_admin` = ?';
   var adminIds = [];
   connection.query(selectAdmins,[orgId,1],function(err,result){
@@ -32,11 +34,16 @@ router.get('/',function(req,res){
                 notAdminUserNames.push(result[0].name);
                 notAdminNickNames.push(result[0].nick_name);
                 if(notAdminIds.length === notAdminNickNames.length){
-                  res.render('switchAuthority.ejs',{
-                    adminNickNames : adminNickNames,
-                    adminUserNames : adminUserNames,
-                    notAdminNickNames : notAdminNickNames,
-                    notAdminUserNames : notAdminUserNames
+                  var selectMyUserName = 'SELECT `name` FROM `users` WHERE `user_id` = ?';
+                  connection.query(selectMyUserName,[myId],function(err,result){
+                    myUserName = result[0].name;
+                    res.render('switchAuthority.ejs',{
+                      adminNickNames : adminNickNames,
+                      adminUserNames : adminUserNames,
+                      notAdminNickNames : notAdminNickNames,
+                      notAdminUserNames : notAdminUserNames,
+                      myUserName : myUserName
+                    });
                   });
                 }
               });
@@ -44,6 +51,19 @@ router.get('/',function(req,res){
           }
         });
       }
+    });
+  });
+});
+
+router.post('/give',function(req,res){
+  var orgId = req.session.org_id;
+  var authorizedUserName = req.body.result;
+  var selectUserId = 'SELECT `user_id` FROM `users` WHERE `name` = ?';
+  connection.query(selectUserId,[authorizedUserName],function(err,result){
+    var authorizedUserId = result[0].user_id;
+    var authorize = 'UPDATE `organization_memberships` SET `is_admin` = true WHERE `user_id` = ? AND `org_id` = ?';
+    connection.query(authorize,[authorizedUserId,orgId],function(err,result){
+      res.redirect('/PHH_Bookmark/switchAuthority');
     });
   });
 });

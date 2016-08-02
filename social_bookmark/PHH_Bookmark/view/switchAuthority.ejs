@@ -6,16 +6,43 @@
   </head>
   <body>
     <div>管理者リスト</div>
-    <% if(typeof adminUserNames !== 'undefined'){ %>
-      <% for(var i = 0; i < adminUserNames.length; i++){ %>
-        <div><%= adminNickNames[i] %><%= adminUserNames[i] %></div>
+      <% if(typeof adminUserNames !== 'undefined'){ %>
+        <% for(var i = 0; i < adminUserNames.length; i++){ %>
+          <div><%= adminNickNames[i] %><%= adminUserNames[i] %>
+          <% if(myUserName === adminUserNames[i]){ %>
+            <input type="button" value="管理者権限を放棄" id="renounce" name="<%= adminUserNames[i]%>">
+          </div>
+          <% } %>
+        <% } %>
       <% } %>
-    <% } %>
+    <form action="/PHH_Bookmark/switchAuthority/renounce" method="post" name="renounce">
+      <input type="hidden" name="result">
+    </form>
     <div>一般メンバーリスト</div>
     <% if(typeof notAdminUserNames !== 'undefined'){ %>
       <% for(var i = 0; i < notAdminUserNames.length; i++){ %>
-        <div><%= notAdminNickNames[i] %><%= notAdminUserNames[i] %></div>
+        <div><%= notAdminNickNames[i] %><%= notAdminUserNames[i] %>
+          <input type="button" value="管理者権限を付与" class="give" name="<%= notAdminUserNames[i] %>">
+        </div>
       <% } %>
     <% } %>
+    <form action="/PHH_Bookmark/switchAuthority/give" method="post" name="give">
+      <input type="hidden" name="result">
+    </form>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script>
+    $(function(){
+      var $giveAuthorityButton = $('.give');
+      var $renounceAuthorityButton = $('#renounce');
+      $giveAuthorityButton.click(function(){
+        document.give.result.value = this.name;
+        document.give.submit();
+      });
+      $renounceAuthorityButton.click(function(){
+        document.renounce.result.value = this.name;
+        document.renounce.submit();
+      });
+    });
+    </script>
   </body>
 </html>
