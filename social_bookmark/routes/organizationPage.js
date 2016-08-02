@@ -2,13 +2,19 @@ var express = require('express');
 var router = express.Router();
 var client = require('cheerio-httpcli');
 var connection = require('../mysqlConnection');
+var isAdmin
 
 router.get('/',function(req,res){
   var myId = req.session.user_id;
   var orgId = req.session.org_id;
-  var checkMembership = 'SELECT `user_id` FROM `organization_memberships` WHERE `user_id` = ? AND `org_id` = ?';
+  var checkMembership = 'SELECT `is_admin` FROM `organization_memberships` WHERE `user_id` = ? AND `org_id` = ?';
   connection.query(checkMembership,[myId,orgId],function(err,result){
     if(result.length > 0){
+      if(result[0].is_admin === 1){
+        isAdmin = true;
+      } else { // the user doesn't have authority
+        isAdmin = false;
+      }
       var specifyOrg = 'SELECT * FROM `organizations` WHERE `id` = ?';
       connection.query(specifyOrg,[orgId],function(err,result){
         var orgName = result[0].name;
@@ -22,13 +28,15 @@ router.get('/',function(req,res){
               orgName : orgName,
               orgIntroduction : orgIntroduction,
               orgThumbnail : orgThumbnail,
-              result : result
+              result : result,
+              isAdmin : isAdmin
             });
           }else{ // when no bookmarks saved in DB with the org_id.
             res.render('organizationPage.ejs',{
               orgName : orgName,
               orgIntroduction : orgIntroduction,
-              orgThumbnail : orgThumbnail
+              orgThumbnail : orgThumbnail,
+              isAdmin : isAdmin
             });
           }
         });
@@ -49,6 +57,7 @@ router.post('/submitUrl',function(req,res){
     var orgThumbnail = result[0].image_path;
     client.fetch(url).then(function (result) {
       res.render('organizationPage.ejs',{
+        isAdmin : isAdmin,
         orgName : orgName,
         orgIntroduction : orgIntroduction,
         orgThumbnail : orgThumbnail,
