@@ -12,45 +12,52 @@ router.get('/',function(req,res){
   selectedUserNickNames = [];
   var orgId = req.session.org_id;
   var myId = req.session.user_id;
-  var checkMembership = 'SELECT `user_id` FROM `organization_memberships` WHERE `user_id` = ? AND `org_id` = ?';
-  connection.query(checkMembership,[myId,orgId],function(err,result){
-    if(result.length > 0){
-      var specifyOrg = 'SELECT * FROM `organizations` WHERE `id` = ?';
-      memberUserNames = [];
-      memberNickNames = [];
-      connection.query(specifyOrg,[orgId],function(err,result){
-        var orgName = result[0].name;
-        var orgIntroduction = result[0].introduction;
-        var orgThumbnail = result[0].image_path;
-        var selectMembers = 'SELECT `user_id` FROM `organization_memberships` WHERE `org_id` = ?';
-        connection.query(selectMembers,[orgId],function(err,result){
-          var selectMemberData = 'SELECT * FROM `users` WHERE `user_id` = ?';
-          var len = result.length;
-          for(var i = 0; i < len; i++){
-            var memberId = result[i].user_id;
-            connection.query(selectMemberData,[memberId],function(err,result){
-              memberUserNames.push(result[0].name);
-              memberNickNames.push(result[0].nick_name);
-              if(memberUserNames.length === len){
-                var selectMyUserName = 'SELECT `name` FROM `users` WHERE `user_id` = ?';
-                connection.query(selectMyUserName,[myId],function(err,result){
-                  myUserName = result[0].name;
-                  res.render('membersManagement.ejs',{
-                    memberUserNames : memberUserNames,
-                    memberNickNames : memberNickNames,
-                    orgName : orgName,
-                    orgThumbnail :orgThumbnail,
-                    orgIntroduction : orgIntroduction,
-                    myUserName : myUserName
-                  });
+  var checkAuthority = 'SELECT `user_id` FROM `organization_memberships` WHERE `user_id` = ? AND `org_id` = ? AND `is_admin` = true';
+  connection.query(checkAuthority,[myId,orgId],function(err,result){
+    if(result.length === 1){
+      var checkMembership = 'SELECT `user_id` FROM `organization_memberships` WHERE `user_id` = ? AND `org_id` = ?';
+      connection.query(checkMembership,[myId,orgId],function(err,result){
+        if(result.length > 0){
+          var specifyOrg = 'SELECT * FROM `organizations` WHERE `id` = ?';
+          memberUserNames = [];
+          memberNickNames = [];
+          connection.query(specifyOrg,[orgId],function(err,result){
+            var orgName = result[0].name;
+            var orgIntroduction = result[0].introduction;
+            var orgThumbnail = result[0].image_path;
+            var selectMembers = 'SELECT `user_id` FROM `organization_memberships` WHERE `org_id` = ?';
+            connection.query(selectMembers,[orgId],function(err,result){
+              var selectMemberData = 'SELECT * FROM `users` WHERE `user_id` = ?';
+              var len = result.length;
+              for(var i = 0; i < len; i++){
+                var memberId = result[i].user_id;
+                connection.query(selectMemberData,[memberId],function(err,result){
+                  memberUserNames.push(result[0].name);
+                  memberNickNames.push(result[0].nick_name);
+                  if(memberUserNames.length === len){
+                    var selectMyUserName = 'SELECT `name` FROM `users` WHERE `user_id` = ?';
+                    connection.query(selectMyUserName,[myId],function(err,result){
+                      myUserName = result[0].name;
+                      res.render('membersManagement.ejs',{
+                        memberUserNames : memberUserNames,
+                        memberNickNames : memberNickNames,
+                        orgName : orgName,
+                        orgThumbnail :orgThumbnail,
+                        orgIntroduction : orgIntroduction,
+                        myUserName : myUserName
+                      });
+                    });
+                  }
                 });
               }
             });
-          }
-        });
+          });
+        } else { // the user is not belong to the organization
+          res.redirect('/PHH_Bookmark/topPage');
+        }
       });
-    } else { // the user is not belong to the organization
-      res.redirect('/PHH_Bookmark/topPage');
+    } else { // when the user doesn't have authority
+      res.redirect('/PHH_Bookmark/organizationPage');
     }
   });
 });
