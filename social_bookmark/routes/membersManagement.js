@@ -255,9 +255,9 @@ router.post('/makeJoin',function(req,res){
     connection.query(selectUserId,[selectedUserNames[i]],function(err,result){
       makeJoinUsers.push(result[0].user_id);
       if(selectedUserNames.length === makeJoinUsers.length){
-        var makeJoin = 'INSERT INTO `organization_memberships` (`user_id`,`org_id`) VALUES (?, ?)';
+        var makeJoin = 'INSERT INTO `organization_memberships` (`user_id`,`org_id`,`is_admin`) VALUES (?, ?, ?)';
         for(var i = 0; i < makeJoinUsers.length; i++){
-          connection.query(makeJoin,[makeJoinUsers[i],orgId]);
+          connection.query(makeJoin,[makeJoinUsers[i],orgId,false]); // いずあどみんさんがね、ぬるだったからね、falseをね、入れるようにしたの。
         }
         res.redirect('/PHH_Bookmark/membersManagement');
       }

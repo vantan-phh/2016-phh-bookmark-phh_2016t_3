@@ -2,7 +2,9 @@ var express = require('express');
 var router = express.Router();
 var client = require('cheerio-httpcli');
 var connection = require('../mysqlConnection');
-var isAdmin
+var isAdmin;
+var bookmarkData;
+var ownBookmarkIds;
 
 router.get('/',function(req,res){
   var myId = req.session.user_id;
@@ -22,23 +24,19 @@ router.get('/',function(req,res){
         var orgThumbnail = result[0].image_path;
         var selectBookmarkData = 'SELECT * FROM `bookmarks` WHERE `org_id` = ?';
         connection.query(selectBookmarkData,[orgId],function(err,result){
-          if(result.length > 0){
-            var result = result;
+          bookmarkData = result;
+          var selectOwnBookmarkIds = 'SELECT `bookmark_id` FROM `bookmarks` WHERE `user_id` = ? AND `org_id` = ?';
+          connection.query(selectOwnBookmarkIds,[myId,orgId],function(err,result){
+            var ownBookmarkIds = result;
             res.render('organizationPage.ejs',{
               orgName : orgName,
               orgIntroduction : orgIntroduction,
               orgThumbnail : orgThumbnail,
-              result : result,
-              isAdmin : isAdmin
+              bookmarkData : bookmarkData,
+              isAdmin : isAdmin,
+              ownBookmarkIds : ownBookmarkIds
             });
-          }else{ // when no bookmarks saved in DB with the org_id.
-            res.render('organizationPage.ejs',{
-              orgName : orgName,
-              orgIntroduction : orgIntroduction,
-              orgThumbnail : orgThumbnail,
-              isAdmin : isAdmin
-            });
-          }
+          });
         });
       });
     } else { // when the user is not belong to the organization
@@ -57,6 +55,8 @@ router.post('/submitUrl',function(req,res){
     var orgThumbnail = result[0].image_path;
     client.fetch(url).then(function (result) {
       res.render('organizationPage.ejs',{
+        bookmarkData : bookmarkData,
+        ownBookmarkIds : ownBookmarkIds,
         isAdmin : isAdmin,
         orgName : orgName,
         orgIntroduction : orgIntroduction,
