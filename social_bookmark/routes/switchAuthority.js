@@ -15,6 +15,7 @@ router.get('/',function(req,res){
     var selectNotAdmins = 'SELECT `user_id` FROM `organization_memberships` WHERE `org_id` = ? AND `is_admin` = ?';
     var notAdminIds = [];
     connection.query(selectNotAdmins,[orgId,0],function(err,result){
+      console.log(result);
       for(var i = 0; i < result.length; i++){
         notAdminIds.push(result[i].user_id);
       }
@@ -29,23 +30,39 @@ router.get('/',function(req,res){
             var selectNotAdminUsers = 'SELECT * FROM `users` WHERE `user_id` = ?';
             var notAdminUserNames = [];
             var notAdminNickNames = [];
-            for(var i = 0; i < notAdminIds.length; i++){
-              connection.query(selectNotAdminUsers,[notAdminIds[i]],function(err,result){
-                notAdminUserNames.push(result[0].name);
-                notAdminNickNames.push(result[0].nick_name);
-                if(notAdminIds.length === notAdminNickNames.length){
-                  var selectMyUserName = 'SELECT `name` FROM `users` WHERE `user_id` = ?';
-                  connection.query(selectMyUserName,[myId],function(err,result){
-                    myUserName = result[0].name;
-                    res.render('switchAuthority.ejs',{
-                      adminNickNames : adminNickNames,
-                      adminUserNames : adminUserNames,
-                      notAdminNickNames : notAdminNickNames,
-                      notAdminUserNames : notAdminUserNames,
-                      myUserName : myUserName
+            if(notAdminIds.length > 0){
+              for(var i = 0; i < notAdminIds.length; i++){
+                connection.query(selectNotAdminUsers,[notAdminIds[i]],function(err,result){
+                  console.log(err);
+                  console.log(result);
+                  notAdminUserNames.push(result[0].name);
+                  notAdminNickNames.push(result[0].nick_name);
+                  if(notAdminIds.length === notAdminNickNames.length){
+                    var selectMyUserName = 'SELECT `name` FROM `users` WHERE `user_id` = ?';
+                    connection.query(selectMyUserName,[myId],function(err,result){
+                      myUserName = result[0].name;
+                      res.render('switchAuthority.ejs',{
+                        adminNickNames : adminNickNames,
+                        adminUserNames : adminUserNames,
+                        notAdminNickNames : notAdminNickNames,
+                        notAdminUserNames : notAdminUserNames,
+                        myUserName : myUserName
+                      });
                     });
-                  });
-                }
+                  }
+                });
+              }
+            } else{ // when notAdminUsers don't exist
+              var selectMyUserName = 'SELECT `name` FROM `users` WHERE `user_id` = ?';
+              connection.query(selectMyUserName,[myId],function(err,result){
+                var myUserName = result[0].name;
+                res.render('switchAuthority.ejs',{
+                  adminUserNames : adminUserNames,
+                  adminNickNames : adminNickNames,
+                  notAdminUserNames : notAdminUserNames,
+                  notAdminNickNames : notAdminNickNames,
+                  myUserName : myUserName
+                });
               });
             }
           }
@@ -62,10 +79,17 @@ router.post('/give',function(req,res){
   connection.query(selectUserId,[authorizedUserName],function(err,result){
     var authorizedUserId = result[0].user_id;
     var authorize = 'UPDATE `organization_memberships` SET `is_admin` = true WHERE `user_id` = ? AND `org_id` = ?';
-    connection.query(authorize,[authorizedUserId,orgId],function(err,result){
-      res.redirect('/PHH_Bookmark/switchAuthority');
-    });
+    connection.query(authorize,[authorizedUserId,orgId]);
+    res.redirect('/PHH_Bookmark/switchAuthority');
   });
+});
+
+router.post('/renounce',function(req,res){
+  var orgId = req.session.org_id;
+  var myId = req.session.user_id;
+  var renounce = 'UPDATE `organization_memberships` SET `is_admin` = false WHERE `user_id` = ? AND `org_id` = ?';
+  connection.query(renounce,[myId,orgId]);
+  res.redirect('/PHH_Bookmark/switchAuthority');
 });
 
 module.exports = router;
