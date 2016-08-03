@@ -45,9 +45,8 @@ router.post('/',function(req,res){
   var description = req.body.description;
   var bookmarkId = req.session.edit_org_bookmark_id;
   var query = 'UPDATE `bookmarks` SET `title` = ?, `description` = ? WHERE `bookmark_id` = ?';
-  connection.query(query,[title,description,bookmarkId],function(err,result){
-    res.redirect('/PHH_Bookmark/organizationPage');
-  });
+  connection.query(query,[title,description,bookmarkId]);
+  res.redirect('/PHH_Bookmark/organizationPage');
 });
 
 router.post('/delete',function(req,res){

@@ -16,6 +16,9 @@
       <div id="list">
         <form accept-charset="UTF-8" action="/PHH_Bookmark/myBookmarkEdit" method="post">
             <!--<input type="text" placeholder="URLを入力" id="url" name="new_bookmark_url">-->
+          <% if(typeof url !== 'undefined'){ %>
+            <%= url %>
+          <% } %>
           <% if(typeof tooLongTitle !== 'undefined'){ %>
             <input type="text" placeholder="タイトル" value="<%= title %>" id="title" name="title">
             <p><%= tooLongTitle %></p>

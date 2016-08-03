@@ -126,7 +126,7 @@ router.post('/searchUser',function(req,res){
         });
       };
     }
-  })
+  });
 });
 
 router.post('/create',upload.single('image_file'),function(req,res){

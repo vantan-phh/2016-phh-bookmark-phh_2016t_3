@@ -33,7 +33,16 @@ var options = {
   host : 'localhost',
   port : 3306,
   user : 'root',
-  database : 'phh_social_bookmark_proto'
+  database : 'phh_social_bookmark_proto',
+  createDatabaseTable: true,
+  schema: {
+    tableName: 'sessions',
+    columnNames: {
+      session_id: 'session_id',
+      expires: 'expires',
+      data: 'data'
+    }
+  }
 }
 var sessionStore = new MySQLStore(options);
 
@@ -54,7 +63,7 @@ app.use(session({
   resave : false,
   saveUninitialized : false,
   cookie : {
-    maxAge : 30*24*60*60*1000 //屹度30日。
+    maxAge : 30*24*60*60*1000 // for 30 days
   }
 }));
 
