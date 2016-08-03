@@ -257,7 +257,7 @@ router.post('/makeJoin',function(req,res){
       if(selectedUserNames.length === makeJoinUsers.length){
         var makeJoin = 'INSERT INTO `organization_memberships` (`user_id`,`org_id`,`is_admin`) VALUES (?, ?, ?)';
         for(var i = 0; i < makeJoinUsers.length; i++){
-          connection.query(makeJoin,[makeJoinUsers[i],orgId,false]); // いずあどみんさんがね、ぬるだったからね、falseをね、入れるようにしたの。
+          connection.query(makeJoin,[makeJoinUsers[i],orgId,false]); 
         }
         res.redirect('/PHH_Bookmark/membersManagement');
       }
