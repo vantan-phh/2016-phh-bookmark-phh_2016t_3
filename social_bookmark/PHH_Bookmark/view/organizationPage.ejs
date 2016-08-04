@@ -9,6 +9,15 @@
     <img src="<%= orgThumbnail %>">
     <div><%= orgIntroduction %></div>
 
+    <form action="/PHH_Bookmark/organizationPage/searchBookmark" method="post">
+      <input type="checkbox" checked="checked" name="searchWithTitle">タイトル
+      <input type="checkbox" name="searchWithDescription">説明文
+      <input type="checkbox" name="searchWithComments">コメント
+      <input type="checkbox" name="searchWithTextsOnSites">URL先のテキスト
+      <input type="text" placeholder="検索ワードを入力" name="keyWord">
+      <input type="submit" value="検索">
+    </form>
+
     <form action="/PHH_Bookmark/organizationPage" method="post">
       <% if(typeof url !== 'undefined'){ %>
         <input type="text" placeholder="URLを入力" name="url" id="url" value="<%= url %>">
@@ -29,9 +38,9 @@
       <input type="hidden" name="result">
     </form>
 
-    <div>組織に追加されたブックマーク</div>
     <form action="/PHH_Bookmark/orgBookmarkEdit/delete" method="post">
       <% if(typeof bookmarkData !== 'undefined'){ %>
+        <div>組織に追加されたブックマーク</div>
         <% for(var i = 0; i < bookmarkData.length; i++){ %>
           <div>
             <% if(isAdmin){ %>
@@ -59,6 +68,13 @@
       <% } %>
     </form>
 
+    <% if(typeof searchedBookmarks !== 'undefined'){ %>
+      <div>検索結果</div>
+      <% for(var i = 0; i < searchedBookmarks.length; i++){ %>
+        <a href="/PHH_Bookmark/bookmarkPage"><%= searchedBookmarks[i].title %></a><a href="<%= searchedBookmarks[i].url%>"><%= searchedBookmarks[i].url%></a>
+        <%= searchedBookmarks[i].description %>
+      <% } %>
+    <% } %>
     <form action="/PHH_Bookmark/organizationPage/toOrgBookmarkEdit" method="post" name="toOrgBookmarkEdit">
       <input type="hidden" name="result">
     </form>

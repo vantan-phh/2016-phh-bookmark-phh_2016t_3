@@ -88,4 +88,42 @@ router.post('/toOrgBookmarkEdit',function(req,res){
   req.session.edit_org_bookmark_id = bookmarkId;
   res.redirect('/PHH_Bookmark/orgBookmarkEdit');
 });
+
+router.post('/searchBookmark',function(req,res){
+  var orgId = req.session.org_id;
+  var specifyOrg = 'SELECT * FROM `organizations` WHERE `id` = ?';
+  connection.query(specifyOrg,[orgId],function(err,result){
+    var orgName = result[0].name;
+    var orgIntroduction = result[0].introduction;
+    var orgThumbnail = result[0].image_path;
+    var keyWord = req.body.keyWord;
+    var searchFromTitle = req.body.searchFromTitle;
+    var searchFromDescription = req.body.searchFromDescription;
+    var searchFromComments = req.body.searchFromComments;
+    var searchFromTextsOnSites = req.body.searchFromTextsOnSites;
+    // add regular express for key word
+    var keyWords = keyWord.split(' ');
+    if(searchFromTitle === 'on' && searchFromDescription === undefined && searchFromComments === undefined && searchFromTextsOnSites === undefined){
+      var keyWordsForQuery = '%';
+      for(var i = 0; i < keyWords.length; i++){
+        if(i + 1 === keyWords.length){
+          keyWordsForQuery += keyWords[i] + '%';
+          var selectBookmarksByTitle = 'SELECT * FROM `bookmarks` WHERE `title` LIKE "' + keyWordsForQuery + '" AND `org_id` = ?';
+          connection.query(selectBookmarksByTitle,[orgId],function(err,result){
+            var searchedBookmarks = result;
+            res.render('organizationPage.ejs',{
+              orgName : orgName,
+              orgIntroduction : orgIntroduction,
+              orgThumbnail : orgThumbnail,
+              isAdmin : isAdmin,
+              searchedBookmarks : searchedBookmarks
+            });
+          });
+        }else{
+          keyWordsForQuery += keyWords[i] + '%" AND `title` LIKE "%';
+        }
+      }
+    }
+  });
+});
 module.exports = router;
