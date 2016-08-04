@@ -15,19 +15,13 @@
       </div>
       <div id="list">
         <form action="/PHH_Bookmark/myPage" method="post">
-          <input type="text" placeholder="URLを入力" id="url" name="new_bookmark_url">
-          <!--<input type="text" placeholder="タイトル" id="title" name="title">
-          <input type="text" placeholder="コメント" id="description" name="description">-->
-          <input type="submit" value="送信">
-          <% if (typeof urlNotice !== 'undefined') { %>
-            <p><%= urlNotice %></p>
           <% if(typeof url !== 'undefined'){ %>
             <input type="text" placeholder="URLを入力" name="url" value="<%= url %>" id="url">
             <input type="button" value="再送信" name="submitUrl" id="submitUrl">
-            <% if (typeof urlNotice !== 'undefined') { %>
+            <% if(typeof urlNotice !== 'undefined'){ %>
               <p><%= urlNotice %></p>
             <% } %>
-          <%} else {%>
+          <% }else{ %>
             <input type="text" placeholder="URLを入力" name="url" id="url">
             <input type="button" value="送信" name="submitUrl" id="submitUrl">
           <% } %>
@@ -46,7 +40,7 @@
               <a href="<%= bookmarkData[i].url %>"><%= bookmarkData[i].url %></a><%= bookmarkData[i].description %>
               <input type="button" value="編集" name="<%= bookmarkData[i].bookmark_id %>" class="edit">
             </div>
-          <% }; %>
+          <% } %>
           <button type="submit">削除</button>
         </form>
         <form name="toEdit" action="/PHH_Bookmark/myBookmarkEdit" method="get">
@@ -58,7 +52,7 @@
         <form action="/PHH_Bookmark/myPage/submitUrl" name="submitUrl" method="post">
           <input type="hidden" name="result">
         </form>
-        <% if (typeof user !== 'undefined') { %>
+        <% if(typeof user !== 'undefined'){ %>
           <span class="login-user"><%= user.name %>さんとしてログインしています</span>
         <% } %>
       </div>
