@@ -10,8 +10,90 @@
     <div><%= orgIntroduction %></div>
     <% if(typeof memberUserNames !== 'undefined'){%>
       <% for(var i = 0; i < memberUserNames.length; i ++){ %>
-        <div><%= memberNickNames[i] %><%= memberUserNames[i] %></div>
+        <div><%= memberNickNames[i] %><%= memberUserNames[i] %>
+          <% if(memberUserNames[i] === myUserName){ %>
+            <input type="button" value="脱退" id="leave">
+          <% } else { %>
+            <input type="button" value="除名" class="expel" name="<%= memberUserNames[i] %>">
+          <% } %>
+        </div>
       <% } %>
     <% } %>
+    <form action="/PHH_Bookmark/membersManagement/searchUser" method="post">
+      <input type="text" placeholder="ユーザー名を入力" name="searchedUser">
+      <input type="submit" value="検索">
+    </form>
+
+    <% if(typeof noUser !== 'undefined'){ %>
+      <%= noUser %>
+    <% } %>
+
+    <% if(typeof searchedUserNames !== 'undefined'){ %>
+      <div>検索にヒットしたユーザー</div>
+      <% for(var i = 0; i < searchedUserNames.length; i++){ %>
+        <div><%= searchedUserNickNames[i] %><%= searchedUserNames[i] %>
+        <input type="button" value="決定" class="select" name="<%= searchedUserNames[i] %>,<%= searchedUserNickNames[i] %>">
+        </div>
+      <% } %>
+    <% } %>
+
+    <% if(typeof selectedUserNames !== 'undefined' && selectedUserNames.length > 0){ %>
+      <div> 選択したユーザー</div>
+      <% for(var i = 0; i < selectedUserNames.length; i++){ %>
+        <div><%= selectedUserNickNames[i] %><%= selectedUserNames[i] %>
+          <input type="button" value="削除" class="exclude" name="<%= selectedUserNames[i] %>,<%= selectedUserNickNames[i] %>">
+        </div>
+      <% } %>
+      <input type="button" value="招待" id="makeJoin">
+    <% }%>
+
+    <a href="/PHH_Bookmark/switchAuthority">権限管理ページへ</a>
+
+    <form action="/PHH_Bookmark/membersManagement/selectUser" method="post" name="selectUser">
+      <input type="hidden" name="result">
+    </form>
+
+    <form action="/PHH_Bookmark/membersManagement/excludeUser" method="post" name="excludeUser">
+      <input type="hidden" name="result">
+    </form>
+
+    <form action="/PHH_Bookmark/membersManagement/makeJoin" method="post" name="makeJoin">
+    </form>
+
+    <form action="/PHH_Bookmark/membersManagement/expelUser" method="post" name="expelUser">
+      <input type="hidden" name="result">
+    </form>
+
+    <form action="/PHH_Bookmark/membersManagement/leave" method="post" name="leave">
+    </form>
+
   </body>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>
+  $(function(){
+    var $selectButton = $('.select');
+    var $excludeButton = $('.exclude');
+    var $makeJoinButton = $('#makeJoin');
+    var $expelButton = $('.expel');
+    var $leaveButton = $('#leave');
+    $selectButton.click(function(){
+      document.selectUser.result.value = this.name;
+      document.selectUser.submit();
+    });
+    $excludeButton.click(function(){
+      document.excludeUser.result.value = this.name;
+      document.excludeUser.submit();
+    });
+    $makeJoinButton.click(function(){
+      document.makeJoin.submit();
+    });
+    $expelButton.click(function(){
+      document.expelUser.result.value = this.name;
+      document.expelUser.submit();
+    });
+    $leaveButton.click(function(){
+      document.leave.submit();
+    });
+  });
+  </script>
 </html>

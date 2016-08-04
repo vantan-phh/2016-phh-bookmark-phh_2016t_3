@@ -8,7 +8,6 @@
     <h2><%= orgName %></h2>
     <img src="<%= orgThumbnail %>">
     <div><%= orgIntroduction %></div>
-    <a href="/PHH_Bookmark/organizationManagement">管理ページへ</a>
 
     <form action="/PHH_Bookmark/organizationPage" method="post">
       <% if(typeof url !== 'undefined'){ %>
@@ -32,14 +31,30 @@
 
     <div>組織に追加されたブックマーク</div>
     <form action="/PHH_Bookmark/orgBookmarkEdit/delete" method="post">
-      <% if(typeof result !== 'undefined'){%>
-        <% for(var i = 0; i < result.length; i++){%>
+      <% if(typeof bookmarkData !== 'undefined'){ %>
+        <% for(var i = 0; i < bookmarkData.length; i++){ %>
           <div>
-            <input type="checkbox" class="checkbox" name="<%= result[i].bookmark_id %>">
-            <a href="/PHH_Bookmark/bookmarkPage"><%= result[i].title %></a><a href="<%= result[i].url %>"><%= result[i].url %></a><%= result[i].description %>
-            <input type="button" value="編集" name="<%= result[i].bookmark_id %>" class="edit">
+            <% if(isAdmin){ %>
+              <input type="checkbox" class="checkbox" name="<%= bookmarkData[i].bookmark_id %>">
+            <% } else if(ownBookmarkIds.length > 0){ %>
+              <% for(var j = 0; j < ownBookmarkIds.length; j++){ %>
+                <% if(ownBookmarkIds[j].bookmark_id === bookmarkData[i].bookmark_id){ %>
+                  <input type="checkbox" class="checkbox" name="<%= bookmarkData[i].bookmark_id %>">
+                <% } %>
+              <% } %>
+            <% } %>
+            <a href="/PHH_Bookmark/bookmarkPage"><%= bookmarkData[i].title %></a><a href="<%= bookmarkData[i].url %>"><%= bookmarkData[i].url %></a><%= bookmarkData[i].description %>
+            <% if(isAdmin){ %>
+              <input type="button" value="編集" name="<%= bookmarkData[i].bookmark_id %>" class="edit">
+            <% } else if(ownBookmarkIds.length > 0){ %>
+              <% for(var j = 0; j < ownBookmarkIds.length; j++){ %>
+                <% if(ownBookmarkIds[j].bookmark_id === bookmarkData[i].bookmark_id){ %>
+                  <input type="button" value="編集" name="<%= bookmarkData[i].bookmark_id %>" class="edit">
+                <% } %>
+              <% } %>
+            <% } %>
           </div>
-        <% }; %>
+        <% } %>
         <button type="submit">削除</button>
       <% } %>
     </form>
@@ -47,7 +62,10 @@
     <form action="/PHH_Bookmark/organizationPage/toOrgBookmarkEdit" method="post" name="toOrgBookmarkEdit">
       <input type="hidden" name="result">
     </form>
-    <a href="/PHH_Bookmark/membersManagement">メンバー管理ページへ</a>
+    <% if(isAdmin){ %>
+      <a href="/PHH_Bookmark/organizationManagement">管理ページへ</a>
+      <a href="/PHH_Bookmark/membersManagement">メンバー管理ページへ</a>
+    <% } %>
     <a href="/PHH_Bookmark/organizationMembers">メンバー一覧へ</a>
   </body>
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>

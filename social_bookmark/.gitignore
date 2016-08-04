@@ -1,3 +1,7 @@
 node_modules
 .DS_Store
 PHH_Bookmark/view/img/uploads
+<<<<<<< HEAD
+=======
+npm-debug.log
+>>>>>>> 63c4ad9cd4f37af00d5e3da6447f7e22df397aaa

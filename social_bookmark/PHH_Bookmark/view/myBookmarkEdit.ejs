@@ -19,6 +19,7 @@
           <% if(typeof url !== 'undefined'){ %>
             <%= url %>
           <% } %>
+          <% if(typeof tooLongTitle !== 'undefined'){ %>
             <input type="text" placeholder="タイトル" value="<%= title %>" id="title" name="title">
           <% if(typeof tooLongTitle !== 'undefined'){ %>
             <p><%= tooLongTitle %></p>

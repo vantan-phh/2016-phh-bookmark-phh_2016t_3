@@ -61,7 +61,7 @@ router.post('/', function(req, res){
             }else{
               res.render('login.ejs', {
                 passwordNotice: '正しい形式でパスワードを入力してください'
-              })
+              });
             }
           });
         }else{
@@ -81,7 +81,6 @@ router.post('/', function(req, res){
     if(checkForm.test(userName)){
       var idFromUserName;
       var saltFromId;
-      var a = 1;
       connection.query('SELECT `user_id` FROM `users` WHERE `name` = ?',[userName],function(err,result){
         if(result.length === 1){
           idFromUserName = result[0].user_id;
@@ -105,7 +104,7 @@ router.post('/', function(req, res){
             }else{
               res.render('login.ejs', {
                 passwordNotice: '正しい形式でパスワードを入力してください'
-              })
+              });
             }
           });
         }else{
@@ -115,7 +114,7 @@ router.post('/', function(req, res){
           });
         }
       });
-    }else {
+    }else{
       res.render('login.ejs', {
         usernameNotice: '正しいユーザーネームを入力してください'
       });
