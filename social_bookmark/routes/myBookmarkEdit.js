@@ -31,6 +31,7 @@ router.post('/',function(req,res){
       if(title.length <= 32){
         if(description.length <= 128){
           connection.query(updateBookmarkData,[title,description,bookmarkId]);
+          res.redirect('/PHH_Bookmark/myPage');
         }else{
           res.render('myBookmarkEdit.ejs',{
             tooLongDescription : '説明が長すぎます。',
