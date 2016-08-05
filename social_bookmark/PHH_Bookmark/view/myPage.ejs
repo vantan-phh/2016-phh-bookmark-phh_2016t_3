@@ -18,18 +18,23 @@
           <% if(typeof url !== 'undefined'){ %>
             <input type="text" placeholder="URLを入力" name="url" value="<%= url %>" id="url">
             <input type="button" value="再送信" name="submitUrl" id="submitUrl">
-            <% if(typeof urlNotice !== 'undefined'){ %>
-              <p><%= urlNotice %></p>
-            <% } %>
           <% }else{ %>
             <input type="text" placeholder="URLを入力" name="url" id="url">
             <input type="button" value="送信" name="submitUrl" id="submitUrl">
           <% } %>
-
+          <% if(typeof urlNotice !== 'undefined'){ %>
+            <p><%= urlNotice %></p>
+          <% } %>
           <% if(typeof title !== 'undefined'){ %>
             <input type="text" placeholder="タイトル" name="title" value="<%= title %>">
-            <input type="text" placeholder="コメント" id="description" name="description">
+            <input type="text" placeholder="コメント" id="description" name="description" value="<%= description %>">
             <input type="submit" value="送信">
+          <% } %>
+          <% if(typeof titleNotice !== 'undefined'){ %>
+            <p><%= titleNotice %></p>
+          <% } %>
+          <% if(typeof descriptionNotice !== 'undefined'){ %>
+            <p><%= descriptionNotice %></p>
           <% } %>
         </form>
         <form name="my_bookmark" action="/PHH_Bookmark/myPage/delete" method="post">
