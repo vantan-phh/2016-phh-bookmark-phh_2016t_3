@@ -46,30 +46,58 @@ router.post('/', function(req,res){
   var eMail = req.body.email;
   var userName = req.body.user_name;
   var password = req.body.password;
-  var passwordAndHash = hashPassword(password);
-  var existsEmailQuery = 'SELECT `mail` FROM `users` WHERE `mail` = ?';
-  var existsUserNameQuery = 'SELECT `name` FROM `users` WHERE `name` = ?';
-  var createAccount = 'INSERT INTO `users` (`name`,`mail`,`salt`,`hash`,`nick_name`,`image_path`) VALUES(?, ?, ?, ?, ?, ?)';
-  connection.query(existsEmailQuery,[eMail],function(err,result){
-    if(result.length === 1){
-      res.render('createAccount.ejs',{
-        eMailExists: '既に登録されているメールアドレスです。'
-      });
-    }
-    connection.query(existsUserNameQuery,[userName],function(err,result){
-      if(result.length === 1){
-        res.render('createAccount.ejs',{
-          userNameExists : '既に登録されているユーザーネームです。'
-        });
-      } else {
-        password = passwordAndHash[0];
-        var salt = passwordAndHash[1];
-        connection.query(createAccount,[userName,eMail,salt,password,userName,'http://res.cloudinary.com/dy4f7hul5/image/upload/v1469220623/sample.jpg'],function(err,rows){
-          res.redirect('/PHH_Bookmark/login');
+  var checkForm = /^[a-zA-Z0-9]+$/;
+  var checkEmail = /^([a-zA-Z0-9])+([a-zA-Z0-9\._-])*@([a-zA-Z0-9_-])+([a-zA-Z0-9\._-]+)+$/;
+  var checkInjection = /[%;+-]+/g;
+  var againPassword = req.body.again_password;
+  if(password === againPassword){
+    if(checkEmail.test(eMail)){
+      if(checkForm.test(userName) && userName.length <= 16){
+        if(checkForm.test(password) && password.length >= 8){
+          var passwordAndHash = hashPassword(password);
+          var existsEmailQuery = 'SELECT `mail` FROM `users` WHERE `mail` = ?';
+          var existsUserNameQuery = 'SELECT `name` FROM `users` WHERE `name` = ?';
+          var createAccount = 'INSERT INTO `users` (`name`,`mail`,`salt`,`hash`,`nick_name`,`image_path`) VALUES(?, ?, ?, ?, ?, ?)';
+          connection.query(existsEmailQuery,[eMail],function(err,result){
+            if(result.length === 1){
+              res.render('createAccount.ejs',{
+                eMailExists: '既に登録されているメールアドレスです。'
+              });
+            }
+            connection.query(existsUserNameQuery,[userName],function(err,result){
+              if(result.length === 1){
+                res.render('createAccount.ejs',{
+                  userNameExists : '既に登録されているユーザーネームです。'
+                });
+              }else{
+                password = passwordAndHash[0];
+                var salt = passwordAndHash[1];
+                connection.query(createAccount,[userName,eMail,salt,password,userName,'http://res.cloudinary.com/dy4f7hul5/image/upload/v1469220623/sample.jpg'],function(err,rows){
+                  res.redirect('/PHH_Bookmark/login');
+                });
+              }
+            });
+          });
+        }else{
+          res.render('createAccount.ejs', {
+            passwordNotice: 'パスワードは半角英数8文字以上です'
+          });
+        }
+      }else{
+        res.render('createAccount.ejs', {
+          usernameNotice: 'ユーザーネームは半角英数16文字以下です'
         });
       }
+    }else{
+      res.render('createAccount.ejs', {
+        mailNotice: '正しいメールアドレスを入力してください'
+      });
+    }
+  }else{
+    res.render('createAccount.ejs',{
+      passwordNotice : 'パスワードが一致しません'
     });
-  });
+  }
 });
 
 module.exports = router;

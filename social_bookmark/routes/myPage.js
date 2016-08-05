@@ -1,28 +1,45 @@
 var express = require('express');
 var router = express.Router();
 var connection = require('../mysqlConnection');
+var client = require('cheerio-httpcli');
+var bookmarkData;
 
 router.get('/',function(req,res){
   var userId = req.session.user_id;
   var query = 'SELECT * FROM `bookmarks` WHERE `user_id` = ?';
   connection.query(query,[userId],function(err,result){
-    var bookmarkId = new Array(result.length);
-    for(var i = 0; i < result.length; i++){
-      bookmarkId[i] = result[i].bookmark_id;
-    }
+    bookmarkData = result;
     res.render('myPage.ejs',{
-      list : result,
-      bookmark_id : bookmarkId
+      bookmarkData : bookmarkData
     });
   });
 });
 router.post('/',function(req,res){
-  var newBookmarkUrl = req.body.new_bookmark_url;
-  if(req.session.url){
-    delete req.session.url;
-  }
-  req.session.url = newBookmarkUrl;
-  res.redirect('/PHH_Bookmark/myBookmarkEdit');
+  var userId = req.session.user_id;
+  var url = req.body.url;
+  var title = req.body.title;
+  var description = req.body.description;
+  var checkUrl = /^(https?)(:\/\/[-_.!~*\'()a-zA-Z0-9;\/?:\@&=+\$,%#]+)$/;
+  var createBookmark = 'INSERT INTO `bookmarks` (`user_id`,`title`,`url`,`description`) VALUES (?, ?, ?, ?)';
+  connection.query(createBookmark,[userId,title,url,description]);
+  res.redirect('/PHH_Bookmark/myPage');
+});
+
+router.post('/submitUrl',function(req,res){
+  var url = req.body.result;
+  var userId = req.session.user_id;
+  var checkUrl = /^(https?)(:\/\/[-_.!~*\'()a-zA-Z0-9;\/?:\@&=+\$,%#]+)$/;
+  var selectBookmarkData = 'SELECT * FROM `bookmarks` WHERE `user_id` = ?';
+  connection.query(selectBookmarkData,[userId],function(err,result){
+    var description = result[0].description;
+    client.fetch(url).then(function(result){
+      res.render('myPage.ejs',{
+        bookmarkData : bookmarkData,
+        title : result.$('title').text(),
+        url : url
+      });
+    });
+  });
 });
 
 router.post('/delete',function(req,res){
@@ -32,17 +49,6 @@ router.post('/delete',function(req,res){
     connection.query(query,[x]);
   }
   res.redirect('/PHH_Bookmark/myPage');
-});
-
-router.post('/edit',function(req,res){
-  if(req.session.edit_id){
-    delete req.session.edit_id;
-  }
-  var id = req.body.result;
-  id = id.split('id');
-  id = id[1];
-  req.session.edit_id = id;
-  res.redirect('/PHH_Bookmark/myBookmarkEdit/exist');
 });
 
 module.exports = router;

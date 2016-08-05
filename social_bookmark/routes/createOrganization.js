@@ -46,7 +46,7 @@ router.post('/searchUser',function(req,res){
               overlapUsers.push(userId);
               var excludeOverlapUsers = 'SELECT `name` FROM `users` WHERE `user_id` NOT IN (?)';
               connection.query(excludeOverlapUsers,[overlapUsers],function(err,result){
-                if(result.length >= 1){
+                if(result.length > 0){
                   var searchedUserName = [];
                   invitedUser = new RegExp('.*' + invitedUser + '.*');
                   for(var i = 0; i < result.length; i++){
@@ -88,7 +88,7 @@ router.post('/searchUser',function(req,res){
       }else{ // when still no one selected
         var excludeOwnData = 'SELECT `name` FROM `users` WHERE `name` NOT IN (?)';
         connection.query(excludeOwnData,[ownUserName],function(err,result){
-          if(result.length >= 1){
+          if(result.length > 0){
             var searchedUserName = [];
             invitedUser = new RegExp('.*' + invitedUser + '.*');
             for(var i = 0; i < result.length; i++){
@@ -126,7 +126,7 @@ router.post('/searchUser',function(req,res){
         });
       };
     }
-  })
+  });
 });
 
 router.post('/create',upload.single('image_file'),function(req,res){
@@ -243,7 +243,7 @@ router.post('/excludeUser',function(req,res){
         selectedUserNickNames.splice(i,1);
       }
     });
-    res.render('createOrganization',{
+    res.render('createOrganization.ejs',{
       orgName : orgName,
       orgIntroduction : orgIntroduction,
       selectedUserNickNames :selectedUserNickNames,

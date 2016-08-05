@@ -15,29 +15,44 @@
       </div>
       <div id="list">
         <form action="/PHH_Bookmark/myPage" method="post">
-          <input type="text" placeholder="URLを入力" id="url" name="new_bookmark_url">
-          <!--<input type="text" placeholder="タイトル" id="title" name="title">
-          <input type="text" placeholder="コメント" id="description" name="description">-->
-          <input type="submit" value="送信">
+          <% if(typeof url !== 'undefined'){ %>
+            <input type="text" placeholder="URLを入力" name="url" value="<%= url %>" id="url">
+            <input type="button" value="再送信" name="submitUrl" id="submitUrl">
+            <% if(typeof urlNotice !== 'undefined'){ %>
+              <p><%= urlNotice %></p>
+            <% } %>
+          <% }else{ %>
+            <input type="text" placeholder="URLを入力" name="url" id="url">
+            <input type="button" value="送信" name="submitUrl" id="submitUrl">
+          <% } %>
+
+          <% if(typeof title !== 'undefined'){ %>
+            <input type="text" placeholder="タイトル" name="title" value="<%= title %>">
+            <input type="text" placeholder="コメント" id="description" name="description">
+            <input type="submit" value="送信">
+          <% } %>
         </form>
         <form name="my_bookmark" action="/PHH_Bookmark/myPage/delete" method="post">
-          <% for(var i = 0; i < list.length; i++){ %>
+          <% for(var i = 0; i < bookmarkData.length; i++){ %>
             <div>
-              <input type="checkbox" class="checkbox" name="<%= bookmark_id[i] %>">
-              <a name="bookmarkId<%= bookmark_id[i]%>"><%= list[i].title %></a>
-              <a href="<%= list[i].url %>"><%= list[i].url %></a><%= list[i].description %>
-              <input type="button" value="編集" name="id<%= bookmark_id[i] %>">
+              <input type="checkbox" class="checkbox" name="<%= bookmarkData[i].bookmark_id %>">
+              <a name="bookmarkId<%= bookmarkData[i].bookmark_id%>"><%= bookmarkData[i].title %></a>
+              <a href="<%= bookmarkData[i].url %>"><%= bookmarkData[i].url %></a><%= bookmarkData[i].description %>
+              <input type="button" value="編集" name="<%= bookmarkData[i].bookmark_id %>" class="edit">
             </div>
-          <% }; %>
+          <% } %>
           <button type="submit">削除</button>
         </form>
-        <form name="toEdit" action="/PHH_Bookmark/myPage/edit" method="post">
-          <input type="hidden" name="result" value="">
+        <form name="toEdit" action="/PHH_Bookmark/myBookmarkEdit" method="get">
+          <input type="hidden" name="result">
         </form>
         <form name="toSubmitBookmarkData" action="/PHH_Bookmark/submitBookmarkData" method="post">
           <input type="hidden" name="result">
         </form>
-        <% if (typeof user !== 'undefined') { %>
+        <form action="/PHH_Bookmark/myPage/submitUrl" name="submitUrl" method="post">
+          <input type="hidden" name="result">
+        </form>
+        <% if(typeof user !== 'undefined'){ %>
           <span class="login-user"><%= user.name %>さんとしてログインしています</span>
         <% } %>
       </div>
@@ -45,9 +60,10 @@
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <script>
       $(function(){
-        var $edit = $("[name^='id']");
+        var $edit = $(".edit");
         var $bookmarkId = $("[name^='bookmarkId']");
-        console.log($edit);
+        var $submitUrlButton = $('#submitUrl');
+        var $url = $('#url');
         $edit.click(function(){
           document.toEdit.result.value = this.name;
           document.toEdit.submit();
@@ -55,6 +71,10 @@
         $bookmarkId.click(function(){
           document.toSubmitBookmarkData.result.value = this.name;
           document.toSubmitBookmarkData.submit();
+        });
+        $submitUrlButton.click(function(){
+          document.submitUrl.result.value = $url.val();
+          document.submitUrl.submit();
         });
       });
     </script>
