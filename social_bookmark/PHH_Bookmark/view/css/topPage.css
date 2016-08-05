@@ -12,7 +12,7 @@ header{
   background-color: white;
   border-bottom: solid #ccc 1px;
   padding: 10px;
-  width: 1279px;
+  width: 1280px;
   height: 60px;
 }
 
@@ -24,7 +24,7 @@ header{
 
 #headerMenu1{
   text-decoration: none;
-  color: orange;
+  color: #36a029;
   position: absolute;
   left: 230px;
   top: 20px;
@@ -32,7 +32,7 @@ header{
 
 #headerSearch{
   border: solid #e1e1e1 2px;
-  outline-color: green;
+  outline-color: #36a029;
   position: absolute;
   left: 700px;
   top: 15px;
@@ -103,7 +103,7 @@ main{
 #goMyPage{
   background-color: #e1e1e1;
   border-radius: 2px;
-  color: green;
+  color: #36a029;
   font-family: monospace;
   font-size: 15px;
   padding: 5px;
@@ -111,5 +111,5 @@ main{
 }
   #goMyPage:hover{
     background-color: black;
-    color: #00ff00;
+    color: green;
   }

@@ -14,9 +14,6 @@
         <% if (typeof mailNotice !== 'undefined') { %>
           <p><%= mailNotice %></p>
         <% } %>
-        <% if (typeof usernameNotice !== 'undefined') { %>
-          <p><%= usernameNotice %></p>
-        <% } %>
         <label><p>Password</p>
         <input class="input" name="password" size="30" type="password"></label>
         <% if (typeof passwordNotice !== 'undefined') { %>
@@ -27,6 +24,9 @@
       </form>
       <% if (typeof noUser !== 'undefined') { %>
         <p id="noUser"><%= noUser %></p>
+      <% } %>
+      <% if (typeof usernameNotice !== 'undefined') { %>
+        <p id="notice"><%= usernameNotice %></p>
       <% } %>
     </main>
     <footer>

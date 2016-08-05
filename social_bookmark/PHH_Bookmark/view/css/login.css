@@ -12,7 +12,7 @@ header{
   background-color: white;
   border-bottom: solid #ccc 1px;
   padding: 10px;
-  width: 1279px;
+  width: 1280px;
   height: 60px;
 }
 
@@ -40,7 +40,7 @@ header{
 
 #headerSearch{
   border: solid #e1e1e1 2px;
-  outline-color: green;
+  outline-color: #36a029;
   position: relative;
   left: 700px;
   top: 5px;
@@ -48,7 +48,7 @@ header{
 }
 
 #headerCreateAccount{
-  background-color: #00e100;
+  background-color: #36a029;
   text-align: center;
   text-decoration: none;
   position: absolute;
@@ -130,20 +130,20 @@ label p{
   margin: 0 0 9px 0;
 }
 .input{
-  outline-color: green;
+  outline-color: #36a029;
   padding: 5px;
   margin-bottom: 5px;
   width: 230px;
 }
 #submitButton{
   border-style: none;
-  background-color: #00e100;
+  background-color: #36a029;
   color: white;
   font-size: 15px;
   text-shadow: 0 1px 0 rgba(0, 0, 0, 0.15);
   width: 230px;
   height: 30px;
-  margin-top: 10px;
+  margin-top: 20px;
 }
   #submitButton:hover{
     background-color: green;
@@ -154,4 +154,10 @@ label p{
   position:absolute;
   left: -15px;
   width: 300px;
+}
+#notice{
+  white-space: pre;
+  position: absolute;
+  left: -10px;
+  top: 280px;
 }
