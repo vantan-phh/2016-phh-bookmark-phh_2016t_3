@@ -8,6 +8,9 @@
     <form action="/PHH_Bookmark/organizationManagement" method="post" enctype="multipart/form-data">
       <div>組織名</div>
       <input type="text" value="<%= orgName %>" name="orgName" placeholder="組織名">
+      <% if(typeof orgNameExists !== 'undefined'){ %>
+        <p><%= orgNameExists %></p>
+      <% } %>
       <div>紹介文</div>
       <input type="text" value="<%= orgIntroduction %>" name="orgIntroduction" placeholder="紹介文">
       <div><img src="<%= orgThumbnail %>"></img></div>
