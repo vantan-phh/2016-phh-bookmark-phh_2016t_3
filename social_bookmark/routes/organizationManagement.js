@@ -123,7 +123,7 @@ router.post('/',upload.single('image_file'),function(req,res){
         orgName : orgName,
         orgIntroduction : orgIntroduction,
         orgThumbnail : orgThumbnail,
-        orgNameExists : 'セキュリティ上の観点から紹介文に「+, -, %, ;」は使えません'
+        orgIntroductionNotice : 'セキュリティ上の観点から紹介文に「+, -, %, ;」は使えません'
       });
     });
   }

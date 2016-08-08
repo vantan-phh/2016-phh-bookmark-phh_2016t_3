@@ -13,6 +13,9 @@
       <% } %>
       <div>紹介文</div>
       <input type="text" value="<%= orgIntroduction %>" name="orgIntroduction" placeholder="紹介文">
+      <% if(typeof orgIntroductionNotice !== 'undefined'){ %>
+        <p><%= orgIntroductionNotice %></p>
+      <% } %>
       <div><img src="<%= orgThumbnail %>"></img></div>
       <input type="file" accept="image/*" name="image_file">
       <input type="submit" value="変更">
