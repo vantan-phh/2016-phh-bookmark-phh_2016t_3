@@ -96,7 +96,7 @@ router.post('/',upload.single('image_file'),function(req,res){
                   orgName : orgName,
                   orgIntroduction : orgIntroduction,
                   orgThumbnail : orgThumbnail,
-                  orgNameExists : 'その名前の組織は既に存在しています。'
+                  orgNameNotice : 'その名前の組織は既に存在しています。'
                 });
               });
             }
@@ -111,7 +111,7 @@ router.post('/',upload.single('image_file'),function(req,res){
           orgName : orgName,
           orgIntroduction : orgIntroduction,
           orgThumbnail : orgThumbnail,
-          orgNameExists : 'セキュリティ上の観点から組織名に「+, -, %, ;」は使えません'
+          orgNameNotice : 'セキュリティ上の観点から組織名に「+, -, %, ;」は使えません'
         });
       });
     }
