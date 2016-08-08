@@ -147,7 +147,7 @@ router.post('/searchBookmark',function(req,res){
       if(i + 1 === keyWords.length){
         keyWordsForQuery += keyWords[i] + '%';
         var selectBookmarksByDescription = 'SELECT * FROM `bookmarks` WHERE `description` LIKE "' + keyWordsForQuery + '" AND `org_id` = ?';
-        connection.query(selectBookmarksByDescription,[orgId]).then((err,result) => {
+        connection.query(selectBookmarksByDescription,[orgId]).then((result) => {
           var searchedBookmarks = result[0];
           res.render('organizationPage.ejs',{
             orgName : orgName,
@@ -269,6 +269,50 @@ router.post('/searchBookmark',function(req,res){
           resolve(searchedBookmarks);
         })
       })
+      return promise;
+    }).then((searchedBookmarks) => {
+      res.render('organizationPage.ejs',{
+        orgName : orgName,
+        orgIntroduction : orgIntroduction,
+        orgThumbnail : orgThumbnail,
+        isAdmin : isAdmin,
+        searchedBookmarks : searchedBookmarks
+      });
+    });
+  }else if(searchFromTitle === 'on' && searchFromDescription === 'on' &&  searchFromTextsOnSites === undefined){
+    var search = () => {
+      var promise = new Promise((resolve,reject) => {
+        var keyWordsForQueryByTitle = '`title` LIKE "%';
+        for(var i = 0; i < keyWords.length; i++){
+          i + 1 === keyWords.length ? keyWordsForQueryByTitle += keyWords[i] + '%' : keyWordsForQueryByTitle += keyWords[i] + '%" AND `title` LIKE "%';
+        }
+        resolve(keyWordsForQueryByTitle);
+      })
+      return promise;
+    }().then((keyWordsForQueryByTitle) => {
+      var keyWordsForQueryByTitle = keyWordsForQueryByTitle;
+      var promise = new Promise((resolve,reject) => {
+        var keyWordsForQueryByDescription = '`description` LIKE "%';
+        for(var i = 0; i < keyWords.length; i++){
+          i + 1 === keyWords.length ? keyWordsForQueryByDescription += keyWords[i] + '%' : keyWordsForQueryByDescription += keyWords[i] + '%" AND `description` LIKE "%';
+        }
+        var values = {
+          keyWordsForQueryByTitle : keyWordsForQueryByTitle,
+          keyWordsForQueryByDescription : keyWordsForQueryByDescription
+        }
+        resolve(values);
+      })
+      return promise;
+    }).then((values) => {
+      var keyWordsForQueryByTitle = values.keyWordsForQueryByTitle;
+      var keyWordsForQueryByDescription = values.keyWordsForQueryByDescription;
+      var selectBookmarksByTitleAndDescription = 'SELECT * FROM `bookmarks` WHERE `org_id` = ? AND ((' + keyWordsForQueryByTitle + '") OR (' + keyWordsForQueryByDescription + '"))';
+      var promise = new Promise((resolve,reject) => {
+        connection.query(selectBookmarksByTitleAndDescription,[orgId]).then((result) => {
+          var searchedBookmarks = result[0];
+          resolve(searchedBookmarks);
+        });
+      });
       return promise;
     }).then((searchedBookmarks) => {
       res.render('organizationPage.ejs',{
