@@ -31,7 +31,7 @@
           <% if(typeof description !== 'undefined'){ %>
             <input type="text" placeholder="コメント" id="description" name="description" value="<%= description %>">
             <input type="submit" value="送信">
-          <% }else{ %>
+          <% }else if(typeof url !== 'undefined'){ %>
             <input type="text" placeholder="コメント" id="description" name="description">
             <input type="submit" value="送信">
           <% } %>
