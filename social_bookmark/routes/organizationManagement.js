@@ -43,8 +43,8 @@ router.post('/',upload.single('image_file'),function(req,res){
   var orgIntroduction = req.body.orgIntroduction;
   var checkInjection = /[%;+-]+/g;
   var checkSpace = /[\S]+/g;
-  if(checkInjection.test(orgIntroduction)){
-    if(checkInjection.test(orgName)){
+  if(!checkInjection.test(orgIntroduction)){
+    if(!checkInjection.test(orgName)){
       var orgNameExists = 'SELECT `name` FROM `organizations` WHERE `name` = ?';
       connection.query(orgNameExists,[orgName],function(err,result){
         if(result.length === 0){
