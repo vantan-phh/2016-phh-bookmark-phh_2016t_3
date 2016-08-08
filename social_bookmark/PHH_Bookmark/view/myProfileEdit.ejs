@@ -10,7 +10,7 @@
     <main>
       <form action="/PHH_Bookmark/myProfileEdit" method="post" enctype="multipart/form-data">
         <div>
-          <% if(nickName) { %>
+          <% if(nickName !== undefined){ %>
             <input type="text" name="nick_name" placeholder="ニックネーム" value="<%= nickName %>">
           <% } else { %>
             <input type="text" name="nick_name" placeholder="ニックネーム">
