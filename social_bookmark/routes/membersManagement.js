@@ -103,28 +103,54 @@ router.post('/searchUser',function(req,res){
                   searchedUserNames.push(searchedUserName);
                 };
               }
-              var selectNickName = 'SELECT `nick_name` FROM `users` WHERE `name` = ?';
-              var searchedUserNickNames = [];
-              for(var i = 0; i < searchedUserNames.length; i++){
-                connection.query(selectNickName,[searchedUserNames[i]],function(err,result){
-                  var searchedUserNickName = result[0].nick_name;
-                  searchedUserNickNames.push(searchedUserNickName);
-                  if(searchedUserNames.length === selectedUserNickNames.length){
-                    res.render('membersManagement.ejs',{
-                      orgName : orgName,
-                      orgIntroduction : orgIntroduction,
-                      orgThumbnail : orgThumbnail,
-                      memberUserNames : memberUserNames,
-                      memberNickNames : memberNickNames,
-                      searchedUserNames : searchedUserNames,
-                      searchedUserNickNames : searchedUserNickNames,
-                      selectedUserNames : selectedUserNames,
-                      selectedUserNickNames : selectedUserNickNames,
-                      myUserName : myUserName
-                    });
-                  }
+              if(searchedUserNames.length > 0){
+                var selectNickName = 'SELECT `nick_name` FROM `users` WHERE `name` = ?';
+                var searchedUserNickNames = [];
+                for(var i = 0; i < searchedUserNames.length; i++){
+                  connection.query(selectNickName,[searchedUserNames[i]],function(err,result){
+                    var searchedUserNickName = result[0].nick_name;
+                    searchedUserNickNames.push(searchedUserNickName);
+                    if(searchedUserNames.length === selectedUserNickNames.length){
+                      res.render('membersManagement.ejs',{
+                        orgName : orgName,
+                        orgIntroduction : orgIntroduction,
+                        orgThumbnail : orgThumbnail,
+                        memberUserNames : memberUserNames,
+                        memberNickNames : memberNickNames,
+                        searchedUserNames : searchedUserNames,
+                        searchedUserNickNames : searchedUserNickNames,
+                        selectedUserNames : selectedUserNames,
+                        selectedUserNickNames : selectedUserNickNames,
+                        myUserName : myUserName
+                      });
+                    }
+                  });
+                }
+              }else{ // when no user hits
+                res.render('membersManagement.ejs',{
+                  orgName : orgName,
+                  orgIntroduction : orgIntroduction,
+                  orgThumbnail : orgThumbnail,
+                  selectedUserNames : selectedUserNames,
+                  selectedUserNickNames : selectedUserNickNames,
+                  memberUserNames : memberUserNames,
+                  memberNickNames : memberNickNames,
+                  notice : '該当するユーザーが見つかりません。',
+                  myUserName : myUserName
                 });
               }
+            } else { // when no user hits
+              res.render('membersManagement.ejs',{
+                orgName : orgName,
+                orgIntroduction : orgIntroduction,
+                orgThumbnail : orgThumbnail,
+                selectedUserNames : selectedUserNames,
+                selectedUserNickNames : selectedUserNickNames,
+                memberUserNames : memberUserNames,
+                memberNickNames : memberNickNames,
+                notice : '該当するユーザーが見つかりません。',
+                myUserName : myUserName
+              });
             }
           });
         } else { // still no one selected
@@ -146,46 +172,62 @@ router.post('/searchUser',function(req,res){
                     searchedUserNames.push(searchedUserName);
                   }
                 }
-                var searchedUserNickNames = [];
-                var selectNickName = 'SELECT `nick_name` FROM `users` WHERE `name` = ?';
-                for(var i = 0; i < searchedUserNames.length; i++){
-                  connection.query(selectNickName,[searchedUserNames[i]],function(err,result){
-                    var searchedUserNickName = result[0].nick_name;
-                    searchedUserNickNames.push(searchedUserNickName);
-                    if(searchedUserNames.length === searchedUserNickNames.length){
-                      res.render('membersManagement.ejs',{
-                        orgName : orgName,
-                        orgIntroduction : orgIntroduction,
-                        orgThumbnail : orgThumbnail,
-                        searchedUserNames : searchedUserNames,
-                        searchedUserNickNames : searchedUserNickNames,
-                        memberUserNames : memberUserNames,
-                        memberNickNames : memberNickNames,
-                        selectedUserNames : selectedUserNames,
-                        selectedUserNickNames : selectedUserNickNames,
-                        myUserName : myUserName
-                      });
-                    }
+                if(searchedUserNames.length > 0){
+                  var searchedUserNickNames = [];
+                  var selectNickName = 'SELECT `nick_name` FROM `users` WHERE `name` = ?';
+                  for(var i = 0; i < searchedUserNames.length; i++){
+                    connection.query(selectNickName,[searchedUserNames[i]],function(err,result){
+                      console.log(err);
+                      console.log(result);
+                      var searchedUserNickName = result[0].nick_name;
+                      searchedUserNickNames.push(searchedUserNickName);
+                      if(searchedUserNames.length === searchedUserNickNames.length){
+                        res.render('membersManagement.ejs',{
+                          orgName : orgName,
+                          orgIntroduction : orgIntroduction,
+                          orgThumbnail : orgThumbnail,
+                          searchedUserNames : searchedUserNames,
+                          searchedUserNickNames : searchedUserNickNames,
+                          memberUserNames : memberUserNames,
+                          memberNickNames : memberNickNames,
+                          selectedUserNames : selectedUserNames,
+                          selectedUserNickNames : selectedUserNickNames,
+                          myUserName : myUserName
+                        });
+                      }
+                    });
+                  }
+                }else{ // when no users hit
+                  res.render('membersManagement.ejs',{
+                    memberUserNames : memberUserNames,
+                    memberNickNames : memberNickNames,
+                    selectedUserNames : selectedUserNames,
+                    selectedUserNickNames : selectedUserNickNames,
+                    orgName : orgName,
+                    orgIntroduction : orgIntroduction,
+                    orgThumbnail : orgThumbnail,
+                    notice : '該当するユーザーが見つかりません。',
+                    myUserName : myUserName
                   });
                 }
-              } else { // when no users hit
+              }else{ // when no user hits
                 res.render('membersManagement.ejs',{
-                  memberUserNames : memberUserNames,
-                  memberNickNames : memberNickNames,
-                  selectedUserNames : selectedUserNames,
-                  selectedUserNickNames : selectedUserNickNames,
                   orgName : orgName,
                   orgIntroduction : orgIntroduction,
                   orgThumbnail : orgThumbnail,
+                  selectedUserNames : selectedUserNames,
+                  selectedUserNickNames : selectedUserNickNames,
                   notice : '該当するユーザーが見つかりません。',
+                  memberUserNames :  memberUserNames,
+                  memberNickNames : memberNickNames,
                   myUserName : myUserName
                 });
-              }
+              };
             });
           });
         }
       };
-    }else{
+    }else{ // when the user input full angle characters
       res.render('membersManagement.ejs',{
         memberUserNames : memberUserNames,
         memberNickNames : memberNickNames,
