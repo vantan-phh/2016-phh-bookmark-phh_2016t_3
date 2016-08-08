@@ -101,28 +101,56 @@ router.post('/searchUser',function(req,res){
                 searchedUserNames.push(searchedUserName);
               };
             }
-            var selectNickName = 'SELECT `nick_name` FROM `users` WHERE `name` = ?';
-            var searchedUserNickNames = [];
-            for(var i = 0; i < searchedUserNames.length; i++){
-              connection.query(selectNickName,[searchedUserNames[i]],function(err,result){
-                var searchedUserNickName = result[0].nick_name;
-                searchedUserNickNames.push(searchedUserNickName);
-                if(searchedUserNames.length === selectedUserNickNames.length){
-                  res.render('membersManagement.ejs',{
-                    orgName : orgName,
-                    orgIntroduction : orgIntroduction,
-                    orgThumbnail : orgThumbnail,
-                    memberUserNames : memberUserNames,
-                    memberNickNames : memberNickNames,
-                    searchedUserNames : searchedUserNames,
-                    searchedUserNickNames : searchedUserNickNames,
-                    selectedUserNames : selectedUserNames,
-                    selectedUserNickNames : selectedUserNickNames,
-                    myUserName : myUserName
-                  });
-                }
+            if(searchedUserNames.length > 0){
+              var selectNickName = 'SELECT `nick_name` FROM `users` WHERE `name` = ?';
+              var searchedUserNickNames = [];
+              for(var i = 0; i < searchedUserNames.length; i++){
+                connection.query(selectNickName,[searchedUserNames[i]],function(err,result){
+                  var searchedUserNickName = result[0].nick_name;
+                  searchedUserNickNames.push(searchedUserNickName);
+                  if(searchedUserNames.length === selectedUserNickNames.length){
+                    res.render('membersManagement.ejs',{
+                      orgName : orgName,
+                      orgIntroduction : orgIntroduction,
+                      orgThumbnail : orgThumbnail,
+                      memberUserNames : memberUserNames,
+                      memberNickNames : memberNickNames,
+                      searchedUserNames : searchedUserNames,
+                      searchedUserNickNames : searchedUserNickNames,
+                      selectedUserNames : selectedUserNames,
+                      selectedUserNickNames : selectedUserNickNames,
+                      myUserName : myUserName
+                    });
+                  }
+                });
+              }
+            }else{ // when no users hit
+              res.render('membersManagement.ejs',{
+                orgName : orgName,
+                orgIntroduction : orgIntroduction,
+                orgThumbnail : orgThumbnail,
+                selectedUserNames : selectedUserNames,
+                selectedUserNickNames : selectedUserNickNames,
+                orgName : orgName,
+                orgIntroduction : orgIntroduction,
+                orgThumbnail : orgThumbnail,
+                noUser : '該当するユーザーが見つかりません。',
+                myUserName : myUserName
               });
             }
+          } else { // when no one hit
+            res.render('membersManagement.ejs',{
+              orgName : orgName,
+              orgIntroduction : orgIntroduction,
+              orgThumbnail : orgThumbnail,
+              selectedUserNames : selectedUserNames,
+              selectedUserNickNames : selectedUserNickNames,
+              orgName : orgName,
+              orgIntroduction : orgIntroduction,
+              orgThumbnail : orgThumbnail,
+              noUser : '該当するユーザーが見つかりません。',
+              myUserName : myUserName
+            });
           }
         });
       } else { // still no one selected
@@ -144,29 +172,44 @@ router.post('/searchUser',function(req,res){
                   searchedUserNames.push(searchedUserName);
                 }
               }
-              var searchedUserNickNames = [];
-              var selectNickName = 'SELECT `nick_name` FROM `users` WHERE `name` = ?';
-              for(var i = 0; i < searchedUserNames.length; i++){
-                connection.query(selectNickName,[searchedUserNames[i]],function(err,result){
-                  var searchedUserNickName = result[0].nick_name;
-                  searchedUserNickNames.push(searchedUserNickName);
-                  if(searchedUserNames.length === searchedUserNickNames.length){
-                    res.render('membersManagement.ejs',{
-                      orgName : orgName,
-                      orgIntroduction : orgIntroduction,
-                      orgThumbnail : orgThumbnail,
-                      searchedUserNames : searchedUserNames,
-                      searchedUserNickNames : searchedUserNickNames,
-                      memberUserNames : memberUserNames,
-                      memberNickNames : memberNickNames,
-                      selectedUserNames : selectedUserNames,
-                      selectedUserNickNames : selectedUserNickNames,
-                      myUserName : myUserName
-                    });
-                  }
+              if(searchedUserNames.length > 0){
+                var searchedUserNickNames = [];
+                var selectNickName = 'SELECT `nick_name` FROM `users` WHERE `name` = ?';
+                for(var i = 0; i < searchedUserNames.length; i++){
+                  connection.query(selectNickName,[searchedUserNames[i]],function(err,result){
+                    var searchedUserNickName = result[0].nick_name;
+                    searchedUserNickNames.push(searchedUserNickName);
+                    if(searchedUserNames.length === searchedUserNickNames.length){
+                      res.render('membersManagement.ejs',{
+                        orgName : orgName,
+                        orgIntroduction : orgIntroduction,
+                        orgThumbnail : orgThumbnail,
+                        searchedUserNames : searchedUserNames,
+                        searchedUserNickNames : searchedUserNickNames,
+                        memberUserNames : memberUserNames,
+                        memberNickNames : memberNickNames,
+                        selectedUserNames : selectedUserNames,
+                        selectedUserNickNames : selectedUserNickNames,
+                        myUserName : myUserName
+                      });
+                    }
+                  });
+                }
+              }else{ // when no users hit
+                res.render('membersManagement.ejs',{
+                  memberUserNames : memberUserNames,
+                  memberNickNames : memberNickNames,
+                  selectedUserNames : selectedUserNames,
+                  selectedUserNickNames : selectedUserNickNames,
+                  orgName : orgName,
+                  orgIntroduction : orgIntroduction,
+                  orgThumbnail : orgThumbnail,
+                  noUser : '該当するユーザーが見つかりません。',
+                  myUserName : myUserName
                 });
               }
             } else { // when no users hit
+              console.log('きた。');
               res.render('membersManagement.ejs',{
                 memberUserNames : memberUserNames,
                 memberNickNames : memberNickNames,
@@ -257,7 +300,7 @@ router.post('/makeJoin',function(req,res){
       if(selectedUserNames.length === makeJoinUsers.length){
         var makeJoin = 'INSERT INTO `organization_memberships` (`user_id`,`org_id`,`is_admin`) VALUES (?, ?, ?)';
         for(var i = 0; i < makeJoinUsers.length; i++){
-          connection.query(makeJoin,[makeJoinUsers[i],orgId,false]); 
+          connection.query(makeJoin,[makeJoinUsers[i],orgId,false]);
         }
         res.redirect('/PHH_Bookmark/membersManagement');
       }

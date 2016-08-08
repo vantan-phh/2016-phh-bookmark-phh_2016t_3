@@ -55,21 +55,31 @@ router.post('/searchUser',function(req,res){
                       searchedUserName.push(result[i].name);
                     }
                   }
-                  var selectNickName = 'SELECT `nick_name` FROM `users` WHERE `name` = ?';
-                  var searchedUserNickName = [];
-                  for(var i = 0; i < searchedUserName.length; i++){
-                    connection.query(selectNickName,[searchedUserName[i]],function(err,result){
-                      searchedUserNickName.push(result[0].nick_name);
-                      if(searchedUserName.length === searchedUserNickName.length){
-                        res.render('createOrganization',{
-                          orgName : orgName,
-                          orgIntroduction : orgIntroduction,
-                          searchedUserName : searchedUserName,
-                          searchedUserNickName : searchedUserNickName,
-                          selectedUserNames : selectedUserNames,
-                          selectedUserNickNames : selectedUserNickNames
-                        });
-                      }
+                  if(searchedUserName.length > 0){
+                    var selectNickName = 'SELECT `nick_name` FROM `users` WHERE `name` = ?';
+                    var searchedUserNickName = [];
+                    for(var i = 0; i < searchedUserName.length; i++){
+                      connection.query(selectNickName,[searchedUserName[i]],function(err,result){
+                        searchedUserNickName.push(result[0].nick_name);
+                        if(searchedUserName.length === searchedUserNickName.length){
+                          res.render('createOrganization',{
+                            orgName : orgName,
+                            orgIntroduction : orgIntroduction,
+                            searchedUserName : searchedUserName,
+                            searchedUserNickName : searchedUserNickName,
+                            selectedUserNames : selectedUserNames,
+                            selectedUserNickNames : selectedUserNickNames
+                          });
+                        }
+                      });
+                    }
+                  }else{ // when no user hits
+                    res.render('createOrganization',{
+                      orgName : orgName,
+                      orgIntroduction : orgIntroduction,
+                      selectedUserNames : selectedUserNames,
+                      selectedUserNickNames : selectedUserNickNames,
+                      noUser : '該当するユーザーが見つかりません。'
                     });
                   }
                 }else{ // when no user hits
@@ -97,22 +107,32 @@ router.post('/searchUser',function(req,res){
                 searchedUserName.push(result[i].name);
               }
             }
-            var selectNickName = 'SELECT `nick_name` FROM `users` WHERE `name` = ?';
-            var searchedUserNickName = [];
-            for(var i = 0; i < searchedUserName.length; i++){
-              connection.query(selectNickName,[searchedUserName[i]],function(err,result){
-                searchedUserNickName.push(result[0].nick_name);
-                if(searchedUserName.length === searchedUserNickName.length){
-                  res.render('createOrganization',{
-                    orgName : orgName,
-                    orgIntroduction : orgIntroduction,
-                    searchedUserName : searchedUserName,
-                    searchedUserNickName : searchedUserNickName,
-                    selectedUserNames : selectedUserNames,
-                    selectedUserNickNames : selectedUserNickNames
-                  });
-                }
-              });
+            if(searchedUserNames.length > 0){
+              var selectNickName = 'SELECT `nick_name` FROM `users` WHERE `name` = ?';
+              var searchedUserNickName = [];
+              for(var i = 0; i < searchedUserName.length; i++){
+                connection.query(selectNickName,[searchedUserName[i]],function(err,result){
+                  searchedUserNickName.push(result[0].nick_name);
+                  if(searchedUserName.length === searchedUserNickName.length){
+                    res.render('createOrganization',{
+                      orgName : orgName,
+                      orgIntroduction : orgIntroduction,
+                      searchedUserName : searchedUserName,
+                      searchedUserNickName : searchedUserNickName,
+                      selectedUserNames : selectedUserNames,
+                      selectedUserNickNames : selectedUserNickNames
+                    });
+                  }
+                });
+              }
+            }else{ // when no user hits
+              res.render('createOrganization',{
+                orgName : orgName,
+                orgIntroduction : orgIntroduction,
+                selectedUserNames : selectedUserNames,
+                selectedUserNickNames : selectedUserNickNames,
+                noUser : '該当するユーザーが見つかりません。'
+              });              
             }
           }else{ // when no user hit
             res.render('createOrganization',{
