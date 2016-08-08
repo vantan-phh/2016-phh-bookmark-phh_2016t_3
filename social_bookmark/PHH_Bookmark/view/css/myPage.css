@@ -30,6 +30,13 @@ header{
   top: 20px;
 }
 
+#headerMenu2{
+  text-decoration: none;
+  color: orange;
+  position: absolute;
+  left: 314px;
+  top: 20px;
+}
 #headerSearch{
   border: solid #e1e1e1 2px;
   outline-color: green;

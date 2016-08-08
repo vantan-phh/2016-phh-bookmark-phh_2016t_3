@@ -34,7 +34,7 @@ router.post('/',function(req,res){
           res.redirect('/PHH_Bookmark/myPage');
         }else{
           res.render('myBookmarkEdit.ejs',{
-            tooLongDescription : '説明が長すぎます。',
+            descriptionNotice : '説明文は128文字以内です',
             title : title,
             description : description,
             url : url
@@ -42,7 +42,7 @@ router.post('/',function(req,res){
         }
       }else{
         res.render('myBookmarkEdit.ejs',{
-          tooLongTitle : 'タイトルが長すぎます。',
+          titleNotice : 'タイトルは32文字以内です',
           title : title,
           description : description,
           url : url
