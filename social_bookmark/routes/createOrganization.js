@@ -110,7 +110,7 @@ router.post('/searchUser',function(req,res){
                     searchedUserName.push(result[i].name);
                   }
                 }
-                if(searchedUserNames.length > 0){
+                if(searchedUserName.length > 0){
                   var selectNickName = 'SELECT `nick_name` FROM `users` WHERE `name` = ?';
                   var searchedUserNickName = [];
                   for(var i = 0; i < searchedUserName.length; i++){
