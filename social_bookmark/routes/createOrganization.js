@@ -188,80 +188,100 @@ router.post('/create',upload.single('image_file'),function(req,res){
   var myId = req.session.user_id;
   var orgNameExists = 'SELECT `name` FROM `organizations` WHERE `name` = ?';
   var selectMyUserName = 'SELECT `name` FROM `users` WHERE `user_id` = ?';
-  connection.query(orgNameExists,[orgName],function(err,result){
-    if(result.length < 1){
-      connection.query(selectMyUserName,[myId],function(err,result){
-        var myUserName = result[0].name;
-        selectedUserNames.push(myUserName);
-        if(req.file){
-          var path = req.file.path;
-          cloudinary.uploader.upload(path,function(result){
-            var orgThumbnail = result.url;
-            var createOrgQuery = 'INSERT INTO `organizations` (`name`,`image_path`,`introduction`) VALUES(?, ?, ?)';
-            connection.query(createOrgQuery,[orgName,orgThumbnail,orgIntroduction],function(err,result){
-              var selectOrgId = 'SELECT `id` FROM `organizations` WHERE `name` = ?';
-              connection.query(selectOrgId,[orgName],function(err,result){
-                var orgId = result[0].id;
-                var selectUserId = 'SELECT `user_id` FROM `users` WHERE `name` = ?';
-                for(var i = 0; i < selectedUserNames.length; i++){
-                  connection.query(selectUserId,[selectedUserNames[i]],function(err,result){
-                    var userId = result[0].user_id;
-                    var intoMembershipsQuery = 'INSERT INTO `organization_memberships` (`user_id`,`org_id`,`is_admin`) VALUES(?, ?, ?)';
-                    if(userId !== req.session.user_id){
-                      connection.query(intoMembershipsQuery,[userId,orgId,false]);
-                    } else if(userId === req.session.user_id){
-                      connection.query(intoMembershipsQuery,[userId,orgId,true],function(err,result){
-                        if(req.session.org_id){
-                          delete req.session.org_id;
+  if(!checkInjection.test(orgIntroduction)){
+    if(!checkInjection.test(orgName)){
+      connection.query(orgNameExists,[orgName],function(err,result){
+        if(result.length < 1){
+          connection.query(selectMyUserName,[myId],function(err,result){
+            var myUserName = result[0].name;
+            selectedUserNames.push(myUserName);
+            if(req.file){
+              var path = req.file.path;
+              cloudinary.uploader.upload(path,function(result){
+                var orgThumbnail = result.url;
+                var createOrgQuery = 'INSERT INTO `organizations` (`name`,`image_path`,`introduction`) VALUES(?, ?, ?)';
+                connection.query(createOrgQuery,[orgName,orgThumbnail,orgIntroduction],function(err,result){
+                  var selectOrgId = 'SELECT `id` FROM `organizations` WHERE `name` = ?';
+                  connection.query(selectOrgId,[orgName],function(err,result){
+                    var orgId = result[0].id;
+                    var selectUserId = 'SELECT `user_id` FROM `users` WHERE `name` = ?';
+                    for(var i = 0; i < selectedUserNames.length; i++){
+                      connection.query(selectUserId,[selectedUserNames[i]],function(err,result){
+                        var userId = result[0].user_id;
+                        var intoMembershipsQuery = 'INSERT INTO `organization_memberships` (`user_id`,`org_id`,`is_admin`) VALUES(?, ?, ?)';
+                        if(userId !== req.session.user_id){
+                          connection.query(intoMembershipsQuery,[userId,orgId,false]);
+                        } else if(userId === req.session.user_id){
+                          connection.query(intoMembershipsQuery,[userId,orgId,true],function(err,result){
+                            if(req.session.org_id){
+                              delete req.session.org_id;
+                            }
+                            req.session.org_id = orgId;
+                            res.redirect('/PHH_Bookmark/organizationPage');
+                          });
                         }
-                        req.session.org_id = orgId;
-                        res.redirect('/PHH_Bookmark/organizationPage');
                       });
                     }
                   });
-                }
+                });
               });
-            });
-          });
-        }else{ //when file data wasn't submitted
-          var orgThumbnail = 'http://res.cloudinary.com/dy4f7hul5/image/upload/v1469755753/y7mekcjoe7zptq7zl3ti.png';
-          var createOrgQuery = 'INSERT INTO `organizations` (`name`,`image_path`,`introduction`) VALUES(?, ?, ?)';
-          connection.query(createOrgQuery,[orgName,orgThumbnail,orgIntroduction],function(err,result){
-            var selectOrgId = 'SELECT `id` FROM `organizations` WHERE `name` = ?';
-            connection.query(selectOrgId,[orgName],function(err,result){
-              var orgId = result[0].id;
-              var selectUserId = 'SELECT `user_id` FROM `users` WHERE `name` = ?';
-              for(var i = 0; i < selectedUserNames.length; i++){
-                connection.query(selectUserId,[selectedUserNames[i]],function(err,result){
-                  var userId = result[0].user_id;
-                  var intoMembershipsQuery = 'INSERT INTO `organization_memberships` (`user_id`,`org_id`,`is_admin`) VALUES(?, ?, ?)';
-                  if(userId !== req.session.user_id){
-                    connection.query(intoMembershipsQuery,[userId,orgId,false]);
-                  } else if(userId === req.session.user_id){
-                    connection.query(intoMembershipsQuery,[userId,orgId,true],function(err,result){
-                      if(req.session.org_id){
-                        delete req.session.org_id;
+            }else{ //when file data wasn't submitted
+              var orgThumbnail = 'http://res.cloudinary.com/dy4f7hul5/image/upload/v1469755753/y7mekcjoe7zptq7zl3ti.png';
+              var createOrgQuery = 'INSERT INTO `organizations` (`name`,`image_path`,`introduction`) VALUES(?, ?, ?)';
+              connection.query(createOrgQuery,[orgName,orgThumbnail,orgIntroduction],function(err,result){
+                var selectOrgId = 'SELECT `id` FROM `organizations` WHERE `name` = ?';
+                connection.query(selectOrgId,[orgName],function(err,result){
+                  var orgId = result[0].id;
+                  var selectUserId = 'SELECT `user_id` FROM `users` WHERE `name` = ?';
+                  for(var i = 0; i < selectedUserNames.length; i++){
+                    connection.query(selectUserId,[selectedUserNames[i]],function(err,result){
+                      var userId = result[0].user_id;
+                      var intoMembershipsQuery = 'INSERT INTO `organization_memberships` (`user_id`,`org_id`,`is_admin`) VALUES(?, ?, ?)';
+                      if(userId !== req.session.user_id){
+                        connection.query(intoMembershipsQuery,[userId,orgId,false]);
+                      } else if(userId === req.session.user_id){
+                        connection.query(intoMembershipsQuery,[userId,orgId,true],function(err,result){
+                          if(req.session.org_id){
+                            delete req.session.org_id;
+                          }
+                          req.session.org_id = orgId;
+                          res.redirect('/PHH_Bookmark/organizationPage');
+                        });
                       }
-                      req.session.org_id = orgId;
-                      res.redirect('/PHH_Bookmark/organizationPage');
                     });
                   }
                 });
-              }
-            });
+              });
+            };
           });
-        };
+        } else { // when submitted orgName is already exist in DB
+          res.render('createOrganization',{
+            orgName : orgName,
+            orgIntroduction : orgIntroduction,
+            selectedUserNames : selectedUserNames,
+            selectedUserNickNames : selectedUserNickNames,
+            orgNameExists : '同じ名前の組織が存在しています。'
+          });
+        }
       });
-    } else { // when submitted orgName is already exist in DB
+    }else{
       res.render('createOrganization',{
         orgName : orgName,
         orgIntroduction : orgIntroduction,
         selectedUserNames : selectedUserNames,
         selectedUserNickNames : selectedUserNickNames,
-        orgNameExists : '同じ名前の組織が存在しています。'
+        orgNameNotice : 'セキュリティ上の観点から組織名に「+, -, %, ;」は使えません'
       });
     }
-  });
+  }else{
+    res.render('createOrganization',{
+      orgName : orgName,
+      orgIntroduction : orgIntroduction,
+      selectedUserNames : selectedUserNames,
+      selectedUserNickNames : selectedUserNickNames,
+      orgIntroductionNotice : 'セキュリティ上の観点から紹介文に「+, -, %, ;」は使えません'
+    });
+  }
 });
 
 router.post('/selectUser',function(req,res){
