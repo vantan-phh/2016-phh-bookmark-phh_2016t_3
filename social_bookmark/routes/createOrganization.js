@@ -27,59 +27,105 @@ router.post('/searchUser',function(req,res){
   var userId = req.session.user_id;
   var selectOwnName = 'SELECT `name` FROM `users` WHERE `user_id` = ?';
   var overlapUsers = [];
-  connection.query(selectOwnName,[userId],function(err,result){
-    var ownUserName = result[0].name;
-    if(invitedUser === ''){
-      res.render('createOrganization',{
-        orgName : orgName,
-        orgIntroduction : orgIntroduction,
-        selectedUserNames : selectedUserNames,
-        selectedUserNickNames : selectedUserNickNames
-      });
-    }else{ // when invitedUser contains any charactor
-      if(selectedUserNames.length > 0){
-        var selectOverlapUser = 'SELECT `user_id` FROM `users` WHERE `name` = ?';
-        for(var i = 0; i < selectedUserNames.length; i++){
-          connection.query(selectOverlapUser,[selectedUserNames[i]],function(err,result){
-            overlapUsers.push(result[0].user_id);
-            if(overlapUsers.length === selectedUserNames.length){
-              overlapUsers.push(userId);
-              var excludeOverlapUsers = 'SELECT `name` FROM `users` WHERE `user_id` NOT IN (?)';
-              connection.query(excludeOverlapUsers,[overlapUsers],function(err,result){
-                if(result.length > 0){
-                  var searchedUserName = [];
-                  invitedUser = new RegExp('.*' + invitedUser + '.*');
-                  for(var i = 0; i < result.length; i++){
-                    var invitedUserName = result[i].name;
-                    if(invitedUser.test(invitedUserName)){
-                      searchedUserName.push(result[i].name);
-                    }
-                  }
-                  if(searchedUserName.length > 0){
-                    var selectNickName = 'SELECT `nick_name` FROM `users` WHERE `name` = ?';
-                    var searchedUserNickName = [];
-                    for(var i = 0; i < searchedUserName.length; i++){
-                      connection.query(selectNickName,[searchedUserName[i]],function(err,result){
-                        searchedUserNickName.push(result[0].nick_name);
-                        if(searchedUserName.length === searchedUserNickName.length){
-                          res.render('createOrganization',{
-                            orgName : orgName,
-                            orgIntroduction : orgIntroduction,
-                            searchedUserName : searchedUserName,
-                            searchedUserNickName : searchedUserNickName,
-                            selectedUserNames : selectedUserNames,
-                            selectedUserNickNames : selectedUserNickNames
+  var checkInjection = /[%;+-]+/g;
+  if(!checkInjection.test(orgIntroduction)){
+    if(!checkInjection.test(orgName)){
+      connection.query(selectOwnName,[userId],function(err,result){
+        var ownUserName = result[0].name;
+        if(invitedUser === ''){
+          res.render('createOrganization',{
+            orgName : orgName,
+            orgIntroduction : orgIntroduction,
+            selectedUserNames : selectedUserNames,
+            selectedUserNickNames : selectedUserNickNames
+          });
+        }else{ // when invitedUser contains any charactor
+          if(selectedUserNames.length > 0){
+            var selectOverlapUser = 'SELECT `user_id` FROM `users` WHERE `name` = ?';
+            for(var i = 0; i < selectedUserNames.length; i++){
+              connection.query(selectOverlapUser,[selectedUserNames[i]],function(err,result){
+                overlapUsers.push(result[0].user_id);
+                if(overlapUsers.length === selectedUserNames.length){
+                  overlapUsers.push(userId);
+                  var excludeOverlapUsers = 'SELECT `name` FROM `users` WHERE `user_id` NOT IN (?)';
+                  connection.query(excludeOverlapUsers,[overlapUsers],function(err,result){
+                    if(result.length > 0){
+                      var searchedUserName = [];
+                      invitedUser = new RegExp('.*' + invitedUser + '.*');
+                      for(var i = 0; i < result.length; i++){
+                        var invitedUserName = result[i].name;
+                        if(invitedUser.test(invitedUserName)){
+                          searchedUserName.push(result[i].name);
+                        }
+                      }
+                      if(searchedUserName.length > 0){
+                        var selectNickName = 'SELECT `nick_name` FROM `users` WHERE `name` = ?';
+                        var searchedUserNickName = [];
+                        for(var i = 0; i < searchedUserName.length; i++){
+                          connection.query(selectNickName,[searchedUserName[i]],function(err,result){
+                            searchedUserNickName.push(result[0].nick_name);
+                            if(searchedUserName.length === searchedUserNickName.length){
+                              res.render('createOrganization',{
+                                orgName : orgName,
+                                orgIntroduction : orgIntroduction,
+                                searchedUserName : searchedUserName,
+                                searchedUserNickName : searchedUserNickName,
+                                selectedUserNames : selectedUserNames,
+                                selectedUserNickNames : selectedUserNickNames
+                              });
+                            }
                           });
                         }
+                      }else{ // when no user hits
+                        res.render('createOrganization',{
+                          orgName : orgName,
+                          orgIntroduction : orgIntroduction,
+                          selectedUserNames : selectedUserNames,
+                          selectedUserNickNames : selectedUserNickNames,
+                          noUser : '該当するユーザーが見つかりません。'
+                        });
+                      }
+                    }else{ // when no user hits
+                      res.render('createOrganization',{
+                        orgName : orgName,
+                        orgIntroduction : orgIntroduction,
+                        selectedUserNames : selectedUserNames,
+                        selectedUserNickNames : selectedUserNickNames,
+                        noUser : '該当するユーザーが見つかりません。'
                       });
                     }
-                  }else{ // when no user hits
-                    res.render('createOrganization',{
-                      orgName : orgName,
-                      orgIntroduction : orgIntroduction,
-                      selectedUserNames : selectedUserNames,
-                      selectedUserNickNames : selectedUserNickNames,
-                      noUser : '該当するユーザーが見つかりません。'
+                  });
+                }
+              });
+            }
+          }else{ // when still no one selected
+            var excludeOwnData = 'SELECT `name` FROM `users` WHERE `name` NOT IN (?)';
+            connection.query(excludeOwnData,[ownUserName],function(err,result){
+              if(result.length > 0){
+                var searchedUserName = [];
+                invitedUser = new RegExp('.*' + invitedUser + '.*');
+                for(var i = 0; i < result.length; i++){
+                  var invitedUserName = result[i].name;
+                  if(invitedUser.test(invitedUserName)){
+                    searchedUserName.push(result[i].name);
+                  }
+                }
+                if(searchedUserNames.length > 0){
+                  var selectNickName = 'SELECT `nick_name` FROM `users` WHERE `name` = ?';
+                  var searchedUserNickName = [];
+                  for(var i = 0; i < searchedUserName.length; i++){
+                    connection.query(selectNickName,[searchedUserName[i]],function(err,result){
+                      searchedUserNickName.push(result[0].nick_name);
+                      if(searchedUserName.length === searchedUserNickName.length){
+                        res.render('createOrganization',{
+                          orgName : orgName,
+                          orgIntroduction : orgIntroduction,
+                          searchedUserName : searchedUserName,
+                          searchedUserNickName : searchedUserNickName,
+                          selectedUserNames : selectedUserNames,
+                          selectedUserNickNames : selectedUserNickNames
+                        });
+                      }
                     });
                   }
                 }else{ // when no user hits
@@ -91,62 +137,37 @@ router.post('/searchUser',function(req,res){
                     noUser : '該当するユーザーが見つかりません。'
                   });
                 }
-              });
-            }
-          });
-        }
-      }else{ // when still no one selected
-        var excludeOwnData = 'SELECT `name` FROM `users` WHERE `name` NOT IN (?)';
-        connection.query(excludeOwnData,[ownUserName],function(err,result){
-          if(result.length > 0){
-            var searchedUserName = [];
-            invitedUser = new RegExp('.*' + invitedUser + '.*');
-            for(var i = 0; i < result.length; i++){
-              var invitedUserName = result[i].name;
-              if(invitedUser.test(invitedUserName)){
-                searchedUserName.push(result[i].name);
-              }
-            }
-            if(searchedUserNames.length > 0){
-              var selectNickName = 'SELECT `nick_name` FROM `users` WHERE `name` = ?';
-              var searchedUserNickName = [];
-              for(var i = 0; i < searchedUserName.length; i++){
-                connection.query(selectNickName,[searchedUserName[i]],function(err,result){
-                  searchedUserNickName.push(result[0].nick_name);
-                  if(searchedUserName.length === searchedUserNickName.length){
-                    res.render('createOrganization',{
-                      orgName : orgName,
-                      orgIntroduction : orgIntroduction,
-                      searchedUserName : searchedUserName,
-                      searchedUserNickName : searchedUserNickName,
-                      selectedUserNames : selectedUserNames,
-                      selectedUserNickNames : selectedUserNickNames
-                    });
-                  }
+              }else{ // when no user hit
+                res.render('createOrganization',{
+                  orgName : orgName,
+                  orgIntroduction : orgIntroduction,
+                  selectedUserNames : selectedUserNames,
+                  selectedUserNickNames : selectedUserNickNames,
+                  noUser : '該当するユーザーが見つかりません。'
                 });
               }
-            }else{ // when no user hits
-              res.render('createOrganization',{
-                orgName : orgName,
-                orgIntroduction : orgIntroduction,
-                selectedUserNames : selectedUserNames,
-                selectedUserNickNames : selectedUserNickNames,
-                noUser : '該当するユーザーが見つかりません。'
-              });              
-            }
-          }else{ // when no user hit
-            res.render('createOrganization',{
-              orgName : orgName,
-              orgIntroduction : orgIntroduction,
-              selectedUserNames : selectedUserNames,
-              selectedUserNickNames : selectedUserNickNames,
-              noUser : '該当するユーザーが見つかりません。'
             });
-          }
-        });
-      };
+          };
+        }
+      });
+    }else{
+      res.render('createOrganization',{
+        orgName : orgName,
+        orgIntroduction : orgIntroduction,
+        selectedUserNames : selectedUserNames,
+        selectedUserNickNames : selectedUserNickNames,
+        orgNameNotice : 'セキュリティ上の観点から組織名に「+, -, %, ;」は使えません'
+      });
     }
-  });
+  }else{
+    res.render('createOrganization',{
+      orgName : orgName,
+      orgIntroduction : orgIntroduction,
+      selectedUserNames : selectedUserNames,
+      selectedUserNickNames : selectedUserNickNames,
+      orgNameNotice : 'セキュリティ上の観点から紹介文に「+, -, %, ;」は使えません'
+    });
+  }
 });
 
 router.post('/create',upload.single('image_file'),function(req,res){
