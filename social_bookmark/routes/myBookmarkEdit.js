@@ -26,23 +26,33 @@ router.post('/',function(req,res){
   var userId = req.session.user_id;
   var updateBookmarkData = 'UPDATE `bookmarks` SET `title` = ?, `description` = ? WHERE `bookmark_id` = ?';
   var checkInjection = /[%;+-]+/g;
-  if(!checkInjection.test(description)){
-    if(!checkInjection.test(title)){
-      if(title.length <= 32){
-        if(description.length <= 128){
-          connection.query(updateBookmarkData,[title,description,bookmarkId]);
-          res.redirect('/PHH_Bookmark/myPage');
+  var checkSpace = /[\S]+/g;
+  if(checkSpace.test(title)){
+    if(!checkInjection.test(description)){
+      if(!checkInjection.test(title)){
+        if(title.length <= 32){
+          if(description.length <= 128){
+            connection.query(updateBookmarkData,[title,description,bookmarkId]);
+            res.redirect('/PHH_Bookmark/myPage');
+          }else{
+            res.render('myBookmarkEdit.ejs',{
+              descriptionNotice : '説明文は128文字以内です',
+              title : title,
+              description : description,
+              url : url
+            });
+          }
         }else{
           res.render('myBookmarkEdit.ejs',{
-            descriptionNotice : '説明文は128文字以内です',
+            titleNotice : 'タイトルは32文字以内です',
             title : title,
             description : description,
             url : url
           });
         }
       }else{
-        res.render('myBookmarkEdit.ejs',{
-          titleNotice : 'タイトルは32文字以内です',
+        res.render('myBookmarkEdit.ejs', {
+          titleNotice : 'セキュリティ上の観点からタイトルに「+, -, %, ;」は使えません',
           title : title,
           description : description,
           url : url
@@ -50,15 +60,15 @@ router.post('/',function(req,res){
       }
     }else{
       res.render('myBookmarkEdit.ejs', {
-        titleNotice : 'セキュリティ上の観点からタイトルに「+, -, %, ;」は使えません',
-        title : title,
+        descriptionNotice : 'セキュリティ上の観点から説明文に「+, -, %, ;」は使えません',
         description : description,
+        title : title,
         url : url
       });
     }
   }else{
     res.render('myBookmarkEdit.ejs', {
-      descriptionNotice : 'セキュリティ上の観点から説明文に「+, -, %, ;」は使えません',
+      titleNotice : 'タイトルを入力してください',
       description : description,
       title : title,
       url : url
