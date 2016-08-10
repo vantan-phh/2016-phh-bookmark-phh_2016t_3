@@ -44,9 +44,26 @@ router.post('/',function(req,res){
   var title = req.body.title;
   var description = req.body.description;
   var bookmarkId = req.session.edit_org_bookmark_id;
-  var query = 'UPDATE `bookmarks` SET `title` = ?, `description` = ? WHERE `bookmark_id` = ?';
-  connection.query(query,[title,description,bookmarkId]);
-  res.redirect('/PHH_Bookmark/organizationPage');
+  var checkInjection = /[%;+-]+/g;
+  if(!checkInjection.test(title)){
+    if(!checkInjection.test(description)){
+      var query = 'UPDATE `bookmarks` SET `title` = ?, `description` = ? WHERE `bookmark_id` = ?';
+      connection.query(query,[title,description,bookmarkId]);
+      res.redirect('/PHH_Bookmark/organizationPage');
+    }else{
+      res.render('orgBookmarkEdit.ejs', {
+        title : title,
+        description : description,
+        descriptionNotice : 'セキュリティ上の観点から説明文に「+, -, %, ;」は使えません'
+      });
+    }
+  }else{
+    res.render('orgBookmarkEdit.ejs', {
+      title : title,
+      description : description,
+      descriptionNotice : 'セキュリティ上の観点からタイトルに「+, -, %, ;」は使えません'
+    });
+  }
 });
 
 router.post('/delete',function(req,res){
