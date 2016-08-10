@@ -74,7 +74,6 @@ router.get('/',function(req,res){
 router.post('/submitUrl',function(req,res){
   var orgId = req.session.org_id;
   var url = req.body.result;
-  var specifyOrg = 'SELECT * FROM `organizations` WHERE `id` = ?';
   client.fetch(url).then((result) => {
     res.render('organizationPage.ejs',{
       bookmarkData : bookmarkData,
@@ -267,8 +266,8 @@ router.post('/searchBookmark',function(req,res){
         var dropTable = 'DROP TABLE `texts`';
         connection.query(dropTable).then(() => {
           resolve(searchedBookmarks);
-        })
-      })
+        });
+      });
       return promise;
     }).then((searchedBookmarks) => {
       res.render('organizationPage.ejs',{
@@ -310,6 +309,303 @@ router.post('/searchBookmark',function(req,res){
       var promise = new Promise((resolve,reject) => {
         connection.query(selectBookmarksByTitleAndDescription,[orgId]).then((result) => {
           var searchedBookmarks = result[0];
+          resolve(searchedBookmarks);
+        });
+      });
+      return promise;
+    }).then((searchedBookmarks) => {
+      res.render('organizationPage.ejs',{
+        orgName : orgName,
+        orgIntroduction : orgIntroduction,
+        orgThumbnail : orgThumbnail,
+        isAdmin : isAdmin,
+        searchedBookmarks : searchedBookmarks
+      });
+    });
+  }else if(searchFromTitle === 'on' && searchFromDescription === undefined &&  searchFromTextsOnSites === 'on'){
+    var search = () => {
+      var promise = new Promise((resolve,reject) => {
+        var keyWordsForQuery = '%';
+        for(var i = 0; i < keyWords.length; i++){
+          i + 1 === keyWords.length ? keyWordsForQuery += keyWords[i] + '%' : keyWordsForQuery += keyWords[i] + '%" AND `title` LIKE "%';
+        }
+        resolve(keyWordsForQuery);
+      });
+      return promise;
+    }().then((keyWordsForQuery) => {
+      var keyWordsForQuery = keyWordsForQuery;
+      var promise = new Promise((resolve,reject) => {
+        var selectBookmarksByTitle = 'SELECT `bookmark_id` FROM `bookmarks` WHERE `title` LIKE "' + keyWordsForQuery + '" AND `org_id` = ?';
+        connection.query(selectBookmarksByTitle,[orgId]).then((result) => {
+          var searchedByTitleBookmarkIds = result[0];
+          resolve(searchedByTitleBookmarkIds);
+        });
+      });
+      return promise;
+    }).then((searchedByTitleBookmarkIds) => {
+      var searchedByTitleBookmarkIds = searchedByTitleBookmarkIds;
+      var promise = new Promise((resolve,reject) => {
+        var createTextsTable = 'CREATE TABLE `texts` (`id` int not null auto_increment, `bookmark_id` int, `text` TEXT ,primary key (`id`))';
+        connection.query(createTextsTable).then(() => {
+          resolve(searchedByTitleBookmarkIds);
+        });
+      });
+      return promise;
+    }).then((searchedByTitleBookmarkIds) => {
+      var searchedByTitleBookmarkIds = searchedByTitleBookmarkIds;
+      var idsForSelect = [];
+      var promise = new Promise((resolve,reject) => {
+        for(var i = 0; i < searchedByTitleBookmarkIds.length; i++){
+          idsForSelect.push(searchedByTitleBookmarkIds[i].bookmark_id);
+        }
+        resolve(idsForSelect);
+      });
+      return promise;
+    }).then((idsForSelect) => {
+      var idsForSelect = idsForSelect;
+      var promise = new Promise((resolve,reject) => {
+        var selectThisOrgBookmarkIds = 'SELECT `bookmark_id` FROM `bookmarks` WHERE `org_id` = ? AND `bookmark_id` NOT IN (?)';
+        connection.query(selectThisOrgBookmarkIds,[orgId,idsForSelect]).then((result) => {
+          var selectedBookmarkIds = result[0];
+          var values = {
+            idsFromTitle : idsForSelect,
+            selectedBookmarkIds : selectedBookmarkIds
+          }
+          resolve(values);
+        },() => {
+          var selectedThisOrgBookmarkIds = 'SELECT `bookmark_id` FROM `bookmarks` WHERE `org_id` = ?';
+          connection.query(selectedThisOrgBookmarkIds,[orgId]).then((result) => {
+            var selectedBookmarkIds = result[0];
+            var values = {
+              idsFromTitle : idsForSelect,
+              selectedBookmarkIds : selectedBookmarkIds
+            }
+            resolve(values);
+          });
+        });
+      });
+      return promise;
+    }).then((values) => {
+      var selectedBookmarkIds = values.selectedBookmarkIds;
+      var idsFromTitle = values.idsFromTitle;
+      var promise = new Promise((resolve,reject) => {
+        var idsFromOther = [];
+        for(var i = 0; i < selectedBookmarkIds.length; i++){
+          idsFromOther.push(selectedBookmarkIds[i].bookmark_id);
+        }
+        var values = {
+          idsFromTitle : idsFromTitle,
+          idsFromOther : idsFromOther
+        }
+        resolve(values);
+      });
+      return promise;
+    }).then((values) => {
+      var idsFromTitle = values.idsFromTitle;
+      var idsFromOther = values.idsFromOther;
+      var promise = new Promise((resolve,reject) => {
+        for(var i = 0; i < idsFromOther.length; i++){
+          var insertIds = 'INSERT INTO `texts` (`bookmark_id`) VALUES(null)';
+          (() => {
+            var a = i;
+            connection.query(insertIds).then(() => {
+              if(a + 1 === idsFromOther.length){
+                var values = {
+                  idsFromOther : idsFromOther,
+                  idsFromTitle : idsFromTitle
+                }
+                resolve(values);
+              }
+            });
+          })();
+        }
+      });
+      return promise;
+    }).then((values) => {
+      var idsFromTitle = values.idsFromTitle;
+      var idsFromOther = values.idsFromOther;
+      var promise = new Promise((resolve,reject) => {
+        var insertIds = 'UPDATE `texts` SET `bookmark_id` = ? WHERE `id` = ?';
+        for(var i = 0; i < idsFromOther.length; i++){
+          (() => {
+            var a = i;
+            connection.query(insertIds,[idsFromOther[a],a+1]);
+            if(a + 1 === idsFromOther.length){
+              var values = {
+                idsFromOther : idsFromOther,
+                idsFromTitle : idsFromTitle
+              }
+              resolve(values);
+            }
+          })();
+        }
+      });
+      return promise;
+    }).then((values) => {
+      var idsFromTitle = values.idsFromTitle;
+      var idsFromOther = values.idsFromOther;
+      var promise = new Promise((resolve,reject) => {
+        var queryForGettingUrl = '';
+        for(var i = 0; i < idsFromOther.length; i++){
+          i + 1 === idsFromOther.length ? queryForGettingUrl += idsFromOther[i] : queryForGettingUrl += idsFromOther[i] + ' OR `bookmark_id` = ';
+        }
+        var values = {
+          idsFromTitle : idsFromTitle,
+          idsFromOther : idsFromOther,
+          queryForGettingUrl : queryForGettingUrl
+        }
+        resolve(values);
+      });
+      return promise;
+    }).then((values) => {
+      var idsFromTitle = values.idsFromTitle;
+      var idsFromOther = values.idsFromOther;
+      var queryForGettingUrl = values.queryForGettingUrl;
+      var promise = new Promise((resolve,reject) => {
+        var selectUrl = 'SELECT `url` FROM `bookmarks` WHERE (`bookmark_id` = ' + queryForGettingUrl + ') AND `org_id` = ?';
+        connection.query(selectUrl,[orgId]).then((result) => {
+          var selectedUrls = result[0];
+          var values = {
+            idsFromTitle : idsFromTitle,
+            idsFromOther : idsFromOther,
+            selectedUrls : selectedUrls
+          }
+          resolve(values);
+        });
+      });
+      return promise;
+    }).then((values) => {
+      var idsFromTitle = values.idsFromTitle;
+      var idsFromOther = values.idsFromOther;
+      var selectedUrls = values.selectedUrls;
+      var promise = new Promise((resolve,reject) => {
+        var bodies = [];
+        var interval;
+        var i = 0;
+        interval = setInterval(() => {
+          (() => {
+            var a = i;
+            console.log("fetch前" + a);
+            client.fetch(selectedUrls[a].url).then((result) => {
+              console.log(selectedUrls);
+              bodies.push(result.$('body').text().replace(/\s/g,''));
+              console.log('waiting....');
+              console.log('fetch後' + a);
+              if(a + 1 === selectedUrls.length){
+                clearInterval(interval);
+                var values = {
+                  idsFromTitle : idsFromTitle,
+                  idsFromOther : idsFromOther,
+                  bodies : bodies
+                }
+                resolve(values)
+              }
+            });
+          })();
+          i++;
+        },3000);
+      });
+      return promise;
+    }).then((values) => {
+      var idsFromTitle = values.idsFromTitle;
+      var idsFromOther = values.idsFromOther;
+      var bodies = values.bodies;
+      var promise = new Promise((resolve,reject) => {
+        var updateTexts = 'UPDATE `texts` SET `text` = ? WHERE `id` = ? AND `bookmark_id` = ?';
+        for(var i = 0; i < bodies.length; i++){
+          (() => {
+            var a = i;
+            connection.query(updateTexts,[bodies[a],a+1,idsFromOther[a]]).then(() => {
+              if(a + 1 === bodies.length){
+                resolve(idsFromTitle);
+              }
+            });
+          })();
+        }
+      });
+      return promise;
+    }).then((idsFromTitle) => {
+      var idsFromTitle = idsFromTitle;
+      var promise = new Promise ((resolve,reject) => {
+        var keyWordsForQuery = '%';
+        for(var i = 0; i < keyWords.length; i++){
+          i + 1 === keyWords.length ? keyWordsForQuery += keyWords[i] : keyWordsForQuery += keyWords[i] + '%" AND `text` LIKE "%'
+        }
+        var values = {
+          idsFromTitle : idsFromTitle,
+          keyWordsForQuery : keyWordsForQuery
+        }
+        resolve(values);
+      });
+      return promise;
+    }).then((values) => {
+      var idsFromTitle = values.idsFromTitle;
+      var keyWordsForQuery = values.keyWordsForQuery;
+      var promise = new Promise((resolve,reject) => {
+        var selectIdsFromText = 'SELECT `bookmark_id` FROM `texts` WHERE `text` LIKE "' + keyWordsForQuery + '%"';
+        connection.query(selectIdsFromText).then((result) => {
+          console.log(selectIdsFromText);
+          var selectedIdsFromText = result[0];
+          var values = {
+            idsFromTitle : idsFromTitle,
+            selectedIdsFromText : selectedIdsFromText
+          }
+          resolve(values);
+        });
+      });
+      return promise;
+    }).then((values) => {
+      var idsFromTitle = values.idsFromTitle;
+      var selectedIdsFromText = values.selectedIdsFromText;
+      var promise = new Promise((resolve,reject) => {
+        var idsFromText = [];
+        for(var i = 0; i < selectedIdsFromText.length; i++){
+          idsFromText.push(selectedIdsFromText[i].bookmark_id);
+        }
+        var values = {
+          idsFromText : idsFromText,
+          idsFromTitle : idsFromTitle
+        }
+        resolve(values);
+      });
+      return promise;
+    }).then((values) => {
+      var idsFromTitle = values.idsFromTitle;
+      var idsFromText = values.idsFromText;
+      var promise = new Promise((resolve,reject) => {
+        var searchedIds = idsFromTitle.concat(idsFromText);
+        resolve(searchedIds);
+      });
+      return promise;
+    }).then((searchedIds) => {
+      var searchedIds = searchedIds;
+      var promise = new Promise((resolve,reject) => {
+        var idsForQuery = '';
+        if(searchedIds.length > 0){
+          for(var i = 0; i < searchedIds.length; i++){
+            i + 1 === searchedIds.length ? idsForQuery += searchedIds[i] : idsForQuery += searchedIds[i] + ') OR (`bookmark_id` = ';
+          }
+        }
+        resolve(idsForQuery);
+      });
+      return promise;
+    }).then((idsForQuery) => {
+      var idsForQuery = idsForQuery;
+      var promise = new Promise((resolve,reject) => {
+        var selectSearchedBookmarks = 'SELECT * FROM `bookmarks` WHERE `org_id` = ? AND ((`bookmark_id` = ' + idsForQuery + '))';
+        connection.query(selectSearchedBookmarks,[orgId]).then((result) => {
+          var searchedBookmarks = result[0];
+          resolve(searchedBookmarks);
+        },() => {
+          resolve([]);
+        });
+      });
+      return promise;
+    }).then((searchedBookmarks) => {
+      var searchedBookmarks = searchedBookmarks;
+      var promise = new Promise((resolve,reject) => {
+        var dropTable = 'DROP TABLE `texts`';
+        connection.query(dropTable).then(() => {
           resolve(searchedBookmarks);
         });
       });

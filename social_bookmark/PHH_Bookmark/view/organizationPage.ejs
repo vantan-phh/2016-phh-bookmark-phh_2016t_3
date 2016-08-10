@@ -70,9 +70,13 @@
 
     <% if(typeof searchedBookmarks !== 'undefined'){ %>
       <div>検索結果</div>
-      <% for(var i = 0; i < searchedBookmarks.length; i++){ %>
-        <a href="/PHH_Bookmark/bookmarkPage"><%= searchedBookmarks[i].title %></a><a href="<%= searchedBookmarks[i].url%>"><%= searchedBookmarks[i].url%></a>
-        <%= searchedBookmarks[i].description %>
+      <% if(searchedBookmarks.length > 0){ %>
+        <% for(var i = 0; i < searchedBookmarks.length; i++){ %>
+          <a href="/PHH_Bookmark/bookmarkPage"><%= searchedBookmarks[i].title %></a><a href="<%= searchedBookmarks[i].url%>"><%= searchedBookmarks[i].url%></a>
+          <%= searchedBookmarks[i].description %>
+        <% } %>
+      <% }else{ %>
+        一致する項目は見つかりませんでした。
       <% } %>
     <% } %>
     <form action="/PHH_Bookmark/organizationPage/toOrgBookmarkEdit" method="post" name="toOrgBookmarkEdit">

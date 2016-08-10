@@ -8,7 +8,7 @@ router.get('/',function(req,res){
   var orgId = req.session.org_id;
   var myId = req.session.user_id;
   var checkMembership = 'SELECT `is_admin` FROM `organization_memberships` WHERE `user_id` = ? AND `org_id` = ?';
-  connection.query(checkAuthority,[myId,orgId],function(err,result){
+  connection.query(checkMembership,[myId,orgId],function(err,result){
     if(result.length > 0){
       if(result[0].is_admin === 1){
         isAdmin = true;
