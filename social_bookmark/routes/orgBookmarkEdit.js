@@ -73,7 +73,7 @@ router.post('/',function(req,res){
         orgThumbnail : orgThumbnail,
         title : title,
         description : description,
-        descriptionNotice : 'セキュリティ上の観点からタイトルに「+, -, %, ;」は使えません'
+        titleNotice : 'セキュリティ上の観点からタイトルに「+, -, %, ;」は使えません'
       });
     }
   });
