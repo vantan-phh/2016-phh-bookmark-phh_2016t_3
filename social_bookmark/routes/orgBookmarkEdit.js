@@ -43,27 +43,40 @@ router.get('/',function(req,res){
 router.post('/',function(req,res){
   var title = req.body.title;
   var description = req.body.description;
+  var orgId = req.session.org_id;
   var bookmarkId = req.session.edit_org_bookmark_id;
   var checkInjection = /[%;+-]+/g;
-  if(!checkInjection.test(title)){
-    if(!checkInjection.test(description)){
-      var query = 'UPDATE `bookmarks` SET `title` = ?, `description` = ? WHERE `bookmark_id` = ?';
-      connection.query(query,[title,description,bookmarkId]);
-      res.redirect('/PHH_Bookmark/organizationPage');
+  var specifyOrg = 'SELECT * FROM `organizations` WHERE `id` = ?';
+  connection.query(specifyOrg, [orgId], function(err, result){
+    var orgName = result[0].name;
+    var orgIntroduction = result[0].introduction;
+    var orgThumbnail = result[0].image_path;
+    if(!checkInjection.test(title)){
+      if(!checkInjection.test(description)){
+        var query = 'UPDATE `bookmarks` SET `title` = ?, `description` = ? WHERE `bookmark_id` = ?';
+        connection.query(query,[title,description,bookmarkId]);
+        res.redirect('/PHH_Bookmark/organizationPage');
+      }else{
+        res.render('orgBookmarkEdit.ejs', {
+          orgName : orgName,
+          orgIntroduction : orgIntroduction,
+          orgThumbnail : orgThumbnail,
+          title : title,
+          description : description,
+          descriptionNotice : 'セキュリティ上の観点から説明文に「+, -, %, ;」は使えません'
+        });
+      }
     }else{
       res.render('orgBookmarkEdit.ejs', {
+        orgName : orgName,
+        orgIntroduction : orgIntroduction,
+        orgThumbnail : orgThumbnail,
         title : title,
         description : description,
-        descriptionNotice : 'セキュリティ上の観点から説明文に「+, -, %, ;」は使えません'
+        descriptionNotice : 'セキュリティ上の観点からタイトルに「+, -, %, ;」は使えません'
       });
     }
-  }else{
-    res.render('orgBookmarkEdit.ejs', {
-      title : title,
-      description : description,
-      descriptionNotice : 'セキュリティ上の観点からタイトルに「+, -, %, ;」は使えません'
-    });
-  }
+  });
 });
 
 router.post('/delete',function(req,res){
