@@ -41,64 +41,105 @@ router.post('/',upload.single('image_file'),function(req,res){
   var orgId = req.session.org_id;
   var orgName = req.body.orgName;
   var orgIntroduction = req.body.orgIntroduction;
-  var orgNameExists = 'SELECT `name` FROM `organizations` WHERE `name` = ?';
-  connection.query(orgNameExists,[orgName],function(err,result){
-    if(result.length === 0){
-      if(req.file){
-        var path = req.file.path;
-        cloudinary.uploader.upload(path,function(result){
-          var orgThumbnail = result.url;
-          var updateOrgData = 'UPDATE `organizations` SET `name` = ?, `introduction` = ?, `image_path` = ? WHERE `id` = ?';
-          connection.query(updateOrgData,[orgName,orgIntroduction,orgThumbnail,orgId],function(err,result){
-            res.redirect('/PHH_Bookmark/organizationPage');
-          });
+  var checkInjection = /[%;+-]+/g;
+  var checkSpace = /[\S]+/g;
+  if(checkSpace.test(orgName)){
+    if(!checkInjection.test(orgIntroduction)){
+      if(!checkInjection.test(orgName)){
+        var orgNameExists = 'SELECT `name` FROM `organizations` WHERE `name` = ?';
+        connection.query(orgNameExists,[orgName],function(err,result){
+          if(result.length === 0){
+            if(req.file){
+              var path = req.file.path;
+              cloudinary.uploader.upload(path,function(result){
+                var orgThumbnail = result.url;
+                var updateOrgData = 'UPDATE `organizations` SET `name` = ?, `introduction` = ?, `image_path` = ? WHERE `id` = ?';
+                connection.query(updateOrgData,[orgName,orgIntroduction,orgThumbnail,orgId],function(err,result){
+                  res.redirect('/PHH_Bookmark/organizationPage');
+                });
+              });
+            } else { // when any files weren't posted
+              var selectFormerThumbnail = 'SELECT `image_path` FROM `organizations` WHERE `id` = ?';
+              connection.query(selectFormerThumbnail,[orgId],function(err,result){
+                var orgThumbnail = result[0].image_path;
+                var updateOrgData = 'UPDATE `organizations` SET `name` = ?, `introduction` = ?, `image_path` = ? WHERE `id` = ?';
+                connection.query(updateOrgData,[orgName,orgIntroduction,orgThumbnail,orgId],function(err,result){
+                  res.redirect('/PHH_Bookmark/organizationPage');
+                });
+              });
+            }
+          } else { // when an organization its name is the same as the posted orgName is already exists
+            var selectFormerOrgName = 'SELECT `name` FROM `organizations` WHERE `id` = ?';
+            connection.query(selectFormerOrgName,[orgId],function(err,result){
+              if(result.length === 1){ // when an organization that have the same name as posted name is identical to this organization
+                if(req.file){
+                  var path = req.file.path;
+                  cloudinary.uploader.upload(path,function(result){
+                    var orgThumbnail = result.url;
+                    var updateOrgData = 'UPDATE `organizations` SET `name` = ?, `introduction` = ?, `image_path` = ? WHERE `id` = ?';
+                    connection.query(updateOrgData,[orgName,orgIntroduction,orgThumbnail,orgId]);
+                    res.redirect('/PHH_Bookmark/organizationPage');
+                  });
+                } else { // when any files weren't posted
+                  var selectFormerThumbnail = 'SELECT `image_path` FROM `organizations` WHERE `id` = ?';
+                  connection.query(selectFormerThumbnail,[orgId],function(err,result){
+                    var orgThumbnail = result[0].image_path;
+                    var updateOrgData = 'UPDATE `organizations` SET `name` = ?, `introduction` = ?, `image_path` = ? WHERE `id` = ?';
+                    connection.query(updateOrgData,[orgName,orgIntroduction,orgThumbnail,orgId]);
+                    res.redirect('/PHH_Bookmark/organizationPage');
+                  });
+                }
+              } else { // when an organization that have the same name as posted name is different from this organization
+                var selectFormerThumbnail = 'SELECT `image_path` FROM `organizations` WHERE `id` = ?';
+                connection.query(selectFormerThumbnail,[orgId],function(err,result){
+                  var orgThumbnail = result[0].image_path;
+                  res.render('organizationManagement.ejs',{
+                    orgName : orgName,
+                    orgIntroduction : orgIntroduction,
+                    orgThumbnail : orgThumbnail,
+                    orgNameNotice : 'その名前の組織は既に存在しています。'
+                  });
+                });
+              }
+            });
+          }
         });
-      } else { // when any files weren't posted
+      }else{
         var selectFormerThumbnail = 'SELECT `image_path` FROM `organizations` WHERE `id` = ?';
         connection.query(selectFormerThumbnail,[orgId],function(err,result){
           var orgThumbnail = result[0].image_path;
-          var updateOrgData = 'UPDATE `organizations` SET `name` = ?, `introduction` = ?, `image_path` = ? WHERE `id` = ?';
-          connection.query(updateOrgData,[orgName,orgIntroduction,orgThumbnail,orgId],function(err,result){
-            res.redirect('/PHH_Bookmark/organizationPage');
+          res.render('organizationManagement.ejs',{
+            orgName : orgName,
+            orgIntroduction : orgIntroduction,
+            orgThumbnail : orgThumbnail,
+            orgNameNotice : 'セキュリティ上の観点から組織名に「+, -, %, ;」は使えません'
           });
         });
       }
-    } else { // when an organization its name is the same as the posted orgName is already exists
-      var selectFormerOrgName = 'SELECT `name` FROM `organizations` WHERE `id` = ?';
-      connection.query(selectFormerOrgName,[orgId],function(err,result){
-        if(result.length === 1){ // when an organization that have the same name as posted name is identical to this organization
-          if(req.file){
-            var path = req.file.path;
-            cloudinary.uploader.upload(path,function(result){
-              var orgThumbnail = result.url;
-              var updateOrgData = 'UPDATE `organizations` SET `name` = ?, `introduction` = ?, `image_path` = ? WHERE `id` = ?';
-              connection.query(updateOrgData,[orgName,orgIntroduction,orgThumbnail,orgId]);
-              res.redirect('/PHH_Bookmark/organizationPage');
-            });
-          } else { // when any files weren't posted
-            var selectFormerThumbnail = 'SELECT `image_path` FROM `organizations` WHERE `id` = ?';
-            connection.query(selectFormerThumbnail,[orgId],function(err,result){
-              var orgThumbnail = result[0].image_path;
-              var updateOrgData = 'UPDATE `organizations` SET `name` = ?, `introduction` = ?, `image_path` = ? WHERE `id` = ?';
-              connection.query(updateOrgData,[orgName,orgIntroduction,orgThumbnail,orgId]);
-              res.redirect('/PHH_Bookmark/organizationPage');
-            });
-          }
-        } else { // when an organization that have the same name as posted name is different from this organization
-          var selectFormerThumbnail = 'SELECT `image_path` FROM `organizations` WHERE `id` = ?';
-          connection.query(selectFormerThumbnail,[orgId],function(err,result){
-            var orgThumbnail = result[0].image_path;
-            res.render('organizationManagement.ejs',{
-              orgName : orgName,
-              orgIntroduction : orgIntroduction,
-              orgThumbnail : orgThumbnail,
-              orgNameExists : 'その名前の組織は既に存在しています。'
-            });
-          });
-        }
+    }else{
+      var selectFormerThumbnail = 'SELECT `image_path` FROM `organizations` WHERE `id` = ?';
+      connection.query(selectFormerThumbnail,[orgId],function(err,result){
+        var orgThumbnail = result[0].image_path;
+        res.render('organizationManagement.ejs',{
+          orgName : orgName,
+          orgIntroduction : orgIntroduction,
+          orgThumbnail : orgThumbnail,
+          orgIntroductionNotice : 'セキュリティ上の観点から紹介文に「+, -, %, ;」は使えません'
+        });
       });
     }
-  });
+  }else{
+    var selectFormerThumbnail = 'SELECT `image_path` FROM `organizations` WHERE `id` = ?';
+    connection.query(selectFormerThumbnail,[orgId],function(err,result){
+      var orgThumbnail = result[0].image_path;
+      res.render('organizationManagement.ejs',{
+        orgName : orgName,
+        orgIntroduction : orgIntroduction,
+        orgThumbnail : orgThumbnail,
+        orgNameNotice : '組織名を入力してください'
+      });
+    });
+  }
 });
 
 module.exports = router;
