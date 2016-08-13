@@ -162,15 +162,15 @@ router.post('/searchBookmark',(req,res) => {
   }else if(searchFromTitle === undefined && searchFromDescription === undefined && searchFromTextsOnSites === 'on'){
     keyWordsForQuery = '%';
     var selectThisOrgBookmarks = 'SELECT * FROM `bookmarks` WHERE `org_id` = ?';
-    var createTextsTable = 'CREATE TABLE `texts` (`bookmark_id` int not null , `text` TEXT )';
-    (() => {
+    var createTextsTable = 'CREATE TABLE `texts` (`id` int not null auto_increment, `bookmark_id` int not null, `text` TEXT, primary key(`id`))';
+    (() => { // create table for inserting text of the site and select searchedBookmarks.
       var promise = new Promise((resolve) => {
         connection.query(createTextsTable).then(() => {
           resolve();
         });
       });
       return promise;
-    })().then(() => {
+    })().then(() => { // select this org bookmarks to insert `texts` table only bookmarks that is this orgs'
       var promise = new Promise((resolve) => {
         connection.query(selectThisOrgBookmarks,[orgId]).then((result) => {
           var bookmarksLength = result[0].length;
@@ -183,48 +183,97 @@ router.post('/searchBookmark',(req,res) => {
         });
       });
       return promise;
-    }).then((values) => {
+    }).then((values) => { // make an array that bookmarkIds are in.
       var bookmarksLength = values.bookmarksLength;
       var thisOrgBookmarks = values.thisOrgBookmarks;
       var promise = new Promise((resolve) => {
-        var bodies = [];
+        var urls = [];
+        thisOrgBookmarks.forEach((currentValue) => {
+          urls.push(currentValue.url);
+        });
+        values = {
+          thisOrgBookmarks,
+          urls,
+        };
+        resolve(values);
+      });
+      return promise;
+    }).then((values) => {
+      var thisOrgBookmarks = values.thisOrgBookmarks;
+      var urls = values.urls;
+      var promise = new Promise((resolve) => {
         var ids = [];
-        for(var i = 0; i < bookmarksLength; i++){
-          var bookmarkUrl = thisOrgBookmarks[i].url;
-          var bookmarkId = thisOrgBookmarks[i].bookmark_id;
-          ids.push(bookmarkId);
-          client.fetch(bookmarkUrl).then((result) => {
-            console.log('get body of the site');
-            var body = result.$('body').text().replace(/\s/g,'');
-            bodies.push(body);
-            if(bookmarksLength === bodies.length){
-              values = {
-                ids,
-                bodies,
-              };
-              resolve(values);
-            }
-          });
-        }
+        thisOrgBookmarks.forEach((currentValue) => {
+          ids.push(currentValue.bookmark_id);
+        });
+        values = {
+          urls,
+          ids,
+        };
+        resolve(values);
+      });
+      return promise;
+    }).then((values) => {
+      var ids = values.ids;
+      var urls = values.urls;
+      var promise = new Promise((resolve) => {
+        var bodies = [];
+        var interval;
+        var i = 0;
+        interval = setInterval(() => {
+          (() => {
+            var a = i;
+            console.log('fetch前' + a);
+            client.fetch(urls[a]).then((result) => {
+              bodies.push(result.$('body').text().replace(/\s/g,''));
+              console.log('waiting....');
+              console.log('fetch後' + a);
+              if(a + 1 === urls.length){
+                clearInterval(interval);
+                values = {
+                  ids,
+                  bodies,
+                };
+                resolve(values);
+              }
+            });
+          })();
+          i++;
+        },3000);
       });
       return promise;
     }).then((values) => {
       var ids = values.ids;
       var bodies = values.bodies;
       var promise = new Promise((resolve) => {
-        console.log(ids);
-        var insertBodies = 'INSERT INTO `texts` (`bookmark_id`, `text`) VALUES (?, ?)';
-        for(var i = 0; i < ids.length; i++){
-          connection.query(insertBodies,[ids[i],bodies[i]]);
-        }
-        resolve();
+        var insertIds = 'INSERT INTO `texts` (`bookmark_id`) VALUES (?)';
+        ids.forEach((currentValue, index, array) => {
+          connection.query(insertIds,[currentValue]).then(() => {
+            if(index + 1 === array.length){
+              resolve(bodies);
+            }
+          });
+        });
+      });
+      return promise;
+    }).then((bodies) => {
+      var bodies = bodies;
+      var promise = new Promise((resolve) => {
+        var updateTexts = 'UPDATE `texts` SET `text` = ? WHERE `id` = ?';
+        bodies.forEach((currentValue, index, array) => {
+          connection.query(updateTexts,[currentValue,index + 1]).then(() => {
+            if(index + 1 === array.length){
+              resolve();
+            }
+          });
+        });
       });
       return promise;
     }).then(() => {
       var promise = new Promise((resolve) => {
-        for(var i = 0; i < keyWords.length; i++){
-          i + 1 === keyWords.length ? keyWordsForQuery += keyWords[i] + '%' : keyWordsForQuery += keyWords[i] + '%" AND `text` LIKE "%';
-        }
+        keyWords.forEach((currentValue, index, array) => {
+          index + 1 === array.length ? keyWordsForQuery += currentValue + '%' : keyWordsForQuery += currentValue + '%" AND `text` LIKE "%';
+        });
         resolve(keyWordsForQuery);
       });
       return promise;
@@ -241,9 +290,9 @@ router.post('/searchBookmark',(req,res) => {
       var hitBookmarks = hitBookmarks;
       var promise = new Promise((resolve) => {
         var idsForQuery = '';
-        for(var i = 0; i < hitBookmarks.length; i++){
-          i + 1 === hitBookmarks.length ? idsForQuery += hitBookmarks[i].bookmark_id : idsForQuery += hitBookmarks[i].bookmark_id + ' OR `bookmark_id` = ';
-        }
+        hitBookmarks.forEach((currentValue,index,array) => {
+          index + 1 === array.length ? idsForQuery += currentValue.bookmark_id : idsForQuery += currentValue.bookmark_id + ' OR `bookmark_id` = ';
+        });
         resolve(idsForQuery);
       });
       return promise;
@@ -251,9 +300,10 @@ router.post('/searchBookmark',(req,res) => {
       var promise = new Promise((resolve) => {
         var selectSearchedBookmarks = 'SELECT * FROM `bookmarks` WHERE `bookmark_id` = ' + idsForQuery + '';
         connection.query(selectSearchedBookmarks).then((result) => {
-          console.log(selectSearchedBookmarks);
           var searchedBookmarks = result[0];
           resolve(searchedBookmarks);
+        },() => { // when no bookmark hit.
+          resolve([]);
         });
       });
       return promise;
@@ -390,7 +440,7 @@ router.post('/searchBookmark',(req,res) => {
         for(var i = 0; i < selectedBookmarkIds.length; i++){
           idsFromOther.push(selectedBookmarkIds[i].bookmark_id);
         }
-        var values = {
+        values = {
           idsFromTitle,
           idsFromOther,
         };
@@ -484,9 +534,7 @@ router.post('/searchBookmark',(req,res) => {
             var a = i;
             console.log('fetch前' + a);
             client.fetch(selectedUrls[a].url).then((result) => {
-              console.log(selectedUrls);
               bodies.push(result.$('body').text().replace(/\s/g,''));
-              console.log('waiting....');
               console.log('fetch後' + a);
               if(a + 1 === selectedUrls.length){
                 clearInterval(interval);

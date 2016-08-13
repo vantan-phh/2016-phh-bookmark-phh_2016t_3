@@ -7,5 +7,5 @@ router.post('/', function(req, res){
   id = id[1];
   req.session.bookmark_id = id;
   res.redirect('/PHH_Bookmark/bookmarkPage');
-})
+});
 module.exports = router;
