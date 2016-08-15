@@ -46,16 +46,28 @@ router.post('/',function(req,res){
   var orgId = req.session.org_id;
   var bookmarkId = req.session.edit_org_bookmark_id;
   var checkInjection = /[%;+-]+/g;
+  var checkSpace = /[\S]+/g;
   var specifyOrg = 'SELECT * FROM `organizations` WHERE `id` = ?';
   connection.query(specifyOrg, [orgId], function(err, result){
     var orgName = result[0].name;
     var orgIntroduction = result[0].introduction;
     var orgThumbnail = result[0].image_path;
-    if(!checkInjection.test(title)){
-      if(!checkInjection.test(description)){
-        var query = 'UPDATE `bookmarks` SET `title` = ?, `description` = ? WHERE `bookmark_id` = ?';
-        connection.query(query,[title,description,bookmarkId]);
-        res.redirect('/PHH_Bookmark/organizationPage');
+    if(checkSpace.test(title)){
+      if(!checkInjection.test(title)){
+        if(!checkInjection.test(description)){
+          var query = 'UPDATE `bookmarks` SET `title` = ?, `description` = ? WHERE `bookmark_id` = ?';
+          connection.query(query,[title,description,bookmarkId]);
+          res.redirect('/PHH_Bookmark/organizationPage');
+        }else{
+          res.render('orgBookmarkEdit.ejs', {
+            orgName : orgName,
+            orgIntroduction : orgIntroduction,
+            orgThumbnail : orgThumbnail,
+            title : title,
+            description : description,
+            descriptionNotice : 'セキュリティ上の観点から説明文に「+, -, %, ;」は使えません'
+          });
+        }
       }else{
         res.render('orgBookmarkEdit.ejs', {
           orgName : orgName,
@@ -63,7 +75,7 @@ router.post('/',function(req,res){
           orgThumbnail : orgThumbnail,
           title : title,
           description : description,
-          descriptionNotice : 'セキュリティ上の観点から説明文に「+, -, %, ;」は使えません'
+          titleNotice : 'セキュリティ上の観点からタイトルに「+, -, %, ;」は使えません'
         });
       }
     }else{
@@ -73,7 +85,7 @@ router.post('/',function(req,res){
         orgThumbnail : orgThumbnail,
         title : title,
         description : description,
-        titleNotice : 'セキュリティ上の観点からタイトルに「+, -, %, ;」は使えません'
+        titleNotice : 'タイトルを入力してください'
       });
     }
   });
