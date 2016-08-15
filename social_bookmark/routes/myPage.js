@@ -106,7 +106,6 @@ router.post('/submitUrl',function(req,res){
   if(checkUrl.test(url)){
     var selectBookmarkData = 'SELECT * FROM `bookmarks` WHERE `user_id` = ?';
     connection.query(selectBookmarkData,[userId],function(err,result){
-      var description = result[0].description;
       client.fetch(url).then(function(result){
         res.render('myPage.ejs',{
           bookmarkData : bookmarkData,
