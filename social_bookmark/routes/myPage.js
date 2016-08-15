@@ -121,7 +121,7 @@ router.post('/submitUrl',function(req,res){
       bookmarkData = result;
       res.render('myPage.ejs',{
         bookmarkData : bookmarkData,
-        urlNotice : 'http://もしくはhttp://から始まる正しいURLを入力してください'
+        urlNotice : 'http://もしくはhttps://から始まる正しいURLを入力してください'
       });
     });
   }
