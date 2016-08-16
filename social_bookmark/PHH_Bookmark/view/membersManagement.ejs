@@ -3,70 +3,79 @@
   <head>
     <meta charset="utf-8">
     <title></title>
+    <link rel="stylesheet" type="text/css" href="/css/membersManagement.css">
   </head>
   <body>
-    <h2><%= orgName %></h2>
-    <img src="<%= orgThumbnail %>">
-    <div><%= orgIntroduction %></div>
-    <% if(typeof memberUserNames !== 'undefined'){%>
-      <% for(var i = 0; i < memberUserNames.length; i ++){ %>
-        <div><%= memberNickNames[i] %><%= memberUserNames[i] %>
-          <% if(memberUserNames[i] === myUserName){ %>
-            <input type="button" value="脱退" id="leave">
-          <% } else { %>
-            <input type="button" value="除名" class="expel" name="<%= memberUserNames[i] %>">
+    <% include layout %>
+    <main>
+      <h2 id="orgName"><%= orgName %></h2>
+      <img id="img" src="<%= orgThumbnail %>">
+      <div id="introduction"><%= orgIntroduction %></div>
+      <% if(typeof memberUserNames !== 'undefined'){%>
+        <% for(var i = 0; i < memberUserNames.length; i ++){ %>
+          <div id="users"><%= memberNickNames[i] %><%= memberUserNames[i] %>
+            <% if(memberUserNames[i] === myUserName){ %>
+              <input type="button" value="脱退" id="leave">
+            <% } else { %>
+              <input type="button" value="除名" class="expel" name="<%= memberUserNames[i] %>">
+            <% } %>
+          </div>
+        <% } %>
+      <% } %>
+      <div id="search">
+        <form action="/PHH_Bookmark/membersManagement/searchUser" method="post">
+          <input type="text" placeholder="ユーザー名を入力" name="searchedUser">
+          <input type="submit" value="検索">
+        </form>
+      </div>
+
+      <% if(typeof notice !== 'undefined'){ %>
+        <div id="notFound"><%= notice %></div>
+      <% } %>
+
+      <div id="searchHit">
+        <% if(typeof searchedUserNames !== 'undefined'){ %>
+          <div>検索にヒットしたユーザー</div>
+          <% for(var i = 0; i < searchedUserNames.length; i++){ %>
+            <div><%= searchedUserNickNames[i] %><%= searchedUserNames[i] %>
+            <input type="button" value="決定" class="select" name="<%= searchedUserNames[i] %>,<%= searchedUserNickNames[i] %>">
+            </div>
           <% } %>
-        </div>
-      <% } %>
-    <% } %>
-    <form action="/PHH_Bookmark/membersManagement/searchUser" method="post">
-      <input type="text" placeholder="ユーザー名を入力" name="searchedUser">
-      <input type="submit" value="検索">
-    </form>
+        <% } %>
+      </div>
 
-    <% if(typeof notice !== 'undefined'){ %>
-      <%= notice %>
-    <% } %>
+      <div id="checkUser">
+        <% if(typeof selectedUserNames !== 'undefined' && selectedUserNames.length > 0){ %>
+          <div> 選択したユーザー</div>
+          <% for(var i = 0; i < selectedUserNames.length; i++){ %>
+            <div><%= selectedUserNickNames[i] %><%= selectedUserNames[i] %>
+              <input type="button" value="招待" id="makeJoin">
+              <input type="button" value="削除" class="exclude" name="<%= selectedUserNames[i] %>,<%= selectedUserNickNames[i] %>">
+            </div>
+          <% } %>
+        <% }%>
+      </div>
 
-    <% if(typeof searchedUserNames !== 'undefined'){ %>
-      <div>検索にヒットしたユーザー</div>
-      <% for(var i = 0; i < searchedUserNames.length; i++){ %>
-        <div><%= searchedUserNickNames[i] %><%= searchedUserNames[i] %>
-        <input type="button" value="決定" class="select" name="<%= searchedUserNames[i] %>,<%= searchedUserNickNames[i] %>">
-        </div>
-      <% } %>
-    <% } %>
+      <a id="management" href="/PHH_Bookmark/switchAuthority">権限管理ページへ</a>
 
-    <% if(typeof selectedUserNames !== 'undefined' && selectedUserNames.length > 0){ %>
-      <div> 選択したユーザー</div>
-      <% for(var i = 0; i < selectedUserNames.length; i++){ %>
-        <div><%= selectedUserNickNames[i] %><%= selectedUserNames[i] %>
-          <input type="button" value="削除" class="exclude" name="<%= selectedUserNames[i] %>,<%= selectedUserNickNames[i] %>">
-        </div>
-      <% } %>
-      <input type="button" value="招待" id="makeJoin">
-    <% }%>
+      <form action="/PHH_Bookmark/membersManagement/selectUser" method="post" name="selectUser">
+        <input type="hidden" name="result">
+      </form>
 
-    <a href="/PHH_Bookmark/switchAuthority">権限管理ページへ</a>
+      <form action="/PHH_Bookmark/membersManagement/excludeUser" method="post" name="excludeUser">
+        <input type="hidden" name="result">
+      </form>
 
-    <form action="/PHH_Bookmark/membersManagement/selectUser" method="post" name="selectUser">
-      <input type="hidden" name="result">
-    </form>
+      <form action="/PHH_Bookmark/membersManagement/makeJoin" method="post" name="makeJoin">
+      </form>
 
-    <form action="/PHH_Bookmark/membersManagement/excludeUser" method="post" name="excludeUser">
-      <input type="hidden" name="result">
-    </form>
+      <form action="/PHH_Bookmark/membersManagement/expelUser" method="post" name="expelUser">
+        <input type="hidden" name="result">
+      </form>
 
-    <form action="/PHH_Bookmark/membersManagement/makeJoin" method="post" name="makeJoin">
-    </form>
-
-    <form action="/PHH_Bookmark/membersManagement/expelUser" method="post" name="expelUser">
-      <input type="hidden" name="result">
-    </form>
-
-    <form action="/PHH_Bookmark/membersManagement/leave" method="post" name="leave">
-    </form>
-
+      <form action="/PHH_Bookmark/membersManagement/leave" method="post" name="leave">
+      </form>
+    </main>
   </body>
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
   <script>
