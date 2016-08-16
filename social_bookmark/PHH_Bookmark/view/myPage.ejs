@@ -8,59 +8,64 @@
   <body>
     <% include layout %>
     <main>
+      <h2 id="read">URLを入力してブックマークを登録</h2>
       <div id="organization"></div>
       <div id="search">
-        <button>検索</button>
         <input type="text">
+        <button>検索</button>
       </div>
       <div id="list">
-        <form action="/PHH_Bookmark/myPage" method="post">
-          <% if(typeof url !== 'undefined'){ %>
-            <input type="text" placeholder="URLを入力" name="url" value="<%= url %>" id="url">
-            <input type="button" value="再送信" name="submitUrl" id="submitUrl">
-          <% }else{ %>
-            <input type="text" placeholder="URLを入力" name="url" id="url">
-            <input type="button" value="送信" name="submitUrl" id="submitUrl">
-          <% } %>
-          <% if(typeof urlNotice !== 'undefined'){ %>
-            <p><%= urlNotice %></p>
-          <% } %>
-          <% if(typeof title !== 'undefined'){ %>
-            <input type="text" placeholder="タイトル" name="title" value="<%= title %>">
-          <% } %>
-          <% if(typeof description !== 'undefined'){ %>
-            <input type="text" placeholder="コメント" id="description" name="description" value="<%= description %>">
-            <input type="submit" value="送信">
-          <% }else if(typeof url !== 'undefined'){ %>
-            <input type="text" placeholder="コメント" id="description" name="description">
-            <input type="submit" value="送信">
-          <% } %>
-          <% if(typeof titleNotice !== 'undefined'){ %>
-            <p><%= titleNotice %></p>
-          <% } %>
-          <% if(typeof descriptionNotice !== 'undefined'){ %>
-            <p><%= descriptionNotice %></p>
-          <% } %>
-        </form>
-        <form name="my_bookmark" action="/PHH_Bookmark/myPage/delete" method="post">
-          <% for(var i = 0; i < bookmarkData.length; i++){ %>
-            <% if(i % 2 === 0){ %>
-              <div id="bookmark1">
-                <input type="checkbox" class="checkbox" name="<%= bookmarkData[i].bookmark_id %>">
-                <a name="bookmarkId<%= bookmarkData[i].bookmark_id%>"><%= bookmarkData[i].title %></a>
-                <a href="<%= bookmarkData[i].url %>"><div id="url"><%= bookmarkData[i].url %></div></a><div id="description"><%= bookmarkData[i].description %></div>
-                <input id="editButton" type="button" value="編集" name="<%= bookmarkData[i].bookmark_id %>" class="edit">
-              </div>
+        <div id="addBookmark">
+          <form action="/PHH_Bookmark/myPage" method="post">
+            <% if(typeof url !== 'undefined'){ %>
+              <input type="text" placeholder="URLを入力" name="url" value="<%= url %>" id="url">
+              <input type="button" value="再送信" name="submitUrl" id="submitUrl">
             <% }else{ %>
-              <div id="bookmark2">
-                <input type="checkbox" class="checkbox" name="<%= bookmarkData[i].bookmark_id %>">
-                <a name="bookmarkId<%= bookmarkData[i].bookmark_id%>"><%= bookmarkData[i].title %></a>
-                <a href="<%= bookmarkData[i].url %>"><div id="url"><%= bookmarkData[i].url %></div></a><div id="description"><%= bookmarkData[i].description %></div>
-                <input id="editButton" type="button" value="編集" name="<%= bookmarkData[i].bookmark_id %>" class="edit">
-              </div>
+              <input type="text" placeholder="URLを入力" name="url" id="url">
+              <input type="button" value="送信" name="submitUrl" id="submitUrl">
             <% } %>
-          <% } %>
-          <button type="submit">削除</button>
+            <% if(typeof urlNotice !== 'undefined'){ %>
+              <p id="urlError"><%= urlNotice %></p>
+            <% } %>
+            <% if(typeof title !== 'undefined'){ %>
+              <input type="text" placeholder="タイトル" name="title" value="<%= title %>">
+            <% } %>
+            <% if(typeof description !== 'undefined'){ %>
+              <input type="text" placeholder="コメント" id="description" name="description" value="<%= description %>">
+              <input type="submit" value="送信">
+            <% }else if(typeof url !== 'undefined'){ %>
+              <input type="text" placeholder="コメント" id="description" name="description">
+              <input type="submit" value="送信">
+            <% } %>
+            <% if(typeof titleNotice !== 'undefined'){ %>
+              <p><%= titleNotice %></p>
+            <% } %>
+            <% if(typeof descriptionNotice !== 'undefined'){ %>
+              <p><%= descriptionNotice %></p>
+            <% } %>
+          </form>
+        </div>
+        <form name="my_bookmark" action="/PHH_Bookmark/myPage/delete" method="post">
+          <div id="bookmark">
+            <% for(var i = 0; i < bookmarkData.length; i++){ %>
+              <% if(i % 2 === 0){ %>
+                <div id="bookmark1">
+                  <input type="checkbox" class="bCheckbox" name="<%= bookmarkData[i].bookmark_id %>">
+                  <a name="bookmarkId<%= bookmarkData[i].bookmark_id%>"><div class="bTitle"><%= bookmarkData[i].title %></div></a>
+                  <a href="<%= bookmarkData[i].url %>"><div class="bUrl"><%= bookmarkData[i].url %></div></a><div class="bDescription"><%= bookmarkData[i].description %></div>
+                  <input class="bEditBtn" type="button" value="編集" name="<%= bookmarkData[i].bookmark_id %>">
+                </div>
+              <% }else{ %>
+                <div id="bookmark2">
+                  <input type="checkbox" class="bCheckbox" name="<%= bookmarkData[i].bookmark_id %>">
+                  <a name="bookmarkId<%= bookmarkData[i].bookmark_id%>"><div class="bTitle"><%= bookmarkData[i].title %></div></a>
+                  <a href="<%= bookmarkData[i].url %>"><div class="bUrl"><%= bookmarkData[i].url %></div></a><div class="bDescription"><%= bookmarkData[i].description %></div>
+                  <input class="bEditBtn" type="button" value="編集" name="<%= bookmarkData[i].bookmark_id %>">
+                </div>
+              <% } %>
+            <% } %>
+          </div>
+          <button id="deleteBtn" type="submit">削除</button>
         </form>
         <form name="toEdit" action="/PHH_Bookmark/myBookmarkEdit" method="get">
           <input type="hidden" name="result">
