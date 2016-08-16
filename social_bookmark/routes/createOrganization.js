@@ -167,6 +167,8 @@ router.post('/create',upload.single('image_file'),function(req,res){
   var orgName = req.body.orgName;
   var orgIntroduction = req.body.orgIntroduction;
   var myId = req.session.user_id;
+  var checkInjection = /[%;+-]+/g;
+  var checkSpace = /[\S]+/g;
   var orgNameExists = 'SELECT `name` FROM `organizations` WHERE `name` = ?';
   var selectMyUserName = 'SELECT `name` FROM `users` WHERE `user_id` = ?';
   if(checkSpace.test(orgName)){
