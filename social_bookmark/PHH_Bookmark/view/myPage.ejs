@@ -10,9 +10,26 @@
     <main>
       <div id="organization"></div>
       <div id="search">
-        <button>検索</button>
-        <input type="text">
+        <form action="/PHH_Bookmark/myPage/searchBookmark" method="post">
+          <input type="checkbox" checked="checked" name="searchFromTitle">タイトル
+          <input type="checkbox" name="searchFromDescription">説明文
+          <input type="checkbox" name="searchFromTextsOnSites">URL先のテキスト
+          <input type="text" placeholder="検索ワードを入力" name="keyWord">
+          <input type="submit" value="検索">
+        </form>
       </div>
+      <% if(typeof searchedBookmarks !== 'undefined'){ %>
+        <div>検索結果</div>
+        <% if(searchedBookmarks.length > 0){ %>
+          <% for(var i = 0; i < searchedBookmarks.length; i++){ %>
+            <a href="/PHH_Bookmark/bookmarkPage"><%= searchedBookmarks[i].title %></a><a href="<%= searchedBookmarks[i].url%>"><%= searchedBookmarks[i].url%></a>
+            <%= searchedBookmarks[i].description %>
+          <% } %>
+        <% }else{ %>
+          一致する項目は見つかりませんでした。
+        <% } %>
+      <% } %>
+
       <div id="list">
         <form action="/PHH_Bookmark/myPage" method="post">
           <% if(typeof url !== 'undefined'){ %>
