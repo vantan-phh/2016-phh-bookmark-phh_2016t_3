@@ -168,6 +168,7 @@ router.post('/searchBookmark', (req, res) => {
     }).then((value) => {
       var searchedBookmarks = value;
       res.render('organizationPage.ejs', {
+        bookmarkData,
         orgName,
         orgIntroduction,
         orgThumbnail,
@@ -202,6 +203,7 @@ router.post('/searchBookmark', (req, res) => {
     }).then((value) => {
       var searchedBookmarks = value;
       res.render('organizationPage.ejs', {
+        bookmarkData,
         orgName,
         orgIntroduction,
         orgThumbnail,
@@ -229,6 +231,7 @@ router.post('/searchBookmark', (req, res) => {
       connection.query(selectSearchedBookmarks, [orgId]).then((result) => {
         var searchedBookmarks = result[0];
         res.render('organizationPage.ejs', {
+          bookmarkData,
           orgName,
           orgIntroduction,
           orgThumbnail,
@@ -282,6 +285,7 @@ router.post('/searchBookmark', (req, res) => {
       return promise;
     }).then((searchedBookmarks) => {
       res.render('organizationPage.ejs', {
+        bookmarkData,
         orgName,
         orgIntroduction,
         orgThumbnail,
@@ -328,6 +332,7 @@ router.post('/searchBookmark', (req, res) => {
       connection.query(selectSearchedBookmarks, [orgId]).then((result) => {
         var searchedBookmarks = result[0];
         res.render('organizationPage.ejs', {
+          bookmarkData,
           orgName,
           orgIntroduction,
           orgThumbnail,
@@ -382,6 +387,7 @@ router.post('/searchBookmark', (req, res) => {
     }).then((value) => {
       var searchedBookmarks = value;
       res.render('organizationPage.ejs', {
+        bookmarkData,
         orgName,
         orgIntroduction,
         orgThumbnail,
@@ -456,6 +462,7 @@ router.post('/searchBookmark', (req, res) => {
     }).then((value) => {
       var searchedBookmarks = value;
       res.render('organizationPage.ejs', {
+        bookmarkData,
         orgName,
         orgIntroduction,
         orgThumbnail,

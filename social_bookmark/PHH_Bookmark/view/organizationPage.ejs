@@ -12,7 +12,6 @@
     <form action="/PHH_Bookmark/organizationPage/searchBookmark" method="post">
       <input type="checkbox" checked="checked" name="searchFromTitle">タイトル
       <input type="checkbox" name="searchFromDescription">説明文
-      <input type="checkbox" name="searchFromComments">コメント
       <input type="checkbox" name="searchFromTextsOnSites">URL先のテキスト
       <input type="text" placeholder="検索ワードを入力" name="keyWord">
       <input type="submit" value="検索">
@@ -37,6 +36,18 @@
     <form action="/PHH_Bookmark/organizationPage/submitUrl" method="post" name="submitUrl">
       <input type="hidden" name="result">
     </form>
+
+    <% if(typeof searchedBookmarks !== 'undefined'){ %>
+      <div>検索結果</div>
+      <% if(searchedBookmarks.length > 0){ %>
+        <% for(var i = 0; i < searchedBookmarks.length; i++){ %>
+          <a href="/PHH_Bookmark/bookmarkPage"><%= searchedBookmarks[i].title %></a><a href="<%= searchedBookmarks[i].url%>"><%= searchedBookmarks[i].url%></a>
+          <%= searchedBookmarks[i].description %>
+        <% } %>
+      <% }else{ %>
+        一致する項目は見つかりませんでした。
+      <% } %>
+    <% } %>
 
     <form action="/PHH_Bookmark/orgBookmarkEdit/delete" method="post">
       <% if(typeof bookmarkData !== 'undefined'){ %>
@@ -68,17 +79,6 @@
       <% } %>
     </form>
 
-    <% if(typeof searchedBookmarks !== 'undefined'){ %>
-      <div>検索結果</div>
-      <% if(searchedBookmarks.length > 0){ %>
-        <% for(var i = 0; i < searchedBookmarks.length; i++){ %>
-          <a href="/PHH_Bookmark/bookmarkPage"><%= searchedBookmarks[i].title %></a><a href="<%= searchedBookmarks[i].url%>"><%= searchedBookmarks[i].url%></a>
-          <%= searchedBookmarks[i].description %>
-        <% } %>
-      <% }else{ %>
-        一致する項目は見つかりませんでした。
-      <% } %>
-    <% } %>
     <form action="/PHH_Bookmark/organizationPage/toOrgBookmarkEdit" method="post" name="toOrgBookmarkEdit">
       <input type="hidden" name="result">
     </form>
