@@ -2,14 +2,8 @@ var express = require('express');
 
 var router = express.Router();
 var client = require('cheerio-httpcli');
-// var connection = require('../mysqlConnection');
-var connection = require('mysql-promise')();
+var connection = require('../mysqlConnection');
 
-connection.configure({
-  host : 'localhost',
-  user : 'root',
-  database : 'phh_social_bookmark_proto',
-});
 var isAdmin;
 var bookmarkData;
 var ownBookmarkIds;
@@ -17,7 +11,7 @@ var orgName;
 var orgIntroduction;
 var orgThumbnail;
 
-router.get('/',(req,res) => {
+router.get('/', (req, res) => {
   var myId = req.session.user_id;
   var orgId = req.session.org_id;
   var checkMembership = 'SELECT `is_admin` FROM `organization_memberships` WHERE `user_id` = ? AND `org_id` = ?';
@@ -26,7 +20,7 @@ router.get('/',(req,res) => {
   var selectOwnBookmarkIds = 'SELECT * FROM `bookmarks` WHERE `user_id` = ? AND `org_id` = ?';
   (() => {
     var promise = new Promise((resolve) => {
-      connection.query(checkMembership,[myId,orgId]).then((result) => {
+      connection.query(checkMembership, [myId, orgId]).then((result) => {
         isAdmin = result[0][0].is_admin === 1;
         resolve();
       });
@@ -34,7 +28,7 @@ router.get('/',(req,res) => {
     return promise;
   })().then(() => {
     var promise = new Promise((resolve) => {
-      connection.query(specifyOrg,[orgId]).then((result) => {
+      connection.query(specifyOrg, [orgId]).then((result) => {
         orgName = result[0][0].name;
         orgIntroduction = result[0][0].introduction;
         orgThumbnail = result[0][0].image_path;
@@ -44,7 +38,7 @@ router.get('/',(req,res) => {
     return promise;
   }).then(() => {
     var promise = new Promise((resolve) => {
-      connection.query(selectBookmarkData,[orgId]).then((result) => {
+      connection.query(selectBookmarkData, [orgId]).then((result) => {
         bookmarkData = result[0];
         resolve();
       });
@@ -52,14 +46,14 @@ router.get('/',(req,res) => {
     return promise;
   }).then(() => {
     var promise = new Promise((resolve) => {
-      connection.query(selectOwnBookmarkIds,[myId,orgId]).then((result) => {
+      connection.query(selectOwnBookmarkIds, [myId, orgId]).then((result) => {
         ownBookmarkIds = result[0];
         resolve();
       });
     });
     return promise;
   }).then(() => {
-    res.render('organizationPage.ejs',{
+    res.render('organizationPage.ejs', {
       orgName,
       orgIntroduction,
       orgThumbnail,
@@ -70,10 +64,10 @@ router.get('/',(req,res) => {
   });
 });
 
-router.post('/submitUrl',(req,res) => {
+router.post('/submitUrl', (req, res) => {
   var url = req.body.result;
   client.fetch(url).then((result) => {
-    res.render('organizationPage.ejs',{
+    res.render('organizationPage.ejs', {
       bookmarkData,
       ownBookmarkIds,
       isAdmin,
@@ -83,22 +77,53 @@ router.post('/submitUrl',(req,res) => {
       url,
       title : result.$('title').text(),
     });
+  }, () => {
+    res.render('organizationPage.ejs', {
+      orgName,
+      orgIntroduction,
+      orgThumbnail,
+      bookmarkData,
+      ownBookmarkIds,
+      isAdmin,
+      networkNotice : 'URLが正しいかをご確認の上、ネットワーク接続をお確かめください。',
+    });
   });
 });
 
-router.post('/',(req,res) => {
+router.post('/', (req, res) => {
   var url = req.body.url;
   var title = req.body.title;
   var description = req.body.description;
   var orgId = req.session.org_id;
   var userId = req.session.user_id;
-  var query = 'INSERT INTO `bookmarks` (`user_id`,`org_id`,`title`,`url`,`description`) VALUES(?,?,?,?,?)';
-  connection.query(query,[userId,orgId,title,url,description]).then(() => {
-    res.redirect('/PHH_Bookmark/organizationPage');
+  (() => {
+    var promise = new Promise((resolve) => {
+      client.fetch(url).then((result) => {
+        var text = result.$('body').text().replace(/\s/g, '');
+        resolve(text);
+      }, () => {
+        res.render('organizationPage.ejs', {
+          orgName,
+          orgIntroduction,
+          orgThumbnail,
+          bookmarkData,
+          ownBookmarkIds,
+          isAdmin,
+          networkNotice : 'URLが正しいかをご確認の上、ネットワーク接続をお確かめください。',
+        });
+      });
+    });
+    return promise;
+  })().then((value) => {
+    var text = value;
+    var query = 'INSERT INTO `bookmarks` (`user_id`, `org_id`, `title`, `url`, `description`, `text`) VALUES(?, ?, ?, ?, ?, ?)';
+    connection.query(query, [userId, orgId, title, url, description, text]).then(() => {
+      res.redirect('/PHH_Bookmark/organizationPage');
+    });
   });
 });
 
-router.post('/toOrgBookmarkEdit',(req,res) => {
+router.post('/toOrgBookmarkEdit', (req, res) => {
   var bookmarkId = req.body.result;
   if(req.session.edit_org_bookmark_id){
     delete req.session.edit_org_bookmark_id;
@@ -107,7 +132,7 @@ router.post('/toOrgBookmarkEdit',(req,res) => {
   res.redirect('/PHH_Bookmark/orgBookmarkEdit');
 });
 
-router.post('/searchBookmark',(req,res) => {
+router.post('/searchBookmark', (req, res) => {
   var orgId = req.session.org_id;
   var keyWord = req.body.keyWord;
   var searchFromTitle = req.body.searchFromTitle;
@@ -125,7 +150,7 @@ router.post('/searchBookmark',(req,res) => {
       if(i + 1 === keyWords.length){
         keyWordsForQuery += keyWords[i] + '%';
         var selectBookmarksByTitle = 'SELECT * FROM `bookmarks` WHERE `title` LIKE "' + keyWordsForQuery + '" AND `org_id` = ?';
-        connection.query(selectBookmarksByTitle,[orgId]).then((result) => {
+        connection.query(selectBookmarksByTitle, [orgId]).then((result) => {
           var searchedBookmarks = result[0];
           res.render('organizationPage.ejs',{
             orgName,
@@ -145,9 +170,9 @@ router.post('/searchBookmark',(req,res) => {
       if(i + 1 === keyWords.length){
         keyWordsForQuery += keyWords[i] + '%';
         var selectBookmarksByDescription = 'SELECT * FROM `bookmarks` WHERE `description` LIKE "' + keyWordsForQuery + '" AND `org_id` = ?';
-        connection.query(selectBookmarksByDescription,[orgId]).then((result) => {
+        connection.query(selectBookmarksByDescription, [orgId]).then((result) => {
           var searchedBookmarks = result[0];
-          res.render('organizationPage.ejs',{
+          res.render('organizationPage.ejs', {
             orgName,
             orgIntroduction,
             orgThumbnail,
@@ -172,7 +197,7 @@ router.post('/searchBookmark',(req,res) => {
       return promise;
     })().then(() => { // select this org bookmarks to insert `texts` table only bookmarks that is this orgs'
       var promise = new Promise((resolve) => {
-        connection.query(selectThisOrgBookmarks,[orgId]).then((result) => {
+        connection.query(selectThisOrgBookmarks, [orgId]).then((result) => {
           var bookmarksLength = result[0].length;
           var thisOrgBookmarks = result[0];
           var values = {
@@ -184,7 +209,6 @@ router.post('/searchBookmark',(req,res) => {
       });
       return promise;
     }).then((values) => { // make an array that bookmarkIds are in.
-      var bookmarksLength = values.bookmarksLength;
       var thisOrgBookmarks = values.thisOrgBookmarks;
       var promise = new Promise((resolve) => {
         var urls = [];
@@ -225,7 +249,7 @@ router.post('/searchBookmark',(req,res) => {
             var a = i;
             console.log('fetch前' + a);
             client.fetch(urls[a]).then((result) => {
-              bodies.push(result.$('body').text().replace(/\s/g,''));
+              bodies.push(result.$('body').text().replace(/\s/g, ''));
               console.log('waiting....');
               console.log('fetch後' + a);
               if(a + 1 === urls.length){
@@ -239,7 +263,7 @@ router.post('/searchBookmark',(req,res) => {
             });
           })();
           i++;
-        },3000);
+        }, 3000);
       });
       return promise;
     }).then((values) => {
@@ -248,7 +272,7 @@ router.post('/searchBookmark',(req,res) => {
       var promise = new Promise((resolve) => {
         var insertIds = 'INSERT INTO `texts` (`bookmark_id`) VALUES (?)';
         ids.forEach((currentValue, index, array) => {
-          connection.query(insertIds,[currentValue]).then(() => {
+          connection.query(insertIds, [currentValue]).then(() => {
             if(index + 1 === array.length){
               resolve(bodies);
             }
@@ -256,12 +280,12 @@ router.post('/searchBookmark',(req,res) => {
         });
       });
       return promise;
-    }).then((bodies) => {
-      var bodies = bodies;
+    }).then((value) => {
+      var bodies = value;
       var promise = new Promise((resolve) => {
         var updateTexts = 'UPDATE `texts` SET `text` = ? WHERE `id` = ?';
         bodies.forEach((currentValue, index, array) => {
-          connection.query(updateTexts,[currentValue,index + 1]).then(() => {
+          connection.query(updateTexts, [currentValue, index + 1]).then(() => {
             if(index + 1 === array.length){
               resolve();
             }
@@ -277,7 +301,8 @@ router.post('/searchBookmark',(req,res) => {
         resolve(keyWordsForQuery);
       });
       return promise;
-    }).then((keyWordsForQuery) => {
+    }).then((value) => {
+      keyWordsForQuery = value;
       var promise = new Promise((resolve) => {
         var selectBookmarksByTexts = 'SELECT `bookmark_id` FROM `texts` WHERE `text` LIKE "' + keyWordsForQuery + '"';
         connection.query(selectBookmarksByTexts).then((result) => {
@@ -286,11 +311,11 @@ router.post('/searchBookmark',(req,res) => {
         });
       });
       return promise;
-    }).then((hitBookmarks) => {
-      var hitBookmarks = hitBookmarks;
+    }).then((value) => {
+      var hitBookmarks = value;
       var promise = new Promise((resolve) => {
         var idsForQuery = '';
-        hitBookmarks.forEach((currentValue,index,array) => {
+        hitBookmarks.forEach((currentValue, index, array) => {
           index + 1 === array.length ? idsForQuery += currentValue.bookmark_id : idsForQuery += currentValue.bookmark_id + ' OR `bookmark_id` = ';
         });
         resolve(idsForQuery);
@@ -302,13 +327,13 @@ router.post('/searchBookmark',(req,res) => {
         connection.query(selectSearchedBookmarks).then((result) => {
           var searchedBookmarks = result[0];
           resolve(searchedBookmarks);
-        },() => { // when no bookmark hit.
+        }, () => { // when no bookmark hit.
           resolve([]);
         });
       });
       return promise;
-    }).then((searchedBookmarks) => {
-      var searchedBookmarks = searchedBookmarks;
+    }).then((value) => {
+      var searchedBookmarks = value;
       var promise = new Promise((resolve) => {
         var dropTable = 'DROP TABLE `texts`';
         connection.query(dropTable).then(() => {
@@ -317,7 +342,7 @@ router.post('/searchBookmark',(req,res) => {
       });
       return promise;
     }).then((searchedBookmarks) => {
-      res.render('organizationPage.ejs',{
+      res.render('organizationPage.ejs', {
         orgName,
         orgIntroduction,
         orgThumbnail,
@@ -335,8 +360,8 @@ router.post('/searchBookmark',(req,res) => {
         resolve(keyWordsForQueryByTitle);
       });
       return promise;
-    })().then((keyWordsForQueryByTitle) => {
-      var keyWordsForQueryByTitle = keyWordsForQueryByTitle;
+    })().then((value) => {
+      var keyWordsForQueryByTitle = value;
       var promise = new Promise((resolve) => {
         var keyWordsForQueryByDescription = '`description` LIKE "%';
         for(var i = 0; i < keyWords.length; i++){
@@ -354,14 +379,14 @@ router.post('/searchBookmark',(req,res) => {
       var keyWordsForQueryByDescription = values.keyWordsForQueryByDescription;
       var selectBookmarksByTitleAndDescription = 'SELECT * FROM `bookmarks` WHERE `org_id` = ? AND ((' + keyWordsForQueryByTitle + '") OR (' + keyWordsForQueryByDescription + '"))';
       var promise = new Promise((resolve) => {
-        connection.query(selectBookmarksByTitleAndDescription,[orgId]).then((result) => {
+        connection.query(selectBookmarksByTitleAndDescription, [orgId]).then((result) => {
           var searchedBookmarks = result[0];
           resolve(searchedBookmarks);
         });
       });
       return promise;
     }).then((searchedBookmarks) => {
-      res.render('organizationPage.ejs',{
+      res.render('organizationPage.ejs', {
         orgName,
         orgIntroduction,
         orgThumbnail,
@@ -372,18 +397,18 @@ router.post('/searchBookmark',(req,res) => {
   }else if(searchFromTitle === 'on' && searchFromDescription === undefined && searchFromTextsOnSites === 'on'){
     (() => {
       var promise = new Promise((resolve) => {
-        var keyWordsForQuery = '%';
+        keyWordsForQuery = '%';
         for(var i = 0; i < keyWords.length; i++){
           i + 1 === keyWords.length ? keyWordsForQuery += keyWords[i] + '%' : keyWordsForQuery += keyWords[i] + '%" AND `title` LIKE "%';
         }
         resolve(keyWordsForQuery);
       });
       return promise;
-    })().then((keyWordsForQuery) => {
-      var keyWordsForQuery = keyWordsForQuery;
+    })().then((value) => {
+      keyWordsForQuery = value;
       var promise = new Promise((resolve) => {
-        var selectBookmarksByTitle = 'SELECT `bookmark_id` FROM `bookmarks` WHERE `title` LIKE "' + keyWordsForQuery + '" AND `org_id` = ?';
-        connection.query(selectBookmarksByTitle,[orgId]).then((result) => {
+        selectBookmarksByTitle = 'SELECT `bookmark_id` FROM `bookmarks` WHERE `title` LIKE "' + keyWordsForQuery + '" AND `org_id` = ?';
+        connection.query(selectBookmarksByTitle, [orgId]).then((result) => {
           var searchedByTitleBookmarkIds = result[0];
           resolve(searchedByTitleBookmarkIds);
         });
@@ -915,16 +940,24 @@ router.post('/searchBookmark',(req,res) => {
       var bookmarkIdsSearchedByText = values.bookmarkIdsSearchedByText;
       var promise = new Promise((resolve) => {
         var idsFromText = [];
-        bookmarkIdsSearchedByText.forEach((currentValue, index, array) => {
-          idsFromText.push(currentValue.bookmark_id);
-          if(index + 1 === array.length){
-            values = {
-              idsFromDescription,
-              idsFromText,
-            };
-            resolve(values);
-          }
-        });
+        if(bookmarkIdsSearchedByText.length > 0){
+          bookmarkIdsSearchedByText.forEach((currentValue, index, array) => {
+            idsFromText.push(currentValue.bookmark_id);
+            if(index + 1 === array.length){
+              values = {
+                idsFromDescription,
+                idsFromText,
+              };
+              resolve(values);
+            }
+          });
+        }else{
+          values = {
+            idsFromDescription,
+            idsFromText,
+          };
+          resolve(values);
+        }
       });
       return promise;
     }).then((values) => {
@@ -980,6 +1013,96 @@ router.post('/searchBookmark',(req,res) => {
         searchedBookmarks,
       });
     });
+  }else if(searchFromTitle === 'on' && searchFromDescription === 'on' && searchFromTextsOnSites === 'on'){
+    (() => {
+      var promise = new Promise((resolve) => {
+        var keyWordsForQueryWithTitle = '%';
+        for(var i = 0; i < keyWords.length;  i++){
+          if(i + 1 === keyWordsForQueryWithTitle.length){
+            keyWordsForQueryWithTitle += keyWords[i] + '%"';
+            resolve(keyWordsForQueryWithTitle);
+          }else{
+            keyWordsForQueryWithTitle += keyWords[i] + '%" AND `title` LIKE "%';
+          }
+        }
+      });
+      return promise;
+    })().then((value) => {
+      var keyWordsForQueryWithTitle = value;
+      var promise = new Promise((resolve) => {
+        var keyWordsForQueryWithDescription = '%';
+        for(var i = 0; i < keyWords.length;  i++){
+          if(i + 1 === keyWords.length){
+            keyWordsForQueryWithDescription += keyWords[i] + '%"';
+            var values = {
+              keyWordsForQueryWithTitle,
+              keyWordsForQueryWithDescription,
+            };
+            resolve(values);
+          }else{
+            keyWordsForQueryWithDescription += keyWords[i] + '%" AND `description` LIKE "%';
+          }
+        }
+      });
+      return promise;
+    }).then((values) => {
+      var keyWordsForQueryWithDescription = values.keyWordsForQueryWithDescription;
+      var keyWordsForQueryWithTitle = values.keyWordsForQueryWithTitle;
+      var promise = new Promise((resolve) => {
+        var selectIdsFromTextOrDescription = 'SELECT `bookmark_id` FROM `bookmarks` WHERE (( `title` LIKE "' + keyWordsForQueryWithTitle + ') OR (`description` LIKE "' + keyWordsForQueryWithDescription + ')) AND `org_id` = ?';
+        connection.query(selectIdsFromTextOrDescription,[orgId]).then((result) => {
+          var selectedBookmarkIds = result[0];
+          resolve(selectedBookmarkIds);
+        });
+      });
+      return promise;
+    }).then((value) => {
+      var selectedBookmarkIds = value;
+      var promise = new Promise((resolve) => {
+        var idsFromTitleOrDescription = [];
+        if(selectedBookmarkIds.length > 0){
+          selectedBookmarkIds.forEach((currentValue, index, array) => {
+            idsFromTitleOrDescription.push(currentValue.bookmark_id);
+            if(index + 1 === array.length){
+              resolve(idsFromTitleOrDescription);
+            }
+          });
+        }else{
+          resolve(idsFromTitleOrDescription);
+        }
+      });
+      return promise;
+    }).then((value) => {
+      var idsFromTitleOrDescription = value;
+      var promise = new Promise((resolve) => {
+        var selectThisOrgBookmarkIds = 'SELECT `bookmark_id` FROM `bookmarks` WHERE `bookmark_id` NOT IN ? AND `org_id` = ?';
+        connection.query(selectThisOrgBookmarkIds,[idsFromTitleOrDescription,orgId]).then((result) => {
+          var selectedBookmarkIds = result[0];
+          var values = {
+            idsFromTitleOrDescription,
+            selectedBookmarkIds,
+          };
+          resolve(values);
+        },() => {
+          selectThisOrgBookmarkIds = 'SELECT `bookmark_id` FROM `bookmarks` WHERE `org_id` = ?';
+          connection.query(selectThisOrgBookmarkIds,[orgId]).then((result) => {
+            var selectedBookmarkIds = result[0];
+            var values = {
+              idsFromTitleOrDescription,
+              selectedBookmarkIds,
+            };
+            resolve(values);
+          });
+        });
+      });
+      return promise;
+    }).then((value) => {
+      var selectedBookmarkIds = values.selectedBookmarkIds;
+      var idsFromTitleOrDescription = values.idsFromTitleOrDescription;
+      var promise = new Promise((resolve) => {
+
+      })
+    })
   }
 });
 module.exports = router;
