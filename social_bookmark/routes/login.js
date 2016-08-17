@@ -124,7 +124,6 @@ router.post('/', (req, res) => {
     var userName = eMailOrUserName;
     if(checkForm.test(userName)){
       (() => {
-        console.log('Hello!');
         var promise = new Promise((resolve) => {
           connection.query('SELECT `user_id` FROM `users` WHERE `name` = ?', [userName]).then((result) => {
             if(result[0].length === 1){
