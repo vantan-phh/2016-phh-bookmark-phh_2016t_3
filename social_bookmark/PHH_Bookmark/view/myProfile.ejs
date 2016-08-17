@@ -8,12 +8,11 @@
   <body>
     <% include layout %>
     <main>
-      <a href="/PHH_Bookmark/topPage"><input type="button" value="topPage"></a>
-      <p><%= nickName %></p>
+      <p id="nickname"><%= nickName %></p>
       <% if(thumbnailPath) {%>
-        <img src="<%= thumbnailPath %>" width="128" height="128"></img>
+        <img id="image" src="<%= thumbnailPath %>" width="128" height="128"></img>
       <% } %>
-      <p><%= introduction %></p>
+      <p id="intro"><%= introduction %></p>
     </main>
   </body>
 </html>

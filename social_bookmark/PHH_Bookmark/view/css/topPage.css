@@ -2,7 +2,7 @@
           コンテンツ
 -----------------------------*/
 main{
-  background-color: #fafafa;
+  background-color: #fefefe;
   border: solid #e1e1e1 1px;
   position: absolute;
   left: 400px;
@@ -20,7 +20,7 @@ main{
   padding: 5px;
   text-decoration: none;
 }
-  #goMyPage:hover{
-    background-color: black;
-    color: #00ff00;
-  }
+#goMyPage:hover{
+  background-color: black;
+  color: #00ff00;
+}
