@@ -1,27 +1,3 @@
-*{
-  box-sizing: border-box;
-}
-body{
-  background-color: #fafafa;
-  margin: 0px;
-}
-/*----------------------------/
-            ヘッダー
------------------------------*/
-header{
-  background-color: white;
-  border-bottom: solid #ccc 1px;
-  padding: 10px;
-  width: 1279px;
-  height: 60px;
-}
-
-#headerFavicon img{
-  position: absolute;
-  left: 140px;
-  top: 5px;
-}
-
 /*----------------------------/
           コンテンツ
 -----------------------------*/
