@@ -16,13 +16,33 @@ main{
   left: 250px;
   top: 50px;
 }
+
 #image{
   position: absolute;
   left: 100px;
   top: 40px;
 }
+
 #intro{
   position: absolute;
   left: 250px;
   top: 100px;
+}
+
+#goEditProfile{
+  background: linear-gradient(#07d34f, #05b142);
+  border-radius: 2px;
+  color: white;
+  font-size: 15px;
+  text-decoration: none;
+  text-align: center;
+  padding: 7px;
+  width: 100px;
+  height: 30px;
+  position: absolute;
+  left: 500px;
+  top: 200px;
+}
+#goEditProfile:hover{
+  background: linear-gradient(#049336, #036b27);
 }
