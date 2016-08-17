@@ -97,67 +97,68 @@ header{
 /*----------------------------/
           コンテンツ
 -----------------------------*/
-#orgName{
-  width: 500px;
+main{
+  background-color: #fafafa;
+  border: solid #e1e1e1 1px;
   position: absolute;
-  left: 500px;
-  top: 100px;
+  left: 250px;
+  margin-top: 50px;
+  padding-left: 20px;
+  width: 800px;
+  height: 400px;
 }
 
-#img{
+#name{
   position: absolute;
-  left: 150px;
+  left: 450px;
   top: 100px;
+}
+#setName{
+  outline-color: green;
+  position: absolute;
+  left: 450px;
+  top: 130px;
+}
+#errorName{
+  color: red;
+  position: absolute;
+  left: 450px;
+  top: 135px;
 }
 
 #introduction{
-  width: 500px;
   position: absolute;
-  left: 520px;
-  top: 160px;
+  left: 450px;
+  top: 180px;
+}
+#setIntro{
+  width: 200px;
+  height: 100px;
+  outline-color: green;
+  resize: none;
+  position: absolute;
+  left: 450px;
+  top: 210px;
+}
+#errorIntro{
+  color: red;
+  position: absolute;
+  left: 450px;
+  top: 235px;
 }
 
-#search{
-  width: 172px;
+#image{
   position: absolute;
-  left: 200px;
+  left: 100px;
+  top: 100px;
+}
+#file{
+  position: absolute;
+  left: 100px;
   top: 300px;
 }
-#search input{
-  outline-color: green;
-}
-#searchHit{
+#submit{
   position: absolute;
-  left: 200px;
-  top: 340px;
-}
-#notFound{
-  position: absolute;
-  left: 200px;
-  top: 340px;
-}
-#checkUser{
-  width: 300px;
-  position: absolute;
-  left: 200px;
-  top: 340px;
-}
-
-#users{
-  background-color: #ffffff;
-  border: solid green 1px;
-  width: 300px;
-  height: auto;
-  min-height: 100%;
-  padding: 10px 0 10px 5px;
-  position: relative;
-  left: 500px;
-  top:  250px;
-}
-
-#management{
-  width: 128px;
-  position: absolute;
-  left: 670px;
-  top: 289px;
+  left: 300px;
+  top: 300px;
 }
