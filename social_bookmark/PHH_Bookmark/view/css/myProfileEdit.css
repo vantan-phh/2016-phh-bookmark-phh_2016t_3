@@ -11,6 +11,17 @@ main{
   left: 300px;
 }
 
+#image{
+  position: absolute;
+  left: 100px;
+  top: 50px;
+}
+#imageFile{
+  position: absolute;
+  left: 300px;
+  top: 100px;
+}
+
 #readNickname{
   font-size: 13px;
   position: absolute;
@@ -31,22 +42,11 @@ main{
   top: 65px;
 }
 
-#image{
-  position: absolute;
-  left: 100px;
-  top: 50px;
-}
-#imageFile{
-  position: absolute;
-  left: 300px;
-  top: 100px;
-}
-
 #readIntro{
   font-size: 13px;
   position: absolute;
   left: 250px;
-  top: 315px;
+  top: 285px;
 }
 .intro{
   outline-color: green;
@@ -55,12 +55,12 @@ main{
   height: 50px;
   position: absolute;
   left: 250px;
-  top: 350px;
+  top: 320px;
 }
 #errorIntro{
   position: absolute;
   left: 250px;
-  top: 155px;
+  top: 325px;
 }
 
 #submit{

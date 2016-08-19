@@ -1,0 +1,56 @@
+/*----------------------------/
+          コンテンツ
+-----------------------------*/
+main{
+  background-color: #fefefe;
+  border: solid #e1e1e1 1px;
+  margin-top: 50px;
+  width: 700px;
+  height: 800px;
+  position: absolute;
+  left: 300px;
+}
+
+#readAdmin{
+  position: absolute;
+  left: 150px;
+  top: 200px;
+}
+
+#adminList{
+  background-color: lightblue;
+  opacity: 0.8;
+  width: 400px;
+  height: 200px;
+  position: absolute;
+  left: 150px;
+  top: 230px;
+}
+.admin{
+  margin: 5px;
+  position: relative;
+  left: 150px;
+  top: 230px;
+}
+
+#readMember{
+  position: absolute;
+  left: 150px;
+  top: 500px;
+}
+
+#memberList{
+  background-color: lightgreen;
+  opacity: 0.8;
+  width: 400px;
+  height: 200px;
+  position: absolute;
+  left: 150px;
+  top: 530px;
+}
+.member{
+  margin: 5px;
+  position: relative;
+  left: 150px;
+  top: 505px;
+}
