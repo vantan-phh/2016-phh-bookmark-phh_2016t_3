@@ -158,6 +158,7 @@ router.post('/', (req, res) => {
         });
       }
     });
+    return promise;
   }).then(() => {
     var promise = new Promise((resolve) => {
       if(!checkInjection.test(title)){
