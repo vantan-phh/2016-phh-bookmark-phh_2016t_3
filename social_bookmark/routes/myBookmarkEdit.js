@@ -1,79 +1,107 @@
 var express = require('express');
-var client = require('cheerio-httpcli');
+
 var router = express.Router();
 var connection = require('../mysqlConnection');
+
 var bookmarkId;
 var url;
 
-router.get('/',function(req,res){
+router.get('/', (req, res) => {
   bookmarkId = req.query.result;
   var selectBookmarkData = 'SELECT * FROM `bookmarks` WHERE `bookmark_id` = ?';
-  connection.query(selectBookmarkData,[bookmarkId],function(err,result){
-    var title = result[0].title;
-    url = result[0].url;
-    var description = result[0].description;
-    res.render('myBookmarkEdit.ejs',{
-      title : title,
-      url : url,
-      description : description
+  connection.query(selectBookmarkData, [bookmarkId]).then((result) => {
+    var title = result[0][0].title;
+    url = result[0][0].url;
+    var description = result[0][0].description;
+    res.render('myBookmarkEdit.ejs', {
+      title,
+      url,
+      description,
     });
   });
 });
 
-router.post('/',function(req,res){
+router.post('/', (req, res) => {
   var title = req.body.title;
   var description = req.body.description;
-  var userId = req.session.user_id;
   var updateBookmarkData = 'UPDATE `bookmarks` SET `title` = ?, `description` = ? WHERE `bookmark_id` = ?';
   var checkInjection = /[%;+-]+/g;
   var checkSpace = /[\S]+/g;
-  if(checkSpace.test(title)){
-    if(!checkInjection.test(description)){
+  (() => {
+    var promise = new Promise((resolve) => {
+      if(checkSpace.test(title)){
+        resolve();
+      }else{
+        res.render('myBookmarkEdit.ejs', {
+          titleNotice : 'タイトルを入力してください',
+          description,
+          title,
+          url,
+        });
+      }
+    });
+    return promise;
+  })().then(() => {
+    var promise = new Promise((resolve) => {
+      if(!checkInjection.test(description)){
+        resolve();
+      }else{
+        res.render('myBookmarkEdit.ejs', {
+          descriptionNotice : 'セキュリティ上の観点から説明文に「+, -, %, ;」は使えません',
+          description,
+          title,
+          url,
+        });
+      }
+    });
+    return promise;
+  }).then(() => {
+    var promise = new Promise((resolve) => {
       if(!checkInjection.test(title)){
-        if(title.length <= 32){
-          if(description.length <= 128){
-            connection.query(updateBookmarkData,[title,description,bookmarkId]);
-            res.redirect('/PHH_Bookmark/myPage');
-          }else{
-            res.render('myBookmarkEdit.ejs',{
-              descriptionNotice : '説明文は128文字以内です',
-              title : title,
-              description : description,
-              url : url
-            });
-          }
-        }else{
-          res.render('myBookmarkEdit.ejs',{
-            titleNotice : 'タイトルは32文字以内です',
-            title : title,
-            description : description,
-            url : url
-          });
-        }
+        resolve();
       }else{
         res.render('myBookmarkEdit.ejs', {
           titleNotice : 'セキュリティ上の観点からタイトルに「+, -, %, ;」は使えません',
-          title : title,
-          description : description,
-          url : url
+          title,
+          description,
+          url,
         });
       }
-    }else{
-      res.render('myBookmarkEdit.ejs', {
-        descriptionNotice : 'セキュリティ上の観点から説明文に「+, -, %, ;」は使えません',
-        description : description,
-        title : title,
-        url : url
-      });
-    }
-  }else{
-    res.render('myBookmarkEdit.ejs', {
-      titleNotice : 'タイトルを入力してください',
-      description : description,
-      title : title,
-      url : url
     });
-  }
+    return promise;
+  }).then(() => {
+    var promise = new Promise((resolve) => {
+      if(title.length <= 32){
+        resolve();
+      }else{
+        res.render('myBookmarkEdit.ejs', {
+          titleNotice : 'タイトルは32文字以内です',
+          title,
+          description,
+          url,
+        });
+      }
+    });
+    return promise;
+  }).then(() => {
+    var promise = new Promise((resolve) => {
+      if(description.length <= 128){
+        resolve();
+      }else{
+        res.render('myBookmarkEdit.ejs', {
+          descriptionNotice : '説明文は128文字以内です',
+          title,
+          description,
+          url,
+        });
+      }
+    });
+    return promise;
+  }).then(() => {
+    connection.query(updateBookmarkData, [title, description, bookmarkId]).then(() => {
+      res.redirect('/PHH_Bookmark/myPage');
+    });
+  });
 });
 
 module.exports = router;

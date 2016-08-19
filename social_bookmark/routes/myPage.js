@@ -25,58 +25,43 @@ router.post('/', (req, res) => {
   var checkUrl = /^(https?)(:\/\/[-_.!~*\'()a-zA-Z0-9;\/?:\@&=+\$,%#]+)$/;
   var checkInjection = /[%;+-]+/g;
   var query = 'SELECT * FROM `bookmarks` WHERE `user_id` = ?';
-  if(checkUrl.test(url)){
-    if(!checkInjection.test(title)){
-      if(!checkInjection.test(description)){
-        if(title.length <= 32){
-          if(description.length <= 128){
-            (() => {
-              var promise = new Promise((resolve) => {
-                client.fetch(url).then((result) => {
-                  var text = result.$('body').text().replace(/\s/g, '');
-                  resolve(text);
-                }, () => {
-                  res.render('organizationPage.ejs', {
-                    bookmarkData,
-                    url,
-                    title,
-                    description,
-                    networkNotice : 'URLが正しいかどうかをご確認の上、ネットワーク接続をお確かめ下さい。',
-                  });
-                });
-              });
-              return promise;
-            })().then((value) => {
-              var text = value;
-              var createBookmark = 'INSERT INTO `bookmarks` (`user_id`, `title`, `url`, `description`, `text`) VALUES (?, ?, ?, ?, ?)';
-              connection.query(createBookmark, [userId, title, url, description, text]).then(() => {
-                res.redirect('/PHH_Bookmark/myPage');
-              });
-            });
-          }else{
-            connection.query(query, [userId]).then((result) => {
-              bookmarkData = result[0];
-              res.render('myPage.ejs', {
-                bookmarkData,
-                url,
-                title,
-                description,
-                descriptionNotice : '説明文は128文字以内です',
-              });
-            });
-          }
-        }else{
-          connection.query(query, [userId]).then((result) => {
-            bookmarkData = result[0];
-            res.render('myPage.ejs', {
-              bookmarkData,
-              url,
-              title,
-              description,
-              titleNotice : 'タイトルは32文字以内です',
-            });
+  (() => {
+    var promise = new Promise((resolve) => {
+      if(checkUrl.test(url)){
+        resolve();
+      }else{
+        connection.query(query, [userId]).then((result) => {
+          bookmarkData = result[0];
+          res.render('myPage.ejs', {
+            bookmarkData,
+            urlNotice : 'http://もしくはhttp://から始まる正しいURLを入力してください',
           });
-        }
+        });
+      }
+    });
+    return promise;
+  })().then(() => {
+    var promise = new Promise((resolve) => {
+      if(!checkInjection.test(title)){
+        resolve();
+      }else{
+        connection.query(query, [userId]).then((result) => {
+          bookmarkData = result[0];
+          res.render('myPage.ejs', {
+            bookmarkData,
+            url,
+            title,
+            description,
+            titleNotice : 'セキュリティ上の観点からタイトルに「+, -, %, ;」は使えません',
+          });
+        });
+      }
+    });
+    return promise;
+  }).then(() => {
+    var promise = new Promise((resolve) => {
+      if(!checkInjection.test(description)){
+        resolve();
       }else{
         connection.query(query, [userId]).then((result) => {
           bookmarkData = result[0];
@@ -89,27 +74,67 @@ router.post('/', (req, res) => {
           });
         });
       }
-    }else{
-      connection.query(query, [userId]).then((result) => {
-        bookmarkData = result[0];
-        res.render('myPage.ejs', {
+    });
+    return promise;
+  }).then(() => {
+    var promise = new Promise((resolve) => {
+      if(title.length <= 32){
+        resolve();
+      }else{
+        connection.query(query, [userId]).then((result) => {
+          bookmarkData = result[0];
+          res.render('myPage.ejs', {
+            bookmarkData,
+            url,
+            title,
+            description,
+            titleNotice : 'タイトルは32文字以内です',
+          });
+        });
+      }
+    });
+    return promise;
+  }).then(() => {
+    var promise = new Promise((resolve) => {
+      if(description.length <= 128){
+        resolve();
+      }else{
+        connection.query(query, [userId]).then((result) => {
+          bookmarkData = result[0];
+          res.render('myPage.ejs', {
+            bookmarkData,
+            url,
+            title,
+            description,
+            descriptionNotice : '説明文は128文字以内です',
+          });
+        });
+      }
+    });
+    return promise;
+  }).then(() => {
+    var promise = new Promise((resolve) => {
+      client.fetch(url).then((result) => {
+        var text = result.$('body').text().replace(/\s/g, '');
+        resolve(text);
+      }, () => {
+        res.render('organizationPage.ejs', {
           bookmarkData,
           url,
           title,
           description,
-          titleNotice : 'セキュリティ上の観点からタイトルに「+, -, %, ;」は使えません',
+          networkNotice : 'URLが正しいかどうかをご確認の上、ネットワーク接続をお確かめ下さい。',
         });
       });
-    }
-  }else{
-    connection.query(query, [userId]).then((result) => {
-      bookmarkData = result[0];
-      res.render('myPage.ejs', {
-        bookmarkData,
-        urlNotice : 'http://もしくはhttp://から始まる正しいURLを入力してください',
-      });
     });
-  }
+    return promise;
+  }).then((value) => {
+    var text = value;
+    var createBookmark = 'INSERT INTO `bookmarks` (`user_id`, `title`, `url`, `description`, `text`) VALUES (?, ?, ?, ?, ?)';
+    connection.query(createBookmark, [userId, title, url, description, text]).then(() => {
+      res.redirect('/PHH_Bookmark/myPage');
+    });
+  });
 });
 
 router.post('/submitUrl', (req, res) => {
