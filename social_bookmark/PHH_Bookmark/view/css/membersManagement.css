@@ -47,16 +47,24 @@
   top: 340px;
 }
 
-#users{
-  background-color: #ffffff;
-  border: solid green 1px;
+#memberList{
+  background-color: lightgreen;
+  opacity: 0.8;
   width: 300px;
-  height: auto;
-  min-height: 100%;
-  padding: 10px 0 10px 5px;
+  height: 200px;
+  position: absolute;
+  left: 500px;
+  top: 310px;
+}
+.members{
+  margin: 10px 0 10px 10px;
+  width: 280px;
   position: relative;
   left: 500px;
   top:  250px;
+}
+.members input{
+  float: right;
 }
 
 #management{

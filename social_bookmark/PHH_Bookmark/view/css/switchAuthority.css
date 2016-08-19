@@ -14,9 +14,8 @@ main{
 #readAdmin{
   position: absolute;
   left: 150px;
-  top: 200px;
+  top: 100px;
 }
-
 #adminList{
   background-color: lightblue;
   opacity: 0.8;
@@ -24,21 +23,24 @@ main{
   height: 200px;
   position: absolute;
   left: 150px;
-  top: 230px;
+  top: 130px;
 }
 .admin{
-  margin: 5px;
+  margin: 10px 0 10px 10px;
+  width: 380px;
   position: relative;
   left: 150px;
-  top: 230px;
+  top: 130px;
+}
+.admin input{
+  float: right;
 }
 
 #readMember{
   position: absolute;
   left: 150px;
-  top: 500px;
+  top: 400px;
 }
-
 #memberList{
   background-color: lightgreen;
   opacity: 0.8;
@@ -46,11 +48,15 @@ main{
   height: 200px;
   position: absolute;
   left: 150px;
-  top: 530px;
+  top: 430px;
 }
 .member{
-  margin: 5px;
+  margin: 10px 0 10px 10px;
+  width: 380px;
   position: relative;
   left: 150px;
-  top: 505px;
+  top: 430px;
+}
+.member input{
+  float: right;
 }

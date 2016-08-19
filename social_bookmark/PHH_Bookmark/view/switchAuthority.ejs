@@ -10,15 +10,15 @@
     <main>
       <div id="readAdmin">管理者リスト</div>
       <div id="adminList"></div>
-        <% if(typeof adminUserNames !== 'undefined'){ %>
-          <% for(var i = 0; i < adminUserNames.length; i++){ %>
-            <div class="admin"><%= adminNickNames[i] %><%= adminUserNames[i] %>
+      <% if(typeof adminUserNames !== 'undefined'){ %>
+        <% for(var i = 0; i < adminUserNames.length; i++){ %>
+          <div class="admin"><%= adminNickNames[i] %><%= adminUserNames[i] %>
             <% if(myUserName === adminUserNames[i]){ %>
               <input type="button" value="管理者権限を放棄" id="renounce">
-            </div>
             <% } %>
-          <% } %>
+          </div>
         <% } %>
+      <% } %>
 
       <form action="/PHH_Bookmark/switchAuthority/renounce" method="post" name="renounce">
         <input type="hidden" name="result">
