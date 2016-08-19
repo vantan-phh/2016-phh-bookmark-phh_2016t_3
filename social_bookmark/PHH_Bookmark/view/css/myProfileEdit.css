@@ -69,7 +69,8 @@ main{
   border-radius: 2px;
   color: white;
   font-size: 15px;
-  text-align: center;
+  text-shadow: 0.5px 0.5px 0 black;
+  width: 70px;
   height: 30px;
   position: absolute;
   left: 500px;

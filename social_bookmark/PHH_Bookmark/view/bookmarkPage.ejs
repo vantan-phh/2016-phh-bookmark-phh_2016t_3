@@ -3,30 +3,34 @@
   <head>
     <meta charset="utf-8">
     <title>bookmarkComment</title>
+    <link rel="stylesheet" type="text/css" href="/css/bookmarkPage.css">
   </head>
   <body>
-    <div><%= bookmark[0].title %></div>
-    <a href="<%= bookmark[0].url %>"><%= bookmark[0].url%></a>
-    <div><%= bookmark[0].description %></div>
-    <% if(typeof comments !== 'undefined'){ %>
-      <% for(var i = 0; i < comments.length; i++){ %>
-        <div><%= comments[i].body %></div>
-        <div><%= commentNickName[i] %></div>
-        <% if(browsingUserId === comments[i].user_id){ %>
-          <input type="button" value="削除" name="<%= comments[i].comment_id %>" class="delete">
+    <% include layout %>
+    <main>
+      <div id="title"><%= bookmark[0].title %></div>
+      <a id="url" href="<%= bookmark[0].url %>"><%= bookmark[0].url%></a>
+      <div id="desc"><%= bookmark[0].description %></div>
+      <form action="/PHH_Bookmark/bookmarkPage" method="post">
+        <input id="commentInput" type="text" placeholder="コメントを入力" name="comment_text">
+        <% if(typeof commentNotice !== 'undefined'){ %>
+          <p id="errorComment"><%= commentNotice %></p>
+        <% } %>
+        <button id="submit" type="submit">投稿</button>
+      </form>
+      <% if(typeof comments !== 'undefined'){ %>
+        <% for(var i = 0; i < comments.length; i++){ %>
+          <div class="commentBody"><%= comments[i].body %></div>
+          <div class="commentName"><%= commentNickName[i] %></div>
+          <% if(browsingUserId === comments[i].user_id){ %>
+            <input type="button" value="削除" name="<%= comments[i].comment_id %>" class="delete">
+          <% } %>
         <% } %>
       <% } %>
-    <% } %>
-    <form action="/PHH_Bookmark/bookmarkPage/delete" method="post" name="deleteComment">
-      <input type="hidden" name="result">
-    </form>
-    <form action="/PHH_Bookmark/bookmarkPage" method="post">
-      <input type="text" placeholder="コメントを入力" name="comment_text">
-      <% if(typeof commentNotice !== 'undefined'){ %>
-        <p><%= commentNotice %></p>
-      <% } %>
-      <button type="submit">投稿</button>
-    </form>
+      <form action="/PHH_Bookmark/bookmarkPage/delete" method="post" name="deleteComment">
+        <input type="hidden" name="result">
+      </form>
+    </main>
   </body>
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
   <script>

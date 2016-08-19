@@ -1,0 +1,58 @@
+/*----------------------------/
+          コンテンツ
+-----------------------------*/
+main{
+  background-color: #fefefe;
+  border: solid #e1e1e1 1px;
+  margin-top: 50px;
+  width: 700px;
+  min-height: 520px;
+  overflow: auto;
+  position: absolute;
+  left: 300px;
+}
+
+#title{
+  position: absolute;
+  left: 200px;
+  top: 50px;
+}
+#url{
+  position: absolute;
+  left: 200px;
+  top: 80px;
+}
+#desc{
+  position: absolute;
+  left: 200px;
+  top: 110px;
+}
+
+.commentBody{
+  position: relative;
+  left: 200px;
+  top: 200px;
+}
+.commentName{
+  font-size: 12px;
+  position: relative;
+  left: 200px;
+  top: 160px;
+}
+.delete{
+  position: relative;
+  left: 400px;
+  top: 160px;
+}
+
+#commentInput{
+  position: relative;
+  left: 200px;
+  top: 170px;
+}
+
+#submit{
+  position: relative;
+  left: 200px;
+  top: 170px;
+}
