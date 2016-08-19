@@ -18,16 +18,21 @@
         <% } %>
         <button id="submit" type="submit">投稿</button>
       </form>
-      <div id="comment">
-      <% if(typeof comments !== 'undefined'){ %>
-        <% for(var i = 0; i < comments.length; i++){ %>
-          <div class="commentName"><%= commentNickName[i] %></div>
-          <div class="commentBody"><%= comments[i].body %></div>
-          <% if(browsingUserId === comments[i].user_id){ %>
-            <a value="削除" name="<%= comments[i].comment_id %>" class="delete">削除</a>
+      <div id="wrapper">
+          <% if(typeof comments !== 'undefined'){ %>
+            <% for(var i = 0; i < comments.length; i++){ %>
+              <div id="test">
+                <div id="comment">
+                  <img id="avatar" src="http://res.cloudinary.com/dy4f7hul5/image/upload/v1469676799/iucwtxf12o9ztvb3tm14.png" width="40px" height="40px">
+                  <div class="commentName"><%= commentNickName[i] %></div>
+                  <div class="commentBody"><%= comments[i].body %></div>
+                  <% if(browsingUserId === comments[i].user_id){ %>
+                    <a value="削除" name="<%= comments[i].comment_id %>" class="delete">削除</a>
+                  <% } %>
+                </div>
+              </div>
+            <% } %>
           <% } %>
-        <% } %>
-      <% } %>
       </div>
       <form action="/PHH_Bookmark/bookmarkPage/delete" method="post" name="deleteComment">
         <input type="hidden" name="result">
