@@ -20,6 +20,7 @@ main{
 }
 #search input{
   outline-color: green;
+  outline-width: 1px;
 }
 
 #addBookmark{
@@ -28,6 +29,7 @@ main{
 }
 #addBookmark input{
   outline-color: green;
+  outline-width: 1px;
   padding: 5px;
 }
 
@@ -71,11 +73,13 @@ main{
   margin-left: 20px;
 }
 .bDescription{
-  margin-left: 20px;
+  position: relative;
+  left: 20px;
 }
 .bEditBtn{
-  margin-left: 20px;
-  margin-bottom: 20px;
+  position: relative;
+  top: 0;
+  left: 150px;
 }
 
 #deleteBtn{

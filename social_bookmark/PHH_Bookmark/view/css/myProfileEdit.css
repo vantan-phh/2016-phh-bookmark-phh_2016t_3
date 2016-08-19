@@ -4,17 +4,77 @@
 main{
   background-color: #fefefe;
   border: solid #e1e1e1 1px;
-  position: absolute;
-  left: 400px;
   margin-top: 50px;
-  padding-left: 20px;
-  width: 500px;
-  height: 300px;
-}
-#search{
+  width: 700px;
+  height: 500px;
   position: absolute;
+  left: 300px;
 }
-#list{
+
+#readNickname{
+  font-size: 13px;
   position: absolute;
+  left: 250px;
+  top: 225px;
+}
+.nickname{
+  outline-color: green;
+  outline-width: 1px;
+  position: absolute;
+  left: 250px;
+  top: 260px;
+}
+#errorNickname{
+  color: red;
+  position: absolute;
+  left: 300px;
+  top: 65px;
+}
+
+#image{
+  position: absolute;
+  left: 100px;
+  top: 50px;
+}
+#imageFile{
+  position: absolute;
+  left: 300px;
   top: 100px;
+}
+
+#readIntro{
+  font-size: 13px;
+  position: absolute;
+  left: 250px;
+  top: 315px;
+}
+.intro{
+  outline-color: green;
+  outline-width: 1px;
+  resize: none;
+  height: 50px;
+  position: absolute;
+  left: 250px;
+  top: 350px;
+}
+#errorIntro{
+  position: absolute;
+  left: 250px;
+  top: 155px;
+}
+
+#submit{
+  background: linear-gradient(#07d34f, #05b142);
+  border: none;
+  border-radius: 2px;
+  color: white;
+  font-size: 15px;
+  text-align: center;
+  height: 30px;
+  position: absolute;
+  left: 500px;
+  top: 450px;
+}
+#submit:hover{
+  background: linear-gradient(#049336, #036b27);
 }
