@@ -18,15 +18,17 @@
         <% } %>
         <button id="submit" type="submit">投稿</button>
       </form>
+      <div id="comment">
       <% if(typeof comments !== 'undefined'){ %>
         <% for(var i = 0; i < comments.length; i++){ %>
-          <div class="commentBody"><%= comments[i].body %></div>
           <div class="commentName"><%= commentNickName[i] %></div>
+          <div class="commentBody"><%= comments[i].body %></div>
           <% if(browsingUserId === comments[i].user_id){ %>
-            <input type="button" value="削除" name="<%= comments[i].comment_id %>" class="delete">
+            <a value="削除" name="<%= comments[i].comment_id %>" class="delete">削除</a>
           <% } %>
         <% } %>
       <% } %>
+      </div>
       <form action="/PHH_Bookmark/bookmarkPage/delete" method="post" name="deleteComment">
         <input type="hidden" name="result">
       </form>

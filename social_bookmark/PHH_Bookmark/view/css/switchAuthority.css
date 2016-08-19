@@ -20,7 +20,8 @@ main{
   background-color: lightblue;
   opacity: 0.8;
   width: 400px;
-  height: 200px;
+  min-height: 200px;
+  overflow: auto;
   position: absolute;
   left: 150px;
   top: 130px;
@@ -45,7 +46,8 @@ main{
   background-color: lightgreen;
   opacity: 0.8;
   width: 400px;
-  height: 200px;
+  min-height: 200px;
+  overflow: auto;
   position: absolute;
   left: 150px;
   top: 430px;

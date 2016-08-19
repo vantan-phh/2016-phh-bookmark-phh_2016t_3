@@ -6,8 +6,7 @@ main{
   border: solid #e1e1e1 1px;
   margin-top: 50px;
   width: 700px;
-  min-height: 520px;
-  overflow: auto;
+  min-height: 500px;
   position: absolute;
   left: 300px;
 }
@@ -28,24 +27,9 @@ main{
   top: 110px;
 }
 
-.commentBody{
-  position: relative;
-  left: 200px;
-  top: 200px;
-}
-.commentName{
-  font-size: 12px;
-  position: relative;
-  left: 200px;
-  top: 160px;
-}
-.delete{
-  position: relative;
-  left: 400px;
-  top: 160px;
-}
-
 #commentInput{
+  outline-color: green;
+  outline-width: 1px;
   position: relative;
   left: 200px;
   top: 170px;
@@ -55,4 +39,33 @@ main{
   position: relative;
   left: 200px;
   top: 170px;
+}
+
+#comment{
+  border: solid 1px gray;
+  width: 300px;
+  min-height: 248px;
+  position: absolute;
+  left: 200px;
+  top: 200px;
+}
+.commentName{
+  background-color: #f1f1f1;
+  font-size: 12px;
+  position: relative;
+  left: 0;
+  top: 0;
+}
+.commentBody{
+  position: relative;
+  left: 10px;
+  top: 0px;
+}
+.delete{
+  color: gray;
+  cursor: pointer;
+  font-size: 11px;
+  position: relative;
+  left: 270px;
+  top: -20px;
 }
