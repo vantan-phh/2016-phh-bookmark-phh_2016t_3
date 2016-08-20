@@ -6,11 +6,11 @@ main{
   border: solid #e1e1e1 1px;
   margin-top: 50px;
   width: 700px;
-  min-height: 500px;
+  height: 520px;
+  overflow: auto;
   position: absolute;
   left: 300px;
 }
-
 #title{
   position: absolute;
   left: 200px;
@@ -34,7 +34,6 @@ main{
   left: 200px;
   top: 170px;
 }
-
 #submit{
   position: relative;
   left: 200px;
@@ -46,13 +45,13 @@ main{
   border: solid gray;
   border-width: 1px 1px 0 1px;
   width: 400px;
-  min-height: 45px;
   position: absolute;
   left: 150px;
   top: 200px;
 }
 #commentHeader{
-  border-bottom: solid gray 1px;
+  background-color: #fafafa;
+  border-bottom: groove gray 1px;
   padding: 10px;
   text-align: center;
 }
@@ -60,9 +59,9 @@ main{
   border-bottom: solid gray 1px;
 }
 #comment{
-  padding: 5px 5px 10px 5px;
   box-sizing: border-box;
   word-wrap: break-word;
+  padding: 5px 5px 10px 5px;
   margin: 0 0 10px 0;
 }
 #avatar{
