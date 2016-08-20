@@ -27,7 +27,6 @@ router.get('/', (req, res) => {
               queryResult,
               bookmarkIdsForQuery,
             };
-            console.log(bookmarkIdsForQuery);
             resolve(values);
           }else{
             bookmarkIdsForQuery += currentValue.bookmark_id + ' OR `bookmark_id` = ';
