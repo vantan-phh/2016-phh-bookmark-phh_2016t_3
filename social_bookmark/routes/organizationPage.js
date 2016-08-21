@@ -66,26 +66,46 @@ router.get('/', (req, res) => {
 
 router.post('/submitUrl', (req, res) => {
   var url = req.body.result;
-  client.fetch(url).then((result) => {
-    res.render('organizationPage.ejs', {
-      bookmarkData,
-      ownBookmarkIds,
-      isAdmin,
-      orgName,
-      orgIntroduction,
-      orgThumbnail,
-      url,
-      title : result.$('title').text(),
+  var checkUrl = /^(https?)(:\/\/[-_.!~*\'()a-zA-Z0-9;\/?:\@&=+\$,%#]+)$/;
+  (() => {
+    var promise = new Promise((resolve) => {
+      if(checkUrl.test(url)){
+        resolve();
+      }else{
+        res.render('organizationPage.ejs', {
+          orgName,
+          orgIntroduction,
+          orgThumbnail,
+          bookmarkData,
+          ownBookmarkIds,
+          isAdmin,
+          urlNotice : 'http://もしくはhttp://から始まる正しいURLを入力してください',
+        });
+      }
     });
-  }, () => {
-    res.render('organizationPage.ejs', {
-      orgName,
-      orgIntroduction,
-      orgThumbnail,
-      bookmarkData,
-      ownBookmarkIds,
-      isAdmin,
-      networkNotice : 'URLが正しいかをご確認の上、ネットワーク接続をお確かめください。',
+    return promise;
+  })().then(() => {
+    client.fetch(url).then((result) => {
+      res.render('organizationPage.ejs', {
+        bookmarkData,
+        ownBookmarkIds,
+        isAdmin,
+        orgName,
+        orgIntroduction,
+        orgThumbnail,
+        url,
+        title : result.$('title').text(),
+      });
+    }, () => {
+      res.render('organizationPage.ejs', {
+        orgName,
+        orgIntroduction,
+        orgThumbnail,
+        bookmarkData,
+        ownBookmarkIds,
+        isAdmin,
+        networkNotice : 'URLが正しいかをご確認の上、ネットワーク接続をお確かめください。',
+      });
     });
   });
 });
@@ -96,7 +116,130 @@ router.post('/', (req, res) => {
   var description = req.body.description;
   var orgId = req.session.org_id;
   var userId = req.session.user_id;
+  var checkUrl = /^(https?)(:\/\/[-_.!~*\'()a-zA-Z0-9;\/?:\@&=+\$,%#]+)$/;
+  var checkInjection = /[%;+-]+/g;
+  var checkSpace = /[\S]+/g;
   (() => {
+    var promise = new Promise((resolve) => {
+      if(checkUrl.test(url)){
+        resolve();
+      }else{
+        res.render('organizationPage.ejs', {
+          orgName,
+          orgIntroduction,
+          orgThumbnail,
+          bookmarkData,
+          ownBookmarkIds,
+          isAdmin,
+          url,
+          title,
+          description,
+          urlNotice : 'http://もしくはhttp://から始まる正しいURLを入力してください',
+        });
+      }
+    });
+    return promise;
+  })().then(() => {
+    var promise = new Promise((resolve) => {
+      if(checkSpace.test(title)){
+        resolve();
+      }else{
+        res.render('organizationPage.ejs', {
+          orgName,
+          orgIntroduction,
+          orgThumbnail,
+          bookmarkData,
+          ownBookmarkIds,
+          isAdmin,
+          url,
+          title,
+          description,
+          titleNotice : 'タイトルを入力してください',
+        });
+      }
+    });
+    return promise;
+  }).then(() => {
+    var promise = new Promise((resolve) => {
+      if(!checkInjection.test(title)){
+        resolve();
+      }else{
+        res.render('organizationPage.ejs', {
+          orgName,
+          orgIntroduction,
+          orgThumbnail,
+          bookmarkData,
+          ownBookmarkIds,
+          isAdmin,
+          url,
+          title,
+          description,
+          titleNotice : 'セキュリティ上の観点からタイトルに「+, -, %, ;」は使えません',
+        });
+      }
+    });
+    return promise;
+  }).then(() => {
+    var promise = new Promise((resolve) => {
+      if(!checkInjection.test(description)){
+        resolve();
+      }else{
+        res.render('organizationPage.ejs', {
+          orgName,
+          orgIntroduction,
+          orgThumbnail,
+          bookmarkData,
+          ownBookmarkIds,
+          isAdmin,
+          url,
+          title,
+          description,
+          descriptionNotice : 'セキュリティ上の観点から説明文に「+, -, %, ;」は使えません',
+        });
+      }
+    });
+    return promise;
+  }).then(() => {
+    var promise = new Promise((resolve) => {
+      if(title.length <= 32){
+        resolve();
+      }else{
+        res.render('organizationPage.ejs', {
+          orgName,
+          orgIntroduction,
+          orgThumbnail,
+          bookmarkData,
+          ownBookmarkIds,
+          isAdmin,
+          url,
+          title,
+          description,
+          titleNotice : 'タイトルは32文字以下です',
+        });
+      }
+    });
+    return promise;
+  }).then(() => {
+    var promise = new Promise((resolve) => {
+      if(description.length <= 128){
+        resolve();
+      }else{
+        res.render('organizationPage.ejs', {
+          orgName,
+          orgIntroduction,
+          orgThumbnail,
+          bookmarkData,
+          ownBookmarkIds,
+          isAdmin,
+          url,
+          title,
+          description,
+          descriptionNotice : '説明文は128文字以下です',
+        });
+      }
+    });
+    return promise;
+  }).then(() => {
     var promise = new Promise((resolve) => {
       client.fetch(url).then((result) => {
         var text = result.$('body').text().replace(/\s/g, '');
@@ -114,7 +257,7 @@ router.post('/', (req, res) => {
       });
     });
     return promise;
-  })().then((value) => {
+  }).then((value) => {
     var text = value;
     var query = 'INSERT INTO `bookmarks` (`user_id`, `org_id`, `title`, `url`, `description`, `text`) VALUES(?, ?, ?, ?, ?, ?)';
     connection.query(query, [userId, orgId, title, url, description, text]).then(() => {

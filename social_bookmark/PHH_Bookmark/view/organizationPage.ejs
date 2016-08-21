@@ -26,11 +26,28 @@
         <input type="button" value="URLを送信" name="submitUrlButton" id="submitUrl">
       <% } %>
 
-      <% if(typeof title !== 'undefined'){ %>
+      <% if(typeof urlNotice !== 'undefined'){ %>
+        <p><%= urlNotice %></p>
+      <% } %>
+
+      <% if(typeof description !== 'undefined'){ %>
+        <input type="text" placeholder="タイトルを入力" name="title" id="title" value="<%= title %>">
+        <input type="text" placeholder="ブックマークの説明文を入力" name="description" id="description" value="<%= description %>">
+        <input type="submit" value="送信">
+      <% }else if(typeof title !== 'undefined'){ %>
         <input type="text" placeholder="タイトルを入力" name="title" id="title" value="<%= title %>">
         <input type="text" placeholder="ブックマークの説明文を入力" name="description" id="description">
         <input type="submit" value="送信">
       <% } %>
+
+      <% if(typeof titleNotice !== 'undefined'){ %>
+        <p><%= titleNotice %></p>
+      <% } %>
+
+      <%if(typeof descriptionNotice !== 'undefined'){ %>
+        <p><%= descriptionNotice %></p>
+      <% } %>
+
     </form>
 
     <form action="/PHH_Bookmark/organizationPage/submitUrl" method="post" name="submitUrl">
