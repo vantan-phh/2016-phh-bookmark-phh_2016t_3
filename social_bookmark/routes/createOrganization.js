@@ -17,7 +17,6 @@ var selectedUserNames = [];
 var selectedNickNames = [];
 
 var checkForm = /^[a-zA-Z0-9]+$/;
-var checkInjection = /[%;+-]+/g;
 
 router.get('/', (req, res) => {
   selectedUserNames = [];
@@ -314,9 +313,26 @@ router.post('/create', upload.single('image_file'), (req, res) => {
   var orgName = req.body.orgName;
   var orgIntroduction = req.body.orgIntroduction;
   var myId = req.session.user_id;
+  var checkInjection = /[%;+-]+/g;
+  var checkSpace = /[\S]+/g;
   var orgNameExists = 'SELECT `name` FROM `organizations` WHERE `name` = ?';
   var selectMyUserName = 'SELECT `name` FROM `users` WHERE `user_id` = ?';
   (() => {
+    var promise = new Promise((resolve) => {
+      if(checkSpace.test(orgName)){
+        resolve();
+      }else{
+        res.render('createOrganization', {
+          orgName,
+          orgIntroduction,
+          selectedUserNames,
+          selectedNickNames,
+          orgNameNotice : '組織名を入力してください',
+        });
+      }
+    });
+    return promise;
+  })().then(() => {
     var promise = new Promise((resolve) => {
       if(!checkInjection.test(orgIntroduction)){
         resolve();
@@ -331,7 +347,7 @@ router.post('/create', upload.single('image_file'), (req, res) => {
       }
     });
     return promise;
-  })().then(() => {
+  }).then(() => {
     var promise = new Promise((resolve) => {
       if(!checkInjection.test(orgName)){
         resolve();

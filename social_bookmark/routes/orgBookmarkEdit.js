@@ -105,6 +105,26 @@ router.post('/', (req, res) => {
     });
     return promise;
   })().then((values) => {
+    var checkSpace = /[\S]+/g;
+    var orgName = values.orgName;
+    var orgIntroduction = values.orgIntroduction;
+    var orgThumbnail = values.orgThumbnail;
+    var promise = new Promise((resolve) => {
+      if(checkSpace.test(title)){
+        resolve(values);
+      }else{
+        res.render('orgBookmarkEdit.ejs', {
+          title,
+          description,
+          orgName,
+          orgIntroduction,
+          orgThumbnail,
+          titleNotice : 'タイトルを入力してください。',
+        });
+      }
+    });
+    return promise;
+  }).then((values) => {
     var orgName = values.orgName;
     var orgIntroduction = values.orgIntroduction;
     var orgThumbnail = values.orgThumbnail;
