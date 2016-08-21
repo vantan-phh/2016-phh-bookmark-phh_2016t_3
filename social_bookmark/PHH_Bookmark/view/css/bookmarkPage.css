@@ -8,6 +8,7 @@ main{
 }
 
 #wrapper{
+  background-color: #fefefe;
   border: solid 1px gray;
   padding-bottom: 220px;
   min-height: 100%;

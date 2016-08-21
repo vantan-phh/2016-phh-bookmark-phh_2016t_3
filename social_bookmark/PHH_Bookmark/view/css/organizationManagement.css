@@ -3,7 +3,7 @@
 -----------------------------*/
 main{
   background-color: #fefefe;
-  border: solid #e1e1e1 1px;
+  border: solid 1px gray;
   margin-top: 50px;
   width: 700px;
   height: 400px;

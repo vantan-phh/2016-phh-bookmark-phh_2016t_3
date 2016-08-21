@@ -3,7 +3,7 @@
 -----------------------------*/
 main{
   background-color: #fefefe;
-  border: solid #e1e1e1 1px;
+  border: solid 1px gray;
   position: absolute;
   left: 500px;
   margin-top: 50px;
