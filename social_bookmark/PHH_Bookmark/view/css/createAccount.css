@@ -16,7 +16,6 @@ label .read{
 }
 label input{
   font-size: 15px;
-  outline-color: green;
   padding: 5px;
   width: 400px;
   height: 30px;

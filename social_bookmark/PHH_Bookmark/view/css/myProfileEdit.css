@@ -29,8 +29,6 @@ main{
   top: 225px;
 }
 .nickname{
-  outline-color: green;
-  outline-width: 1px;
   position: absolute;
   left: 250px;
   top: 260px;
@@ -49,8 +47,6 @@ main{
   top: 285px;
 }
 .intro{
-  outline-color: green;
-  outline-width: 1px;
   resize: none;
   height: 50px;
   position: absolute;

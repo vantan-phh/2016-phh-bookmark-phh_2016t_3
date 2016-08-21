@@ -8,22 +8,23 @@
   <body>
     <% include layout %>
     <main>
+      <div id="wrapper">
       <div id="title"><%= bookmark[0].title %></div>
       <a id="url" href="<%= bookmark[0].url %>"><%= bookmark[0].url%></a>
       <div id="desc"><%= bookmark[0].description %></div>
       <form action="/PHH_Bookmark/bookmarkPage" method="post">
-        <input id="commentInput" type="text" placeholder="コメントを入力" name="comment_text">
+        <textarea id="commentInput" type="text" placeholder="コメントを入力" name="comment_text"></textarea>
         <% if(typeof commentNotice !== 'undefined'){ %>
           <p id="errorComment"><%= commentNotice %></p>
         <% } %>
         <button id="submit" type="submit">投稿</button>
       </form>
-      <div id="wrapper">
+      <div id="commentWrapper">
         <div id="commentHeader">コメント</div>
           <% if(typeof comments !== 'undefined'){ %>
             <% for(var i = 0; i < comments.length; i++){ %>
-              <div id="test">
-                <div id="comment">
+              <div id="comment">
+                <div id="commentList">
                   <img id="avatar" src="http://res.cloudinary.com/dy4f7hul5/image/upload/v1469676799/iucwtxf12o9ztvb3tm14.png" width="40px" height="40px">
                   <div class="commentName"><%= commentNickName[i] %></div>
                   <div class="commentBody"><%= comments[i].body %></div>
@@ -38,6 +39,7 @@
       <form action="/PHH_Bookmark/bookmarkPage/delete" method="post" name="deleteComment">
         <input type="hidden" name="result">
       </form>
+      </div>
     </main>
   </body>
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>

@@ -8,50 +8,57 @@ main{
 }
 
 #read{
-  position: absolute;
-  top: 0;
-  margin: 0 0 10px 0 !important;
+  display: inline-block;
+  position: relative;
+  margin: 0 0 10px 0;
 }
 
 #search{
-  position: absolute;
-  left: 800px;
-  width: 180px;
-}
-#search input{
-  outline-color: green;
-  outline-width: 1px;
-}
-
-#addBookmark{
-  position: absolute;
-  top: 40px;
-}
-#addBookmark input{
-  outline-color: green;
-  outline-width: 1px;
-  padding: 5px;
-}
-
-#urlError{
-  color: red;
+  float: right;
   position: relative;
-  left: 200px;
-  top: -42px;
+  width: 180px;
 }
 
 #list{
-  background-color: #fafafa;
-  margin-top: 60px;
-  padding: 20px 10px;
   width: 800px;
+  min-height: 100%;
+  overflow: auto;
+  padding: 10px 10px;
+}
+
+#inputBookmark{
+  margin: 0 0 10px 0;
+}
+#inputBookmark input{
+  padding: 5px;
+}
+#inputBookmark p{
+  color: red;
+  margin: 10px 0 0 0;
+}
+
+#inputBookmark #url{
+  font-size: 15px;
+  width: 600px;
+  margin-bottom: 5px;
+}
+#inputBookmark #submitUrl{
+  
+}
+#inputBookmark #title{
+  width: 200px;
+}
+#inputBookmark #description{
+  width: 300px;
+}
+#inputBookmark #submit{
+
 }
 
 #bookmark1{
   background-color: #e1e1e1;
   border-radius: 10px;
   float: left;
-  word-wrap: break-word;
   padding: 0 5px 0 0;
   margin: 0 10px 10px 0;
   width: 200px;
@@ -61,27 +68,45 @@ main{
   background-color: #aaaa00;
   border-radius: 10px;
   float: left;
-  word-wrap: break-word;
   padding: 0 5px 0 0;
   margin: 0 10px 10px 0;
   width: 200px;
   height: 150px;
 }
 
-.bTitle{
+.checkbox{
+  margin: 5px 130px 0 5px;
+}
+.edit{
+  float: right;
+  margin: 5px 5px 0 0;
+}
+li{
   margin-left: 20px;
 }
-.bUrl{
-  margin-left: 20px;
+.title{
+  width: 170px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-text-overflow: ellipsis;
+  -o-text-overflow: ellipsis;
 }
-.bDescription{
-  position: relative;
-  left: 20px;
+.url{
+  width: 170px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-text-overflow: ellipsis;
+  -o-text-overflow: ellipsis;
+  padding-top: 2px;
 }
-.bEditBtn{
-  position: relative;
-  top: 0;
-  left: 150px;
+.description{
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  padding-top: 5px;
 }
 
 #deleteBtn{

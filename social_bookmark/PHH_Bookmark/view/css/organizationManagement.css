@@ -28,7 +28,6 @@ main{
   top: 100px;
 }
 #setName{
-  outline-color: green;
   position: absolute;
   left: 400px;
   top: 130px;
@@ -48,7 +47,6 @@ main{
 #setIntro{
   width: 200px;
   height: 100px;
-  outline-color: green;
   resize: none;
   position: absolute;
   left: 400px;

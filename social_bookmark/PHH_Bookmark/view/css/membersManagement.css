@@ -27,9 +27,6 @@
   left: 200px;
   top: 300px;
 }
-#search input{
-  outline-color: green;
-}
 #searchHit{
   position: absolute;
   left: 200px;

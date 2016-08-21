@@ -2,25 +2,15 @@
           コンテンツ
 -----------------------------*/
 main{
-  background-color: #fefefe;
-  border: solid #e1e1e1 1px;
-  position: absolute;
-  left: 400px;
   margin-top: 50px;
-  padding-left: 20px;
-  width: 500px;
+  position: absolute;
+  left: 300px;
 }
 
-#goMyPage{
-  background-color: #e1e1e1;
-  border-radius: 2px;
-  color: green;
-  font-family: monospace;
-  font-size: 15px;
-  padding: 5px;
-  text-decoration: none;
-}
-#goMyPage:hover{
-  background-color: black;
-  color: #00ff00;
+#wrapper{
+  border: solid 1px gray;
+  width: 700px;
+  min-height: 100%;
+  overflow: auto;
+  padding: 10px 10px 20px 10px;
 }
