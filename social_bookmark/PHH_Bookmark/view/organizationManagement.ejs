@@ -16,7 +16,12 @@
       <% if(typeof orgIntroductionNotice !== 'undefined'){ %>
         <p><%= orgIntroductionNotice %></p>
       <% } %>
-      <div><img src="<%= orgThumbnail %>"></img></div>
+      <% if(typeof orgThumbnail !== 'undefined'){%>
+        <div><img src="<%= orgThumbnail %>"></img></div>
+      <% } %>
+      <% if(typeof thumbailNotice !== 'undefined'){%>
+        <p><%= thumbailNotice %></p>
+      <% } %>
       <input type="file" accept="image/*" name="image_file">
       <input type="submit" value="変更">
     </form>

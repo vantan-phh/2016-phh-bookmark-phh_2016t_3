@@ -23,6 +23,9 @@
         <p><%= orgIntroductionNotice %></p>
       <% } %>
       <input type="file" accept="image/*" name="image_file">
+      <% if(typeof thumbailNotice !== 'undefined'){%>
+        <p><%= thumbailNotice %></p>
+      <% } %>
       <input type="text" placeholder="招待メンバー" name="invitedUser" id="invitedUser">
       <% if(typeof searchUserNotice !== 'undefined'){ %>
         <p><%= searchUserNotice %></p>

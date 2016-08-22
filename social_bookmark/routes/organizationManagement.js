@@ -130,7 +130,15 @@ router.post('/', upload.single('image_file'), (req, res) => {
               var path = req.file.path;
               cloudinary.uploader.upload(path, (cloudinaryResult) => {
                 var orgThumbnail = cloudinaryResult.url;
-                resolve(orgThumbnail);
+                if(orgThumbnail === undefined){
+                  res.render('organizationManagement.ejs', {
+                    orgName,
+                    orgIntroduction,
+                    thumbailNotice : '画像ファイルが正しく読み込めませんでした。',
+                  });
+                }else{
+                  resolve(orgThumbnail);
+                }
               });
             });
             return promise;
@@ -169,7 +177,15 @@ router.post('/', upload.single('image_file'), (req, res) => {
                   var path = req.file.path;
                   cloudinary.uploader.upload(path, (cloudinaryResult) => {
                     var orgThumbnail = cloudinaryResult.url;
-                    resolve(orgThumbnail);
+                    if(orgThumbnail === undefined){
+                      res.render('organizationManagement.ejs', {
+                        orgName,
+                        orgIntroduction,
+                        thumbailNotice : '画像ファイルが正しく読み込めませんでした。',
+                      });
+                    }else{
+                      resolve(orgThumbnail);
+                    }
                   });
                 });
                 return promise;
