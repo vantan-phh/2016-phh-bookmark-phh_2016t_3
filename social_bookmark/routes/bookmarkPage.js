@@ -19,21 +19,22 @@ router.get('/', (req, res) => {
     var promise = new Promise((resolve) => {
       var queryResult = value;
       if(queryResult.length > 0){
-        var bookmarkIdsForQuery = '';
+        var userIdsForQuery = '';
         queryResult.forEach((currentValue, index, array) => {
           if(index + 1 === array.length){
-            bookmarkIdsForQuery += currentValue.bookmark_id;
+            userIdsForQuery += currentValue.user_id;
             var values = {
               queryResult,
-              bookmarkIdsForQuery,
+              userIdsForQuery,
             };
             resolve(values);
           }else{
-            bookmarkIdsForQuery += currentValue.bookmark_id + ' OR `bookmark_id` = ';
+            userIdsForQuery += currentValue.user_id + ' OR `user_id` = ';
           }
         });
       }else{
         var pullBookmark = 'SELECT * FROM `bookmarks` WHERE `bookmark_id` = ?';
+        console.log(pullBookmark);
         connection.query(pullBookmark, [bookmarkId]).then((result) => {
           res.render('bookmarkPage.ejs', {
             bookmark : result[0],
@@ -48,6 +49,7 @@ router.get('/', (req, res) => {
     var queryResult = values.queryResult;
     var promise = new Promise((resolve) => {
       var pullNickName = 'SELECT `nick_name` FROM `users` WHERE `user_id` = ' + userIdsForQuery;
+      console.log(pullNickName);
       connection.query(pullNickName).then((result) => {
         var nickNames = result[0];
         values = {
