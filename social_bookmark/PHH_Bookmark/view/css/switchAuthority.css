@@ -12,9 +12,9 @@ main{
 }
 
 #readAdmin{
-  position: absolute;
+  position: relative;
   left: 150px;
-  top: 100px;
+  top: 50px;
 }
 #adminList{
   background-color: lightblue;
@@ -22,25 +22,32 @@ main{
   width: 400px;
   min-height: 200px;
   overflow: auto;
+  padding-top: 5px;
   position: absolute;
   left: 150px;
-  top: 130px;
+  top: 80px;
 }
 .admin{
-  margin: 10px 0 10px 10px;
-  width: 380px;
-  position: relative;
-  left: 150px;
-  top: 130px;
+  margin: 5px 0 5px 10px;
 }
-.admin input{
+#adminName{
+  display: inline-block;
+  width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-text-overflow: ellipsis;
+  -o-text-overflow: ellipsis;
+}
+#renounce{
   float: right;
+  margin: 5px 5px 0 0;
 }
 
 #readMember{
-  position: absolute;
+  position: relative;
   left: 150px;
-  top: 400px;
+  top: 280px;
 }
 #memberList{
   background-color: lightgreen;
@@ -48,17 +55,24 @@ main{
   width: 400px;
   min-height: 200px;
   overflow: auto;
+  padding-top: 5px;
   position: absolute;
   left: 150px;
-  top: 430px;
+  top: 330px;
 }
 .member{
-  margin: 10px 0 10px 10px;
-  width: 380px;
-  position: relative;
-  left: 150px;
-  top: 430px;
+  margin: 5px 0 5px 10px;
 }
-.member input{
+#memberName{
+  display: inline-block;
+  width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-text-overflow: ellipsis;
+  -o-text-overflow: ellipsis;
+}
+#giveAdmin{
   float: right;
+  margin: 4px 5px 0 0;
 }

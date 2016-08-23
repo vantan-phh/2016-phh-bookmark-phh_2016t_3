@@ -20,7 +20,9 @@
           <p id="errorIntro"><%= orgIntroductionNotice %></p>
         <% } %>
         <% if(typeof orgThumbnail !== 'undefined'){%>
-          <div id="image"><img src="<%= orgThumbnail %>"></img></div>
+          <div id="img">
+            <img src="<%= orgThumbnail %>">
+          </div>
         <% } %>
         <% if(typeof thumbailNotice !== 'undefined'){%>
           <p><%= thumbailNotice %></p>

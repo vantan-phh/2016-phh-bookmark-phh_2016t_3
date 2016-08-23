@@ -9,33 +9,37 @@
     <% include layout %>
     <main>
       <h2><%= orgName %></h2>
-      <img src="<%= orgThumbnail %>">
+      <div id="img">
+        <img src="<%= orgThumbnail %>">
+      </div>
       <div><%= orgIntroduction %></div>
-
-      <div>管理者リスト</div>
-      <% if(typeof adminUserNames !== 'undefined'){ %>
-        <% for(var i = 0; i < adminUserNames.length; i++){ %>
-          <div class="admin"><%= adminNickNames[i] %><%= adminUserNames[i] %>
-            <% if(myUserName === adminUserNames[i]){ %>
-              <input type="button" value="管理者権限を放棄" id="renounce">
-            <% } %>
-          </div>
+      <div id="readAdmin">管理者リスト</div>
+      <div id="adminList">
+        <% if(typeof adminUserNames !== 'undefined'){ %>
+          <% for(var i = 0; i < adminUserNames.length; i++){ %>
+            <div class="admin"><p id="adminName"><%= adminNickNames[i] %><%= adminUserNames[i] %></p>
+              <% if(myUserName === adminUserNames[i]){ %>
+                <input type="button" value="管理者権限を放棄" id="renounce">
+              <% } %>
+            </div>
+          <% } %>
         <% } %>
-      <% } %>
+      </div>
 
       <form action="/PHH_Bookmark/switchAuthority/renounce" method="post" name="renounce">
         <input type="hidden" name="result">
       </form>
 
       <div id="readMember">一般メンバーリスト</div>
-      <div id="memberList"></div>
-      <% if(typeof notAdminUserNames !== 'undefined'){ %>
-        <% for(var i = 0; i < notAdminUserNames.length; i++){ %>
-          <div class="member"><%= notAdminNickNames[i] %><%= notAdminUserNames[i] %>
-            <input type="button" value="管理者権限を付与" class="give" name="<%= notAdminUserNames[i] %>">
-          </div>
+      <div id="memberList">
+        <% if(typeof notAdminUserNames !== 'undefined'){ %>
+          <% for(var i = 0; i < notAdminUserNames.length; i++){ %>
+            <div class="member"><p id="memberName"><%= notAdminNickNames[i] %><%= notAdminUserNames[i] %></p>
+              <input id="giveAdmin" type="button" value="管理者権限を付与" class="give" name="<%= notAdminUserNames[i] %>">
+            </div>
+          <% } %>
         <% } %>
-      <% } %>
+      </div>
 
       <form action="/PHH_Bookmark/switchAuthority/give" method="post" name="give">
         <input type="hidden" name="result">

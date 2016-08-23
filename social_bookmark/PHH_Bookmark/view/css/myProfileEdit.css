@@ -6,57 +6,71 @@ main{
   border: solid 1px gray;
   margin-top: 50px;
   width: 700px;
-  height: 500px;
+  height: 400px;
   position: absolute;
   left: 300px;
-}
-
-#image{
-  position: absolute;
-  left: 100px;
-  top: 50px;
-}
-#imageFile{
-  position: absolute;
-  left: 300px;
-  top: 100px;
 }
 
 #readNickname{
   font-size: 13px;
   position: absolute;
-  left: 250px;
-  top: 225px;
+  left: 230px;
+  top: 60px;
 }
 .nickname{
   position: absolute;
-  left: 250px;
-  top: 260px;
+  left: 230px;
+  top: 80px;
 }
 #errorNickname{
   color: red;
   position: absolute;
-  left: 300px;
-  top: 65px;
+  left: 370px;
+  top: 77px;
 }
 
 #readIntro{
   font-size: 13px;
   position: absolute;
-  left: 250px;
-  top: 285px;
+  left: 230px;
+  top: 110px;
 }
 .intro{
   resize: none;
-  height: 50px;
+  width: 300px;
+  height: 60px;
   position: absolute;
-  left: 250px;
-  top: 320px;
+  left: 230px;
+  top: 130px;
 }
 #errorIntro{
+  color: red;
   position: absolute;
-  left: 250px;
-  top: 325px;
+  left: 230px;
+  top: 190px;
+}
+
+#img{
+  display: table-cell;
+  min-width: 150px;
+  min-height: 150px;
+  position: relative;
+  left: 50px;
+  top: 50px;
+}
+#img img{
+  width:auto;
+  height:auto;
+  max-width:150px;
+  max-height:150px;
+  min-height: 150px;
+  min-width: 150px;
+  vertical-align: middle;
+}
+#imgFile{
+  position: relative;
+  left: 50px;
+  top: 60px;
 }
 
 #submit{
@@ -70,7 +84,7 @@ main{
   height: 30px;
   position: absolute;
   left: 500px;
-  top: 450px;
+  top: 300px;
 }
 #submit:hover{
   background: linear-gradient(#049336, #036b27);

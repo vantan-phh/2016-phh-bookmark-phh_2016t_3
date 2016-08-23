@@ -91,7 +91,9 @@
           </form>
           <% if(typeof orgData !== 'undefined'){ %>
             <% for(var i = 0; i < orgData.length; i++){ %>
-              <img src="<%= orgData[i].image_path %>">
+              <div id="img">
+                <img src="<%= orgData[i].image_path %>">
+              </div>
               <a class="orgName" name="<%= orgData[i].id %>"><%= orgData[i].name %></a>
               <div><%= orgData[i].introduction %></div>
             <% } %>

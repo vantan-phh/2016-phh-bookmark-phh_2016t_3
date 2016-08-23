@@ -57,10 +57,10 @@
   #headerSearch{
     border: solid #e1e1e1 2px;
     outline-width: 2px;
+    padding: 5px;
     position: absolute;
     left: 700px;
     top: 15px;
-    padding: 5px;
   }
 
   #headerLoginUser{
@@ -77,27 +77,28 @@
     top: 17px;
   }
   #headerMyImg img{
+    width: 30px;
+    height: 30px;
     position: absolute;
     left: 1000px;
     top: 12px;
-    width: 30px;
-    height: 30px;
   }
   #headerOpenMenu{
+    width: 10px;
     position: absolute;
     left: 1040px;
     top: 20px;
-    width: 10px;
   }
   #headerMenuList{
     background-color: white;
     border: solid black 1px;
+    z-index: 100;
+    width: 150px;
+    min-height: 0;
+    overflow: auto;
     position: absolute;
     left: 910px;
     top: 50px;
-    width: 150px;
-    height: 120px;
-    z-index: 100;
   }
   #headerMenuList a{
     text-decoration: none;
@@ -153,7 +154,7 @@
         <a id="headerMenu2" href="/PHH_Bookmark/organizationPage">Organization</a>
       </div>
       <input id="headerSearch" type="text" placeholder="Search Bookmarks">
-      <span id="headerLoginUser"><%= nickName%><div id="headerUserName">(<%= userName %>)</div></span>
+      <!-- <span id="headerLoginUser"><%= nickName%><div id="headerUserName">(<%= userName %>)</div></span> -->
       <a id="headerMyImg" href="/PHH_Bookmark/myProfile"><img src="http://res.cloudinary.com/dy4f7hul5/image/upload/v1469676799/iucwtxf12o9ztvb3tm14.png"></a>
       <div id="headerOpenMenu" onclick="obj=document.getElementById('headerMenuList').style; obj.display=(obj.display=='none')?'block':'none';">
         <a style="cursor:pointer;">▼</a>

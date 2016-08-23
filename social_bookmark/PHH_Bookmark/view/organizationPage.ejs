@@ -3,111 +3,94 @@
   <head>
     <meta charset="utf-8">
     <title></title>
+    <link rel="stylesheet" type="text/css" href="/css/organizationPage.css">
   </head>
   <body>
     <% include layout %>
-    <h2><%= orgName %></h2>
-    <img src="<%= orgThumbnail %>">
-    <div><%= orgIntroduction %></div>
+    <main>
+      <div id="wrapper">
+        <h2 id="orgName"><%= orgName %></h2>
+        <div id="img">
+          <img src="<%= orgThumbnail %>">
+        </div>
+        <div><%= orgIntroduction %></div>
 
-    <form action="/PHH_Bookmark/organizationPage/searchBookmark" method="post">
-      <input type="checkbox" checked="checked" name="searchFromTitle">タイトル
-      <input type="checkbox" name="searchFromDescription">説明文
-      <input type="checkbox" name="searchFromTextsOnSites">URL先のテキスト
-      <input type="text" placeholder="検索ワードを入力" name="keyWord">
-      <input type="submit" value="検索">
-    </form>
+        <form action="/PHH_Bookmark/organizationPage/searchBookmark" method="post">
+          <input type="checkbox" checked="checked" name="searchFromTitle">タイトル
+          <input type="checkbox" name="searchFromDescription">説明文
+          <input type="checkbox" name="searchFromComments">コメント
+          <input type="checkbox" name="searchFromTextsOnSites">URL先のテキスト
+          <input type="text" placeholder="検索ワードを入力" name="keyWord">
+          <input type="submit" value="検索">
+        </form>
 
-    <form action="/PHH_Bookmark/organizationPage" method="post">
-      <% if(typeof url !== 'undefined'){ %>
-        <input type="text" placeholder="URLを入力" name="url" id="url" value="<%= url %>">
-        <input type="button" value="URLを再送信" name="submitUrlButton" id="submitUrl">
-      <% } else { %>
-        <input type="text" placeholder="URLを入力" name="url" id="url">
-        <input type="button" value="URLを送信" name="submitUrlButton" id="submitUrl">
-      <% } %>
+        <form action="/PHH_Bookmark/organizationPage" method="post">
+          <% if(typeof url !== 'undefined'){ %>
+            <input type="text" placeholder="URLを入力" name="url" id="url" value="<%= url %>">
+            <input type="button" value="URLを再送信" name="submitUrlButton" id="submitUrl">
+          <% } else { %>
+            <input type="text" placeholder="URLを入力" name="url" id="url">
+            <input type="button" value="URLを送信" name="submitUrlButton" id="submitUrl">
+          <% } %>
 
-      <% if(typeof urlNotice !== 'undefined'){ %>
-        <p><%= urlNotice %></p>
-      <% } %>
+          <% if(typeof title !== 'undefined'){ %>
+            <input type="text" placeholder="タイトルを入力" name="title" id="title" value="<%= title %>">
+            <input type="text" placeholder="ブックマークの説明文を入力" name="description" id="description">
+            <input type="submit" value="送信">
+          <% } %>
+        </form>
 
-      <% if(typeof description !== 'undefined'){ %>
-        <input type="text" placeholder="タイトルを入力" name="title" id="title" value="<%= title %>">
-        <input type="text" placeholder="ブックマークの説明文を入力" name="description" id="description" value="<%= description %>">
-        <input type="submit" value="送信">
-      <% }else if(typeof title !== 'undefined'){ %>
-        <input type="text" placeholder="タイトルを入力" name="title" id="title" value="<%= title %>">
-        <input type="text" placeholder="ブックマークの説明文を入力" name="description" id="description">
-        <input type="submit" value="送信">
-      <% } %>
+        <form action="/PHH_Bookmark/organizationPage/submitUrl" method="post" name="submitUrl">
+          <input type="hidden" name="result">
+        </form>
 
-      <% if(typeof titleNotice !== 'undefined'){ %>
-        <p><%= titleNotice %></p>
-      <% } %>
-
-      <%if(typeof descriptionNotice !== 'undefined'){ %>
-        <p><%= descriptionNotice %></p>
-      <% } %>
-
-    </form>
-
-    <form action="/PHH_Bookmark/organizationPage/submitUrl" method="post" name="submitUrl">
-      <input type="hidden" name="result">
-    </form>
-
-    <% if(typeof searchedBookmarks !== 'undefined'){ %>
-      <div>検索結果</div>
-      <% if(searchedBookmarks.length > 0){ %>
-        <% for(var i = 0; i < searchedBookmarks.length; i++){ %>
-          <a href="/PHH_Bookmark/bookmarkPage"><%= searchedBookmarks[i].title %></a><a href="<%= searchedBookmarks[i].url%>"><%= searchedBookmarks[i].url%></a>
-          <%= searchedBookmarks[i].description %>
-        <% } %>
-      <% }else{ %>
-        一致する項目は見つかりませんでした。
-      <% } %>
-    <% } %>
-
-    <form action="/PHH_Bookmark/orgBookmarkEdit/delete" method="post">
-      <% if(typeof bookmarkData !== 'undefined'){ %>
-        <div>組織に追加されたブックマーク</div>
-        <% for(var i = 0; i < bookmarkData.length; i++){ %>
-          <div>
-            <% if(isAdmin){ %>
-              <input type="checkbox" class="checkbox" name="<%= bookmarkData[i].bookmark_id %>">
-            <% } else if(ownBookmarkIds.length > 0){ %>
-              <% for(var j = 0; j < ownBookmarkIds.length; j++){ %>
-                <% if(ownBookmarkIds[j].bookmark_id === bookmarkData[i].bookmark_id){ %>
+        <form action="/PHH_Bookmark/orgBookmarkEdit/delete" method="post">
+          <% if(typeof bookmarkData !== 'undefined'){ %>
+            <div>組織に追加されたブックマーク</div>
+            <% for(var i = 0; i < bookmarkData.length; i++){ %>
+              <div>
+                <% if(isAdmin){ %>
                   <input type="checkbox" class="checkbox" name="<%= bookmarkData[i].bookmark_id %>">
+                <% } else if(ownBookmarkIds.length > 0){ %>
+                  <% for(var j = 0; j < ownBookmarkIds.length; j++){ %>
+                    <% if(ownBookmarkIds[j].bookmark_id === bookmarkData[i].bookmark_id){ %>
+                      <input type="checkbox" class="checkbox" name="<%= bookmarkData[i].bookmark_id %>">
+                    <% } %>
+                  <% } %>
                 <% } %>
-              <% } %>
-            <% } %>
-            <a name="bookmarkId<%= bookmarkData[i].bookmark_id%>"><%= bookmarkData[i].title %></a><a href="<%= bookmarkData[i].url %>"><%= bookmarkData[i].url %></a><%= bookmarkData[i].description %>
-            <% if(isAdmin){ %>
-              <input type="button" value="編集" name="<%= bookmarkData[i].bookmark_id %>" class="edit">
-            <% } else if(ownBookmarkIds.length > 0){ %>
-              <% for(var j = 0; j < ownBookmarkIds.length; j++){ %>
-                <% if(ownBookmarkIds[j].bookmark_id === bookmarkData[i].bookmark_id){ %>
+                <a href="/PHH_Bookmark/bookmarkPage"><%= bookmarkData[i].title %></a><a href="<%= bookmarkData[i].url %>"><%= bookmarkData[i].url %></a><%= bookmarkData[i].description %>
+                <% if(isAdmin){ %>
                   <input type="button" value="編集" name="<%= bookmarkData[i].bookmark_id %>" class="edit">
+                <% } else if(ownBookmarkIds.length > 0){ %>
+                  <% for(var j = 0; j < ownBookmarkIds.length; j++){ %>
+                    <% if(ownBookmarkIds[j].bookmark_id === bookmarkData[i].bookmark_id){ %>
+                      <input type="button" value="編集" name="<%= bookmarkData[i].bookmark_id %>" class="edit">
+                    <% } %>
+                  <% } %>
                 <% } %>
-              <% } %>
+              </div>
             <% } %>
-          </div>
-        <% } %>
-        <button type="submit">削除</button>
-      <% } %>
-    </form>
+            <button type="submit">削除</button>
+          <% } %>
+        </form>
 
-    <form action="/PHH_Bookmark/organizationPage/toOrgBookmarkEdit" method="post" name="toOrgBookmarkEdit">
-      <input type="hidden" name="result">
-    </form>
-    <% if(isAdmin){ %>
-      <a href="/PHH_Bookmark/organizationManagement">管理ページへ</a>
-      <a href="/PHH_Bookmark/membersManagement">メンバー管理ページへ</a>
-    <% } %>
-    <a href="/PHH_Bookmark/organizationMembers">メンバー一覧へ</a>
-    <form name="toSubmitBookmarkData" action="/PHH_Bookmark/submitBookmarkData" method="post">
-      <input type="hidden" name="result">
-    </form>
+        <% if(typeof searchedBookmarks !== 'undefined'){ %>
+          <div>検索結果</div>
+          <% for(var i = 0; i < searchedBookmarks.length; i++){ %>
+            <a href="/PHH_Bookmark/bookmarkPage"><%= searchedBookmarks[i].title %></a><a href="<%= searchedBookmarks[i].url%>"><%= searchedBookmarks[i].url%></a>
+            <%= searchedBookmarks[i].description %>
+          <% } %>
+        <% } %>
+        <form action="/PHH_Bookmark/organizationPage/toOrgBookmarkEdit" method="post" name="toOrgBookmarkEdit">
+          <input type="hidden" name="result">
+        </form>
+        <% if(isAdmin){ %>
+          <a href="/PHH_Bookmark/organizationManagement">管理ページへ</a>
+          <a href="/PHH_Bookmark/membersManagement">メンバー管理ページへ</a>
+        <% } %>
+        <a href="/PHH_Bookmark/organizationMembers">メンバー一覧へ</a>
+      </div>
+    </main>
   </body>
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
   <script>

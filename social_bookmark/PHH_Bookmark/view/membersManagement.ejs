@@ -9,20 +9,25 @@
     <% include layout %>
     <main>
       <h2 id="orgName"><%= orgName %></h2>
-      <img id="img" src="<%= orgThumbnail %>">
-      <div id="introduction"><%= orgIntroduction %></div>
-      <div id="memberList"></div>
-      <% if(typeof memberUserNames !== 'undefined'){%>
-        <% for(var i = 0; i < memberUserNames.length; i ++){ %>
-          <div class="members"><%= memberNickNames[i] %><%= memberUserNames[i] %>
-            <% if(memberUserNames[i] === myUserName){ %>
-              <input type="button" value="脱退" id="leave">
-            <% } else { %>
-              <input type="button" value="除名" class="expel" name="<%= memberUserNames[i] %>">
-            <% } %>
-          </div>
+      <div id="img">
+        <img src="<%= orgThumbnail %>">
+      </div>
+      <div id="introduction">
+        <%= orgIntroduction %>
+      </div>
+      <div id="memberList">
+        <% if(typeof memberUserNames !== 'undefined'){%>
+          <% for(var i = 0; i < memberUserNames.length; i ++){ %>
+            <div class="members"><%= memberNickNames[i] %><%= memberUserNames[i] %>
+              <% if(memberUserNames[i] === myUserName){ %>
+                <input type="button" value="脱退" id="leave">
+              <% } else { %>
+                <input type="button" value="除名" class="expel" name="<%= memberUserNames[i] %>">
+              <% } %>
+            </div>
+          <% } %>
         <% } %>
-      <% } %>
+      </div>
       <div id="search">
         <form action="/PHH_Bookmark/membersManagement/searchUser" method="post">
           <input type="text" placeholder="ユーザー名を入力" name="searchedUser">

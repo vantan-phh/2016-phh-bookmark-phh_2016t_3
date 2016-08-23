@@ -20,23 +20,26 @@
             <p id="errorNickname"><%= nickNameNotice %></p>
           <% } %>
 
-          <% if(imagePath) { %>
-            <img id="image" src="<%= imagePath %>" width="128" height="128"></img>
-          <% } %>
-          <input id="imageFile" type="file" name="image_file" accept="image/*">
-          <% if(typeof thumbailNotice !== 'undefined'){%>
-            <p><%= thumbailNotice %></p>
-          <% } %>
-
           <label><p id="readIntro">自己紹介</p>
           <% if(introduction) { %>
-            <textarea class="intro" type="text" name="introduction" placeholder="自己紹介文" value="<%= introduction %>"></textarea>
+            <textarea class="intro" type="text" name="introduction" placeholder="自己紹介文"><%= introduction %></textarea>
           <% } else { %>
             <textarea class="intro" type="text" name="introduction" placeholder="自己紹介文"></textarea></label>
           <% } %>
           <% if(typeof introductionNotice !== 'undefined'){ %>
             <p id="errorIntro"><%= introductionNotice %></p>
           <% } %>
+
+          <% if(imagePath) { %>
+            <img id="img" src="<%= imagePath %>" width="128" height="128">
+          <% } %>
+          <div id="imgFile">
+            <input type="file" name="image_file" accept="image/*">
+            <% if(typeof thumbailNotice !== 'undefined'){%>
+              <p><%= thumbailNotice %></p>
+            <% } %>
+          </div>
+
           <input id="submit" type="submit" value="変更">
         </div>
       </form>

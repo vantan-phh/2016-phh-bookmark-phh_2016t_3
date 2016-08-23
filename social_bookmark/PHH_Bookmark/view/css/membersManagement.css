@@ -2,16 +2,30 @@
           コンテンツ
 -----------------------------*/
 #orgName{
-  width: 500px;
-  position: absolute;
-  left: 500px;
-  top: 100px;
+  display: inline-block;
+  position: relative;
+  left: 100px;
+  top: 20px;
 }
 
 #img{
-  position: absolute;
-  left: 150px;
-  top: 100px;
+  border: solid 4px gray;
+  border-radius: 2px;
+  display: table-cell;
+  min-width: 150px;
+  min-height: 150px;
+  position: relative;
+  left: 100px;
+  top: 50px;
+}
+#img img{
+  width:auto;
+  height:auto;
+  max-width:350px;
+  max-height:150px;
+  min-width: 150px;
+  min-height: 150px;
+  vertical-align: middle;
 }
 
 #introduction{
@@ -54,11 +68,8 @@
   top: 310px;
 }
 .members{
+  display: inline-block;
   margin: 10px 0 10px 10px;
-  width: 280px;
-  position: relative;
-  left: 500px;
-  top:  250px;
 }
 .members input{
   float: right;
