@@ -12,25 +12,28 @@
       <div id="organization"></div>
       <div id="search">
         <form action="/PHH_Bookmark/myPage/searchBookmark" method="post">
-          <input type="checkbox" checked="checked" name="searchFromTitle">タイトル
-          <input type="checkbox" name="searchFromDescription">説明文
-          <input type="checkbox" name="searchFromTextsOnSites">URL先のテキスト
+          <div id="searchCheck">
+            <input type="checkbox" checked="checked" name="searchFromTitle">タイトル
+            <input type="checkbox" name="searchFromDescription">説明文
+            <input type="checkbox" name="searchFromTextsOnSites">URL先のテキスト
+          </div>
           <input type="text" placeholder="検索ワードを入力" name="keyWord">
           <input type="submit" value="検索">
         </form>
       </div>
       <% if(typeof searchedBookmarks !== 'undefined'){ %>
-        <div>検索結果</div>
-        <% if(searchedBookmarks.length > 0){ %>
-          <% for(var i = 0; i < searchedBookmarks.length; i++){ %>
-            <a href="/PHH_Bookmark/bookmarkPage"><%= searchedBookmarks[i].title %></a><a href="<%= searchedBookmarks[i].url%>"><%= searchedBookmarks[i].url%></a>
-            <%= searchedBookmarks[i].description %>
+        <div id="searchResult">
+          <p>検索結果</p>
+          <% if(searchedBookmarks.length > 0){ %>
+            <% for(var i = 0; i < searchedBookmarks.length; i++){ %>
+              <a href="/PHH_Bookmark/bookmarkPage"><%= searchedBookmarks[i].title %></a><a href="<%= searchedBookmarks[i].url%>"><%= searchedBookmarks[i].url%></a>
+              <%= searchedBookmarks[i].description %>
+            <% } %>
+          <% }else{ %>
+            <p>一致する項目は見つかりませんでした。</p>
           <% } %>
-        <% }else{ %>
-          一致する項目は見つかりませんでした。
         <% } %>
-      <% } %>
-
+      </div>
       <div id="list">
         <div id="inputBookmark">
           <form action="/PHH_Bookmark/myPage" method="post">
@@ -70,8 +73,8 @@
                   <input class="checkbox" type="checkbox" name="<%= bookmarkData[i].bookmark_id %>">
                   <input class="edit" type="button" value="編集" name="<%= bookmarkData[i].bookmark_id %>">
                   <ol>
-                    <li><a name="bookmarkId<%= bookmarkData[i].bookmark_id%>"><div class="title"><%= bookmarkData[i].title %></div></a></li>
-                    <li><a href="<%= bookmarkData[i].url %>"><div class="url"><%= bookmarkData[i].url %></div></a></li>
+                    <li><a class="title" name="bookmarkId<%= bookmarkData[i].bookmark_id%>"><%= bookmarkData[i].title %></a></li>
+                    <li><a class="url" href="<%= bookmarkData[i].url %>"><%= bookmarkData[i].url %></a></li>
                     <li><div class="description"><%= bookmarkData[i].description %></div></li>
                   </ol>
                 </div>
@@ -80,8 +83,8 @@
                   <input class="checkbox" type="checkbox" name="<%= bookmarkData[i].bookmark_id %>">
                   <input class="edit" type="button" value="編集" name="<%= bookmarkData[i].bookmark_id %>">
                   <ol>
-                    <li><a name="bookmarkId<%= bookmarkData[i].bookmark_id%>"><div class="title"><%= bookmarkData[i].title %></div></a></li>
-                    <li><a href="<%= bookmarkData[i].url %>"><div class="url"><%= bookmarkData[i].url %></div></a></li>
+                    <li><a class="title" name="bookmarkId<%= bookmarkData[i].bookmark_id%>"><%= bookmarkData[i].title %></a></li>
+                    <li><a class="url" href="<%= bookmarkData[i].url %>"><%= bookmarkData[i].url %></a></li>
                     <li><div class="description"><%= bookmarkData[i].description %></div></li>
                   </ol>
                 </div>

@@ -14,9 +14,14 @@ main{
 }
 
 #search{
-  float: right;
   position: relative;
-  width: 180px;
+  left: 700px;
+  top: 100px;
+}
+#searchResult{
+  position: relative;
+  left: 700px;
+  top: 200px;
 }
 
 #list{
@@ -42,17 +47,11 @@ main{
   width: 600px;
   margin-bottom: 5px;
 }
-#inputBookmark #submitUrl{
-  
-}
 #inputBookmark #title{
   width: 200px;
 }
 #inputBookmark #description{
   width: 300px;
-}
-#inputBookmark #submit{
-
 }
 
 #bookmark1{
@@ -65,7 +64,7 @@ main{
   height: 150px;
 }
 #bookmark2{
-  background-color: #aaaa00;
+  background-color: #36a029;
   border-radius: 10px;
   float: left;
   padding: 0 5px 0 0;
@@ -85,15 +84,21 @@ li{
   margin-left: 20px;
 }
 .title{
-  width: 170px;
+  display: inline-block;
+  max-width: 170px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   -webkit-text-overflow: ellipsis;
   -o-text-overflow: ellipsis;
 }
+.title:hover{
+  opacity: 0.6;
+  cursor: pointer;
+}
 .url{
-  width: 170px;
+  display: inline-block;
+  max-width: 170px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
