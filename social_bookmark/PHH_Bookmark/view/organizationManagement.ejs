@@ -19,7 +19,12 @@
         <% if(typeof orgIntroductionNotice !== 'undefined'){ %>
           <p id="errorIntro"><%= orgIntroductionNotice %></p>
         <% } %>
-        <div id="image"><img src="<%= orgThumbnail %>"></img></div>
+        <% if(typeof orgThumbnail !== 'undefined'){%>
+          <div id="image"><img src="<%= orgThumbnail %>"></img></div>
+        <% } %>
+        <% if(typeof thumbailNotice !== 'undefined'){%>
+          <p><%= thumbailNotice %></p>
+        <% } %>
         <input id="file" type="file" accept="image/*" name="image_file">
         <input id="submit" type="submit" value="変更">
       </form>

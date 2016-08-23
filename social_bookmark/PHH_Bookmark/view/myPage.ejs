@@ -11,9 +11,26 @@
       <h2 id="read">URLを入力してブックマークを登録</h2>
       <div id="organization"></div>
       <div id="search">
-        <input type="text">
-        <button>検索</button>
+        <form action="/PHH_Bookmark/myPage/searchBookmark" method="post">
+          <input type="checkbox" checked="checked" name="searchFromTitle">タイトル
+          <input type="checkbox" name="searchFromDescription">説明文
+          <input type="checkbox" name="searchFromTextsOnSites">URL先のテキスト
+          <input type="text" placeholder="検索ワードを入力" name="keyWord">
+          <input type="submit" value="検索">
+        </form>
       </div>
+      <% if(typeof searchedBookmarks !== 'undefined'){ %>
+        <div>検索結果</div>
+        <% if(searchedBookmarks.length > 0){ %>
+          <% for(var i = 0; i < searchedBookmarks.length; i++){ %>
+            <a href="/PHH_Bookmark/bookmarkPage"><%= searchedBookmarks[i].title %></a><a href="<%= searchedBookmarks[i].url%>"><%= searchedBookmarks[i].url%></a>
+            <%= searchedBookmarks[i].description %>
+          <% } %>
+        <% }else{ %>
+          一致する項目は見つかりませんでした。
+        <% } %>
+      <% } %>
+
       <div id="list">
         <div id="inputBookmark">
           <form action="/PHH_Bookmark/myPage" method="post">
@@ -72,6 +89,13 @@
             <% } %>
             <button id="deleteBtn" type="submit">削除</button>
           </form>
+          <% if(typeof orgData !== 'undefined'){ %>
+            <% for(var i = 0; i < orgData.length; i++){ %>
+              <img src="<%= orgData[i].image_path %>">
+              <a class="orgName" name="<%= orgData[i].id %>"><%= orgData[i].name %></a>
+              <div><%= orgData[i].introduction %></div>
+            <% } %>
+          <% } %>
         </div>
         <form name="toEdit" action="/PHH_Bookmark/myBookmarkEdit" method="get">
           <input type="hidden" name="result">
@@ -80,6 +104,9 @@
           <input type="hidden" name="result">
         </form>
         <form action="/PHH_Bookmark/myPage/submitUrl" name="submitUrl" method="post">
+          <input type="hidden" name="result">
+        </form>
+        <form name="submitOrgId" action="/PHH_Bookmark/organizationPage/submitOrgId" method="post">
           <input type="hidden" name="result">
         </form>
         <% if(typeof user !== 'undefined'){ %>
@@ -94,6 +121,7 @@
         var $bookmarkId = $("[name^='bookmarkId']");
         var $submitUrlButton = $('#submitUrl');
         var $url = $('#url');
+        var $orgName = $(".orgName");
         $edit.click(function(){
           document.toEdit.result.value = this.name;
           document.toEdit.submit();
@@ -106,6 +134,10 @@
           document.submitUrl.result.value = $url.val();
           document.submitUrl.submit();
         });
+        $orgName.click(function(){
+          document.submitOrgId.result.value = this.name;
+          document.submitOrgId.submit();
+        })
       });
     </script>
   </body>

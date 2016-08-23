@@ -8,8 +8,11 @@
   <body>
     <% include layout %>
     <main>
-      <div id="readAdmin">管理者リスト</div>
-      <div id="adminList"></div>
+      <h2><%= orgName %></h2>
+      <img src="<%= orgThumbnail %>">
+      <div><%= orgIntroduction %></div>
+
+      <div>管理者リスト</div>
       <% if(typeof adminUserNames !== 'undefined'){ %>
         <% for(var i = 0; i < adminUserNames.length; i++){ %>
           <div class="admin"><%= adminNickNames[i] %><%= adminUserNames[i] %>
