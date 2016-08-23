@@ -281,98 +281,53 @@ router.post('/searchBookmark', (req, res) => {
   var searchFromTitle = req.body.searchFromTitle;
   var searchFromDescription = req.body.searchFromDescription;
   var searchFromTextsOnSites = req.body.searchFromTextsOnSites;
+  var checkInjection = /[%;+-]+/g;
   var splitKeyWord = /[\S]+/g;
   var keyWords = keyWord.match(splitKeyWord);
   var keyWordsForQuery;
-  if(searchFromTitle === 'on' && searchFromDescription === undefined && searchFromTextsOnSites === undefined){
-    (() => {
-      var promise = new Promise((resolve) => {
-        keyWordsForQuery = '%';
-        keyWords.forEach((currentValue, index, array) => {
-          if(index + 1 === array.length){
-            keyWordsForQuery += currentValue;
-            resolve(keyWordsForQuery);
-          }else{
-            keyWordsForQuery += currentValue + '%" AND `title` LIKE "%';
-          }
+  (() => {
+    var promise = new Promise((resolve) => {
+      if(!checkInjection.test(keyWord)){
+        resolve();
+      }else{
+        res.render('organizationPage.ejs', {
+          bookmarkData,
+          orgName,
+          orgIntroduction,
+          orgThumbnail,
+          isAdmin,
+          keyWordNotice : 'セキュリティ上の観点から「+, -, %, ;」を含んでの検索はできません',
         });
-      });
-      return promise;
-    })().then((value) => {
-      keyWordsForQuery = value;
-      var promise = new Promise((resolve) => {
-        var selectSearchedBookmarks = 'SELECT * FROM `bookmarks` WHERE `org_id` = ? AND ( `title` LIKE "' + keyWordsForQuery + '%" )';
-        connection.query(selectSearchedBookmarks, [orgId]).then((result) => {
-          var searchedBookmarks = result[0];
-          resolve(searchedBookmarks);
-        });
-      });
-      return promise;
-    }).then((value) => {
-      var searchedBookmarks = value;
-      res.render('organizationPage.ejs', {
-        bookmarkData,
-        orgName,
-        orgIntroduction,
-        orgThumbnail,
-        isAdmin,
-        searchedBookmarks,
-      });
+      }
     });
-  }else if(searchFromTitle === undefined && searchFromDescription === 'on' && searchFromTextsOnSites === undefined){
-    (() => {
-      var promise = new Promise((resolve) => {
-        keyWordsForQuery = '%';
-        keyWords.forEach((currentValue, index, array) => {
-          if(index + 1 === array.length){
-            keyWordsForQuery += currentValue;
-            resolve(keyWordsForQuery);
-          }else{
-            keyWordsForQuery += currentValue + '%" AND `description` LIKE "%';
-          }
+    return promise;
+  })().then(() => {
+    if(searchFromTitle === 'on' && searchFromDescription === undefined && searchFromTextsOnSites === undefined){
+      (() => {
+        var promise = new Promise((resolve) => {
+          keyWordsForQuery = '%';
+          keyWords.forEach((currentValue, index, array) => {
+            if(index + 1 === array.length){
+              keyWordsForQuery += currentValue;
+              resolve(keyWordsForQuery);
+            }else{
+              keyWordsForQuery += currentValue + '%" AND `title` LIKE "%';
+            }
+          });
         });
-      });
-      return promise;
-    })().then((value) => {
-      keyWordsForQuery = value;
-      var promise = new Promise((resolve) => {
-        var selectSearchedBookmarks = 'SELECT * FROM `bookamrks` WHERE `org_id` = ? AND ( `description` LIKE "' + keyWordsForQuery + '%" )';
-        connection.query(selectSearchedBookmarks, [orgId]).then((result) => {
-          var searchedBookmarks = result[0];
-          resolve(searchedBookmarks);
+        return promise;
+      })().then((value) => {
+        keyWordsForQuery = value;
+        var promise = new Promise((resolve) => {
+          var selectSearchedBookmarks = 'SELECT * FROM `bookmarks` WHERE `org_id` = ? AND ( `title` LIKE "' + keyWordsForQuery + '%" )';
+          connection.query(selectSearchedBookmarks, [orgId]).then((result) => {
+            var searchedBookmarks = result[0];
+            resolve(searchedBookmarks);
+          });
         });
-      });
-      return promise;
-    }).then((value) => {
-      var searchedBookmarks = value;
-      res.render('organizationPage.ejs', {
-        bookmarkData,
-        orgName,
-        orgIntroduction,
-        orgThumbnail,
-        isAdmin,
-        searchedBookmarks,
-      });
-    });
-  }else if(searchFromTitle === undefined && searchFromDescription === undefined && searchFromTextsOnSites === 'on'){
-    keyWordsForQuery = '%';
-    (() => { // create table for inserting text of the site and select searchedBookmarks.
-      var promise = new Promise((resolve) => {
-        keyWords.forEach((currentValue, index, array) => {
-          if(index + 1 === array.length){
-            keyWordsForQuery += currentValue;
-            resolve(keyWordsForQuery);
-          }else{
-            keyWordsForQuery += currentValue + '%" AND `text` LIKE "%';
-          }
-        });
-      });
-      return promise;
-    })().then((value) => { // select this org bookmarks to insert `texts` table only bookmarks that is this orgs'
-      keyWordsForQuery = value;
-      var selectSearchedBookmarks = 'SELECT * FROM `bookmarks` WHERE `org_id` = ? AND ( `text` LIKE "' + keyWordsForQuery + '%")';
-      connection.query(selectSearchedBookmarks, [orgId]).then((result) => {
-        var searchedBookmarks = result[0];
+        return promise;
+      }).then((value) => {
+        var searchedBookmarks = value;
         res.render('organizationPage.ejs', {
           bookmarkData,
           orgName,
@@ -382,98 +337,32 @@ router.post('/searchBookmark', (req, res) => {
           searchedBookmarks,
         });
       });
-    });
-  }else if(searchFromTitle === 'on' && searchFromDescription === 'on' && searchFromTextsOnSites === undefined){
-    (() => {
-      var promise = new Promise((resolve) => {
-        var keyWordsForQueryByTitle = '%';
-        keyWords.forEach((currentValue, index, array) => {
-          if(index + 1 === array.length){
-            keyWordsForQueryByTitle += currentValue;
-            resolve(keyWordsForQueryByTitle);
-          }else{
-            keyWordsForQueryByTitle += currentValue + '%" AND `title` LIKE "%';
-          }
+    }else if(searchFromTitle === undefined && searchFromDescription === 'on' && searchFromTextsOnSites === undefined){
+      (() => {
+        var promise = new Promise((resolve) => {
+          keyWordsForQuery = '%';
+          keyWords.forEach((currentValue, index, array) => {
+            if(index + 1 === array.length){
+              keyWordsForQuery += currentValue;
+              resolve(keyWordsForQuery);
+            }else{
+              keyWordsForQuery += currentValue + '%" AND `description` LIKE "%';
+            }
+          });
         });
-      });
-      return promise;
-    })().then((value) => {
-      var keyWordsForQueryByTitle = value;
-      var promise = new Promise((resolve) => {
-        var keyWordsForQueryByDescription = '%';
-        keyWords.forEach((currentValue, index, array) => {
-          if(index + 1 === array.length){
-            keyWordsForQueryByDescription += currentValue;
-            var values = {
-              keyWordsForQueryByDescription,
-              keyWordsForQueryByTitle,
-            };
-            resolve(values);
-          }else{
-            keyWordsForQueryByDescription += currentValue + '%" AND `description` LIKE "%';
-          }
+        return promise;
+      })().then((value) => {
+        keyWordsForQuery = value;
+        var promise = new Promise((resolve) => {
+          var selectSearchedBookmarks = 'SELECT * FROM `bookamrks` WHERE `org_id` = ? AND ( `description` LIKE "' + keyWordsForQuery + '%" )';
+          connection.query(selectSearchedBookmarks, [orgId]).then((result) => {
+            var searchedBookmarks = result[0];
+            resolve(searchedBookmarks);
+          });
         });
-      });
-      return promise;
-    }).then((values) => {
-      var keyWordsForQueryByTitle = values.keyWordsForQueryByTitle;
-      var keyWordsForQueryByDescription = values.keyWordsForQueryByDescription;
-      var selectSearchedBookmarks = 'SELECT * FROM `bookmarks` WHERE `org_id` = ? AND (( `title` LIKE "' + keyWordsForQueryByTitle + '%" ) OR ( `description` LIKE "' + keyWordsForQueryByDescription + '%"))';
-      var promise = new Promise((resolve) => {
-        connection.query(selectSearchedBookmarks, [orgId]).then((result) => {
-          var searchedBookmarks = result[0];
-          resolve(searchedBookmarks);
-        });
-      });
-      return promise;
-    }).then((searchedBookmarks) => {
-      res.render('organizationPage.ejs', {
-        bookmarkData,
-        orgName,
-        orgIntroduction,
-        orgThumbnail,
-        isAdmin,
-        searchedBookmarks,
-      });
-    });
-  }else if(searchFromTitle === 'on' && searchFromDescription === undefined && searchFromTextsOnSites === 'on'){
-    (() => {
-      var promise = new Promise((resolve) => {
-        var keyWordsForQueryWithTitle = '%';
-        keyWords.forEach((currentValue, index, array) => {
-          if(index + 1 === array.length){
-            keyWordsForQueryWithTitle += currentValue;
-            resolve(keyWordsForQueryWithTitle);
-          }else{
-            keyWordsForQueryWithTitle += currentValue + '%" AND `title` LIKE "%';
-          }
-        });
-      });
-      return promise;
-    })().then((value) => {
-      var keyWordsForQueryWithTitle = value;
-      var promise = new Promise((resolve) => {
-        var keyWordsForQueryWithText = '%';
-        keyWords.forEach((currentValue, index, array) => {
-          if(index + 1 === array.length){
-            keyWordsForQueryWithText += currentValue;
-            var values = {
-              keyWordsForQueryWithText,
-              keyWordsForQueryWithTitle,
-            };
-            resolve(values);
-          }else{
-            keyWordsForQueryWithText += currentValue + '%" AND `text` LIKE "%';
-          }
-        });
-      });
-      return promise;
-    }).then((values) => {
-      var keyWordsForQueryWithText = values.keyWordsForQueryWithText;
-      var keyWordsForQueryWithTitle = values.keyWordsForQueryWithTitle;
-      var selectSearchedBookmarks = 'SELECT * FROM `bookmarks` WHERE `org_id` = ? AND (( `title` LIKE "' + keyWordsForQueryWithTitle + '%" ) OR ( `text` LIKE "' + keyWordsForQueryWithText + '%" ))';
-      connection.query(selectSearchedBookmarks, [orgId]).then((result) => {
-        var searchedBookmarks = result[0];
+        return promise;
+      }).then((value) => {
+        var searchedBookmarks = value;
         res.render('organizationPage.ejs', {
           bookmarkData,
           orgName,
@@ -483,136 +372,266 @@ router.post('/searchBookmark', (req, res) => {
           searchedBookmarks,
         });
       });
-    });
-  }else if(searchFromTitle === undefined && searchFromDescription === 'on' && searchFromTextsOnSites === 'on'){
-    (() => {
-      var promise = new Promise((resolve) => {
-        var keyWordsForQueryWithDescription = '%';
-        keyWords.forEach((currentValue, index, array) => {
-          if(index + 1 === array.length){
-            keyWordsForQueryWithDescription += currentValue;
-            resolve(keyWordsForQueryWithDescription);
-          }else{
-            keyWordsForQueryWithDescription += currentValue + '%" AND `description` LIKE "';
-          }
+    }else if(searchFromTitle === undefined && searchFromDescription === undefined && searchFromTextsOnSites === 'on'){
+      keyWordsForQuery = '%';
+      (() => { // create table for inserting text of the site and select searchedBookmarks.
+        var promise = new Promise((resolve) => {
+          keyWords.forEach((currentValue, index, array) => {
+            if(index + 1 === array.length){
+              keyWordsForQuery += currentValue;
+              resolve(keyWordsForQuery);
+            }else{
+              keyWordsForQuery += currentValue + '%" AND `text` LIKE "%';
+            }
+          });
         });
-      });
-      return promise;
-    })().then((value) => {
-      var keyWordsForQueryWithDescription = value;
-      var promise = new Promise((resolve) => {
-        var keyWordsForQueryWithText = '%';
-        keyWords.forEach((currentValue, index, array) => {
-          if(index + 1 === array.length){
-            keyWordsForQueryWithText += currentValue;
-            var values = {
-              keyWordsForQueryWithText,
-              keyWordsForQueryWithDescription,
-            };
-            resolve(values);
-          }else{
-            keyWordsForQueryWithText += currentValue + '%" `text` LIKE "%';
-          }
-        });
-      });
-      return promise;
-    }).then((values) => {
-      var keyWordsForQueryWithText = values.keyWordsForQueryWithText;
-      var keyWordsForQueryWithDescription = values.keyWordsForQueryWithDescription;
-      var promise = new Promise((resolve) => {
-        var selectSearchedBookmarks = 'SELECT * FROM `bookmarks` WHERE `org_id` = ? AND (( `description` LIKE "' + keyWordsForQueryWithDescription + '%" ) OR ( "' + keyWordsForQueryWithText + '%" ))';
+        return promise;
+      })().then((value) => { // select this org bookmarks to insert `texts` table only bookmarks that is this orgs'
+        keyWordsForQuery = value;
+        var selectSearchedBookmarks = 'SELECT * FROM `bookmarks` WHERE `org_id` = ? AND ( `text` LIKE "' + keyWordsForQuery + '%")';
         connection.query(selectSearchedBookmarks, [orgId]).then((result) => {
           var searchedBookmarks = result[0];
-          resolve(searchedBookmarks);
+          res.render('organizationPage.ejs', {
+            bookmarkData,
+            orgName,
+            orgIntroduction,
+            orgThumbnail,
+            isAdmin,
+            searchedBookmarks,
+          });
         });
       });
-      return promise;
-    }).then((value) => {
-      var searchedBookmarks = value;
-      res.render('organizationPage.ejs', {
-        bookmarkData,
-        orgName,
-        orgIntroduction,
-        orgThumbnail,
-        isAdmin,
-        searchedBookmarks,
-      });
-    });
-  }else if(searchFromTitle === 'on' && searchFromDescription === 'on' && searchFromTextsOnSites === 'on'){
-    (() => {
-      var promise = new Promise((resolve) => {
-        var keyWordsForQueryWithTitle = '%';
-        keyWords.forEach((currentValue, index, array) => {
-          if(index + 1 === array.length){
-            keyWordsForQueryWithTitle += currentValue;
-            resolve(keyWordsForQueryWithTitle);
-          }else{
-            keyWordsForQueryWithTitle += currentValue + '%" AND `title` LIKE "%';
-          }
+    }else if(searchFromTitle === 'on' && searchFromDescription === 'on' && searchFromTextsOnSites === undefined){
+      (() => {
+        var promise = new Promise((resolve) => {
+          var keyWordsForQueryByTitle = '%';
+          keyWords.forEach((currentValue, index, array) => {
+            if(index + 1 === array.length){
+              keyWordsForQueryByTitle += currentValue;
+              resolve(keyWordsForQueryByTitle);
+            }else{
+              keyWordsForQueryByTitle += currentValue + '%" AND `title` LIKE "%';
+            }
+          });
+        });
+        return promise;
+      })().then((value) => {
+        var keyWordsForQueryByTitle = value;
+        var promise = new Promise((resolve) => {
+          var keyWordsForQueryByDescription = '%';
+          keyWords.forEach((currentValue, index, array) => {
+            if(index + 1 === array.length){
+              keyWordsForQueryByDescription += currentValue;
+              var values = {
+                keyWordsForQueryByDescription,
+                keyWordsForQueryByTitle,
+              };
+              resolve(values);
+            }else{
+              keyWordsForQueryByDescription += currentValue + '%" AND `description` LIKE "%';
+            }
+          });
+        });
+        return promise;
+      }).then((values) => {
+        var keyWordsForQueryByTitle = values.keyWordsForQueryByTitle;
+        var keyWordsForQueryByDescription = values.keyWordsForQueryByDescription;
+        var selectSearchedBookmarks = 'SELECT * FROM `bookmarks` WHERE `org_id` = ? AND (( `title` LIKE "' + keyWordsForQueryByTitle + '%" ) OR ( `description` LIKE "' + keyWordsForQueryByDescription + '%"))';
+        var promise = new Promise((resolve) => {
+          connection.query(selectSearchedBookmarks, [orgId]).then((result) => {
+            var searchedBookmarks = result[0];
+            resolve(searchedBookmarks);
+          });
+        });
+        return promise;
+      }).then((searchedBookmarks) => {
+        res.render('organizationPage.ejs', {
+          bookmarkData,
+          orgName,
+          orgIntroduction,
+          orgThumbnail,
+          isAdmin,
+          searchedBookmarks,
         });
       });
-      return promise;
-    })().then((value) => {
-      var keyWordsForQueryWithTitle = value;
-      var promise = new Promise((resolve) => {
-        var keyWordsForQueryWithDescription = '%';
-        keyWords.forEach((currentValue, index, array) => {
-          if(index + 1 === array.length){
-            keyWordsForQueryWithDescription += currentValue;
-            var values = {
-              keyWordsForQueryWithTitle,
-              keyWordsForQueryWithDescription,
-            };
-            resolve(values);
-          }else{
-            keyWordsForQueryWithDescription += currentValue + '%" AND `description` LIKE "%';
-          }
+    }else if(searchFromTitle === 'on' && searchFromDescription === undefined && searchFromTextsOnSites === 'on'){
+      (() => {
+        var promise = new Promise((resolve) => {
+          var keyWordsForQueryWithTitle = '%';
+          keyWords.forEach((currentValue, index, array) => {
+            if(index + 1 === array.length){
+              keyWordsForQueryWithTitle += currentValue;
+              resolve(keyWordsForQueryWithTitle);
+            }else{
+              keyWordsForQueryWithTitle += currentValue + '%" AND `title` LIKE "%';
+            }
+          });
         });
-      });
-      return promise;
-    }).then((values) => {
-      var keyWordsForQueryWithDescription = values.keyWordsForQueryWithDescription;
-      var keyWordsForQueryWithTitle = values.keyWordsForQueryWithTitle;
-      var promise = new Promise((resolve) => {
-        var keyWordsForQueryWithText = '%';
-        keyWords.forEach((currentValue, index, array) => {
-          if(index + 1 === array.length){
-            keyWordsForQueryWithText += currentValue;
-            values = {
-              keyWordsForQueryWithText,
-              keyWordsForQueryWithTitle,
-              keyWordsForQueryWithDescription,
-            };
-            resolve(values);
-          }else{
-            keyWordsForQueryWithText += currentValue + '%" AND `text` LIKE "%';
-          }
+        return promise;
+      })().then((value) => {
+        var keyWordsForQueryWithTitle = value;
+        var promise = new Promise((resolve) => {
+          var keyWordsForQueryWithText = '%';
+          keyWords.forEach((currentValue, index, array) => {
+            if(index + 1 === array.length){
+              keyWordsForQueryWithText += currentValue;
+              var values = {
+                keyWordsForQueryWithText,
+                keyWordsForQueryWithTitle,
+              };
+              resolve(values);
+            }else{
+              keyWordsForQueryWithText += currentValue + '%" AND `text` LIKE "%';
+            }
+          });
         });
-      });
-      return promise;
-    }).then((values) => {
-      var keyWordsForQueryWithText = values.keyWordsForQueryWithText;
-      var keyWordsForQueryWithTitle = values.keyWordsForQueryWithTitle;
-      var keyWordsForQueryWithDescription = values.keyWordsForQueryWithDescription;
-      var promise = new Promise((resolve) => {
-        var selectSearchedBookmarks = 'SELECT * FROM `bookmarks` WHERE `org_id` = ? AND (( `title` LIKE "' + keyWordsForQueryWithTitle + '%" ) OR ( `description` LIKE "' + keyWordsForQueryWithDescription + '%" ) OR ( `text` LIKE "' + keyWordsForQueryWithText + '%" ))';
+        return promise;
+      }).then((values) => {
+        var keyWordsForQueryWithText = values.keyWordsForQueryWithText;
+        var keyWordsForQueryWithTitle = values.keyWordsForQueryWithTitle;
+        var selectSearchedBookmarks = 'SELECT * FROM `bookmarks` WHERE `org_id` = ? AND (( `title` LIKE "' + keyWordsForQueryWithTitle + '%" ) OR ( `text` LIKE "' + keyWordsForQueryWithText + '%" ))';
         connection.query(selectSearchedBookmarks, [orgId]).then((result) => {
           var searchedBookmarks = result[0];
-          resolve(searchedBookmarks);
+          res.render('organizationPage.ejs', {
+            bookmarkData,
+            orgName,
+            orgIntroduction,
+            orgThumbnail,
+            isAdmin,
+            searchedBookmarks,
+          });
         });
       });
-      return promise;
-    }).then((value) => {
-      var searchedBookmarks = value;
-      res.render('organizationPage.ejs', {
-        bookmarkData,
-        orgName,
-        orgIntroduction,
-        orgThumbnail,
-        isAdmin,
-        searchedBookmarks,
+    }else if(searchFromTitle === undefined && searchFromDescription === 'on' && searchFromTextsOnSites === 'on'){
+      (() => {
+        var promise = new Promise((resolve) => {
+          var keyWordsForQueryWithDescription = '%';
+          keyWords.forEach((currentValue, index, array) => {
+            if(index + 1 === array.length){
+              keyWordsForQueryWithDescription += currentValue;
+              resolve(keyWordsForQueryWithDescription);
+            }else{
+              keyWordsForQueryWithDescription += currentValue + '%" AND `description` LIKE "';
+            }
+          });
+        });
+        return promise;
+      })().then((value) => {
+        var keyWordsForQueryWithDescription = value;
+        var promise = new Promise((resolve) => {
+          var keyWordsForQueryWithText = '%';
+          keyWords.forEach((currentValue, index, array) => {
+            if(index + 1 === array.length){
+              keyWordsForQueryWithText += currentValue;
+              var values = {
+                keyWordsForQueryWithText,
+                keyWordsForQueryWithDescription,
+              };
+              resolve(values);
+            }else{
+              keyWordsForQueryWithText += currentValue + '%" `text` LIKE "%';
+            }
+          });
+        });
+        return promise;
+      }).then((values) => {
+        var keyWordsForQueryWithText = values.keyWordsForQueryWithText;
+        var keyWordsForQueryWithDescription = values.keyWordsForQueryWithDescription;
+        var promise = new Promise((resolve) => {
+          var selectSearchedBookmarks = 'SELECT * FROM `bookmarks` WHERE `org_id` = ? AND (( `description` LIKE "' + keyWordsForQueryWithDescription + '%" ) OR ( "' + keyWordsForQueryWithText + '%" ))';
+          connection.query(selectSearchedBookmarks, [orgId]).then((result) => {
+            var searchedBookmarks = result[0];
+            resolve(searchedBookmarks);
+          });
+        });
+        return promise;
+      }).then((value) => {
+        var searchedBookmarks = value;
+        res.render('organizationPage.ejs', {
+          bookmarkData,
+          orgName,
+          orgIntroduction,
+          orgThumbnail,
+          isAdmin,
+          searchedBookmarks,
+        });
       });
-    });
-  }
+    }else if(searchFromTitle === 'on' && searchFromDescription === 'on' && searchFromTextsOnSites === 'on'){
+      (() => {
+        var promise = new Promise((resolve) => {
+          var keyWordsForQueryWithTitle = '%';
+          keyWords.forEach((currentValue, index, array) => {
+            if(index + 1 === array.length){
+              keyWordsForQueryWithTitle += currentValue;
+              resolve(keyWordsForQueryWithTitle);
+            }else{
+              keyWordsForQueryWithTitle += currentValue + '%" AND `title` LIKE "%';
+            }
+          });
+        });
+        return promise;
+      })().then((value) => {
+        var keyWordsForQueryWithTitle = value;
+        var promise = new Promise((resolve) => {
+          var keyWordsForQueryWithDescription = '%';
+          keyWords.forEach((currentValue, index, array) => {
+            if(index + 1 === array.length){
+              keyWordsForQueryWithDescription += currentValue;
+              var values = {
+                keyWordsForQueryWithTitle,
+                keyWordsForQueryWithDescription,
+              };
+              resolve(values);
+            }else{
+              keyWordsForQueryWithDescription += currentValue + '%" AND `description` LIKE "%';
+            }
+          });
+        });
+        return promise;
+      }).then((values) => {
+        var keyWordsForQueryWithDescription = values.keyWordsForQueryWithDescription;
+        var keyWordsForQueryWithTitle = values.keyWordsForQueryWithTitle;
+        var promise = new Promise((resolve) => {
+          var keyWordsForQueryWithText = '%';
+          keyWords.forEach((currentValue, index, array) => {
+            if(index + 1 === array.length){
+              keyWordsForQueryWithText += currentValue;
+              values = {
+                keyWordsForQueryWithText,
+                keyWordsForQueryWithTitle,
+                keyWordsForQueryWithDescription,
+              };
+              resolve(values);
+            }else{
+              keyWordsForQueryWithText += currentValue + '%" AND `text` LIKE "%';
+            }
+          });
+        });
+        return promise;
+      }).then((values) => {
+        var keyWordsForQueryWithText = values.keyWordsForQueryWithText;
+        var keyWordsForQueryWithTitle = values.keyWordsForQueryWithTitle;
+        var keyWordsForQueryWithDescription = values.keyWordsForQueryWithDescription;
+        var promise = new Promise((resolve) => {
+          var selectSearchedBookmarks = 'SELECT * FROM `bookmarks` WHERE `org_id` = ? AND (( `title` LIKE "' + keyWordsForQueryWithTitle + '%" ) OR ( `description` LIKE "' + keyWordsForQueryWithDescription + '%" ) OR ( `text` LIKE "' + keyWordsForQueryWithText + '%" ))';
+          connection.query(selectSearchedBookmarks, [orgId]).then((result) => {
+            var searchedBookmarks = result[0];
+            resolve(searchedBookmarks);
+          });
+        });
+        return promise;
+      }).then((value) => {
+        var searchedBookmarks = value;
+        res.render('organizationPage.ejs', {
+          bookmarkData,
+          orgName,
+          orgIntroduction,
+          orgThumbnail,
+          isAdmin,
+          searchedBookmarks,
+        });
+      });
+    }
+  });
 });
 module.exports = router;

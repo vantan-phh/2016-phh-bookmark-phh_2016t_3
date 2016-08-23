@@ -16,6 +16,9 @@
       <input type="text" placeholder="検索ワードを入力" name="keyWord">
       <input type="submit" value="検索">
     </form>
+    <% if(typeof keyWordNotice !== 'undefined'){ %>
+      <p><%= keyWordNotice %></p>
+    <% } %>
 
     <form action="/PHH_Bookmark/organizationPage" method="post">
       <% if(typeof url !== 'undefined'){ %>
