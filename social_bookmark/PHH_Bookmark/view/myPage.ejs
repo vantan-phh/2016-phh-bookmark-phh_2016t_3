@@ -70,6 +70,13 @@
           <% } %>
           <button type="submit">削除</button>
         </form>
+        <% if(typeof orgData !== 'undefined'){ %>
+          <% for(var i = 0; i < orgData.length; i++){ %>
+            <img src="<%= orgData[i].image_path %>">
+            <a class="orgName" name="<%= orgData[i].id %>"><%= orgData[i].name %></a>
+            <div><%= orgData[i].introduction %></div>
+          <% } %>
+        <% } %>
         <form name="toEdit" action="/PHH_Bookmark/myBookmarkEdit" method="get">
           <input type="hidden" name="result">
         </form>
@@ -77,6 +84,9 @@
           <input type="hidden" name="result">
         </form>
         <form action="/PHH_Bookmark/myPage/submitUrl" name="submitUrl" method="post">
+          <input type="hidden" name="result">
+        </form>
+        <form name="submitOrgId" action="/PHH_Bookmark/organizationPage/submitOrgId" method="post">
           <input type="hidden" name="result">
         </form>
         <% if(typeof user !== 'undefined'){ %>
@@ -91,6 +101,7 @@
         var $bookmarkId = $("[name^='bookmarkId']");
         var $submitUrlButton = $('#submitUrl');
         var $url = $('#url');
+        var $orgName = $(".orgName");
         $edit.click(function(){
           document.toEdit.result.value = this.name;
           document.toEdit.submit();
@@ -103,6 +114,10 @@
           document.submitUrl.result.value = $url.val();
           document.submitUrl.submit();
         });
+        $orgName.click(function(){
+          document.submitOrgId.result.value = this.name;
+          document.submitOrgId.submit();
+        })
       });
     </script>
   </body>

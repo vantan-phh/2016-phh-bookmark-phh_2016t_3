@@ -11,6 +11,15 @@ var orgName;
 var orgIntroduction;
 var orgThumbnail;
 
+router.post('/submitOrgId', (req, res) => {
+  var orgId = req.body.result;
+  if(req.session.org_id){
+    delete req.session.org_id;
+  }
+  req.session.org_id = orgId;
+  res.redirect('/PHH_Bookmark/organizationPage');
+});
+
 router.get('/', (req, res) => {
   var myId = req.session.user_id;
   var orgId = req.session.org_id;

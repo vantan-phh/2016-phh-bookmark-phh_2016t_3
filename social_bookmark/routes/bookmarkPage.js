@@ -34,7 +34,6 @@ router.get('/', (req, res) => {
         });
       }else{
         var pullBookmark = 'SELECT * FROM `bookmarks` WHERE `bookmark_id` = ?';
-        console.log(pullBookmark);
         connection.query(pullBookmark, [bookmarkId]).then((result) => {
           res.render('bookmarkPage.ejs', {
             bookmark : result[0],
@@ -49,7 +48,6 @@ router.get('/', (req, res) => {
     var queryResult = values.queryResult;
     var promise = new Promise((resolve) => {
       var pullNickName = 'SELECT `nick_name` FROM `users` WHERE `user_id` = ' + userIdsForQuery;
-      console.log(pullNickName);
       connection.query(pullNickName).then((result) => {
         var nickNames = result[0];
         values = {

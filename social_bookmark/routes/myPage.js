@@ -8,15 +8,51 @@ var bookmarkData;
 
 router.get('/', (req, res) => {
   var userId = req.session.user_id;
-  var query = 'SELECT * FROM `bookmarks` WHERE `user_id` = ?';
-  connection.query(query, [userId]).then((result) => {
-    bookmarkData = result[0];
-    res.render('myPage.ejs', {
-      bookmarkData,
+  (() => {
+    var promise = new Promise((resolve) => {
+      var selectBelongOrg = 'SELECT `org_id` FROM `organization_memberships` WHERE `user_id` = ?';
+      connection.query(selectBelongOrg, [userId]).then((result) => {
+        var selectedBelongOrgIds = result[0];
+        resolve(selectedBelongOrgIds);
+      });
+    });
+    return promise;
+  })().then((value) => {
+    var selectedBelongOrgIds = value;
+    var promise = new Promise((resolve) => {
+      var belongOrgIdsForQuery = '';
+      selectedBelongOrgIds.forEach((currentValue, index, array) => {
+        if(index + 1 === array.length){
+          belongOrgIdsForQuery += currentValue.org_id;
+          resolve(belongOrgIdsForQuery);
+        }else{
+          belongOrgIdsForQuery += currentValue.org_id + ' OR `id` = ';
+        }
+      });
+    });
+    return promise;
+  }).then((value) => {
+    var belongOrgIdsForQuery = value;
+    var promise = new Promise((resolve) => {
+      var selectOrgData = 'SELECT * FROM `organizations` WHERE `id` = ' + belongOrgIdsForQuery;
+      connection.query(selectOrgData).then((result) => {
+        var orgData = result[0];
+        resolve(orgData);
+      });
+    });
+    return promise;
+  }).then((value) => {
+    var orgData = value;
+    var query = 'SELECT * FROM `bookmarks` WHERE `user_id` = ?';
+    connection.query(query, [userId]).then((result) => {
+      bookmarkData = result[0];
+      res.render('myPage.ejs', {
+        bookmarkData,
+        orgData,
+      });
     });
   });
 });
-
 router.post('/', (req, res) => {
   var userId = req.session.user_id;
   var url = req.body.url;
