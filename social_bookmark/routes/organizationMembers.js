@@ -3,6 +3,8 @@ var express = require('express');
 var router = express.Router();
 var connection = require('../mysqlConnection');
 
+var cannotLeave;
+
 router.get('/', (req, res) => {
   var myId = req.session.user_id;
   var orgId = req.session.org_id;
@@ -107,14 +109,68 @@ router.get('/', (req, res) => {
     });
     return promise;
   }).then((values) => {
-    res.render('organizationMembers.ejs', {
-      orgName : values.orgData.name,
-      orgIntroduction : values.orgData.introduction,
-      orgThumbnail : values.orgData.image_path,
-      selectedAdminData : values.selectedAdminData,
-      selectedNotAdminData : values.selectedNotAdminData,
-      myUserName : values.myUserName,
+    if(cannotLeave === 1){
+      cannotLeave = 0;
+      res.render('organizationMembers.ejs', {
+        orgName : values.orgData.name,
+        orgIntroduction : values.orgData.introduction,
+        orgThumbnail : values.orgData.image_path,
+        selectedAdminData : values.selectedAdminData,
+        selectedNotAdminData : values.selectedNotAdminData,
+        myUserName : values.myUserName,
+        cannotLeaveNotice : 'この組織の管理者が1名のみのため、脱退はできません。',
+      });
+    }else{
+      res.render('organizationMembers.ejs', {
+        orgName : values.orgData.name,
+        orgIntroduction : values.orgData.introduction,
+        orgThumbnail : values.orgData.image_path,
+        selectedAdminData : values.selectedAdminData,
+        selectedNotAdminData : values.selectedNotAdminData,
+        myUserName : values.myUserName,
+      });
+    }
+  });
+});
+
+router.post('/leave', (req, res) => {
+  var myId = req.session.user_id;
+  var orgId = req.session.org_id;
+  (() => {
+    var promise = new Promise((resolve) => {
+      var checkAuthority = 'SELECT `is_admin` FROM `organization_memberships` WHERE `org_id` = ? AND `user_id` = ?';
+      connection.query(checkAuthority, [orgId, myId]).then((result) => {
+        resolve(result[0][0].is_admin);
+      });
     });
+    return promise;
+  })().then((isAdmin) => {
+    if(isAdmin === 1){
+      (() => {
+        var promise = new Promise((resolve) => {
+          var selectAdmins = 'SELECT `user_id` FROM `organization_memberships` WHERE `org_id` = ? AND `is_admin` = true';
+          connection.query(selectAdmins, [orgId]).then((result) => {
+            if(result[0].length > 1){
+              resolve();
+            }else{
+              cannotLeave = 1;
+              res.redirect('/PHH_Bookmark/organizationMembers');
+            }
+          });
+        });
+        return promise;
+      })().then(() => {
+        var leave = 'DELETE FROM `organization_memberships` WHERE `org_id` = ? AND `user_id` = ?';
+        connection.query(leave, [orgId, myId]).then(() => {
+          res.render('leave.ejs');
+        });
+      });
+    }else{
+      var leave = 'DELETE FROM `organization_memberships` WHERE `org_id` = ? AND `user_id` = ?';
+      connection.query(leave, [orgId, myId]).then(() => {
+        res.render('leave.ejs');
+      });
+    }
   });
 });
 
