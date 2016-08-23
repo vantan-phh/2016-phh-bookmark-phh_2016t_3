@@ -18,7 +18,8 @@
       <div id="memberList">
         <% if(typeof memberUserNames !== 'undefined'){%>
           <% for(var i = 0; i < memberUserNames.length; i ++){ %>
-            <div class="members"><%= memberNickNames[i] %><%= memberUserNames[i] %>
+            <div class="members">
+              <p id="memberName"><%= memberUserNames[i] %></p><!-- <p><%= memberNickNames[i] %></p> -->
               <% if(memberUserNames[i] === myUserName){ %>
                 <input type="button" value="脱退" id="leave">
               <% } else { %>

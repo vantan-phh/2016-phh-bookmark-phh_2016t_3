@@ -19,7 +19,7 @@ main{
   min-height: 150px;
   position: relative;
   left: 50px;
-  top: 100px;
+  top: 50px;
 }
 #img img{
   width:auto;
@@ -31,40 +31,40 @@ main{
   vertical-align: middle;
 }
 #file{
-  position: absolute;
+  position: relative;
   left: 50px;
-  top: 300px;
+  top: 70px;
 }
 
 #name{
   position: absolute;
-  left: 400px;
-  top: 100px;
+  left: 300px;
+  top: 70px;
 }
 #setName{
   position: absolute;
-  left: 400px;
-  top: 130px;
+  left: 300px;
+  top: 100px;
 }
 #errorName{
   color: red;
   position: absolute;
-  left: 400px;
-  top: 135px;
+  left: 435px;
+  top: 97px;
 }
 
 #introduction{
   position: absolute;
-  left: 400px;
-  top: 180px;
+  left: 300px;
+  top: 130px;
 }
 #setIntro{
-  width: 200px;
-  height: 100px;
+  width: 300px;
+  height: 50px;
   resize: none;
   position: absolute;
-  left: 400px;
-  top: 210px;
+  left: 300px;
+  top: 160px;
 }
 #errorIntro{
   color: red;
@@ -82,9 +82,9 @@ main{
   text-shadow: 0.5px 0.5px 0 black;
   width: 70px;
   height: 30px;
-  position: absolute;
-  left: 500px;
-  top: 350px;
+  position: relative;
+  left: 320px;
+  top: 100px;
 }
 #submit:hover{
   background: linear-gradient(#049336, #036b27);

@@ -68,11 +68,20 @@
   top: 310px;
 }
 .members{
+  margin: 5px 0 5px 10px;
+}
+#memberName{
   display: inline-block;
-  margin: 10px 0 10px 10px;
+  width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-text-overflow: ellipsis;
+  -o-text-overflow: ellipsis;
 }
 .members input{
   float: right;
+  margin: 5px 5px 0 0;
 }
 
 #management{
