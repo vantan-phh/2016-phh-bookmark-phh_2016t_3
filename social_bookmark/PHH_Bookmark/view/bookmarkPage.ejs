@@ -11,7 +11,7 @@
     <% if(typeof comments !== 'undefined'){ %>
       <% for(var i = 0; i < comments.length; i++){ %>
         <div><%= comments[i].body %></div>
-        <div><%= commentNickName[i].nick_name %></div>
+        <div><%= commentNickName[i] %></div>
         <% if(browsingUserId === comments[i].user_id){ %>
           <input type="button" value="削除" name="<%= comments[i].comment_id %>" class="delete">
         <% } %>
