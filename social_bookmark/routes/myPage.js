@@ -5,6 +5,7 @@ var connection = require('../mysqlConnection');
 var client = require('cheerio-httpcli');
 
 var bookmarkData;
+var orgData;
 
 router.get('/', (req, res) => {
   var userId = req.session.user_id;
@@ -36,13 +37,13 @@ router.get('/', (req, res) => {
     var promise = new Promise((resolve) => {
       var selectOrgData = 'SELECT * FROM `organizations` WHERE `id` = ' + belongOrgIdsForQuery;
       connection.query(selectOrgData).then((result) => {
-        var orgData = result[0];
+        orgData = result[0];
         resolve(orgData);
       });
     });
     return promise;
   }).then((value) => {
-    var orgData = value;
+    orgData = value;
     var query = 'SELECT * FROM `bookmarks` WHERE `user_id` = ?';
     connection.query(query, [userId]).then((result) => {
       bookmarkData = result[0];
@@ -71,6 +72,7 @@ router.post('/', (req, res) => {
           res.render('myPage.ejs', {
             bookmarkData,
             urlNotice : 'http://もしくはhttp://から始まる正しいURLを入力してください',
+            orgData,
           });
         });
       }
@@ -89,6 +91,7 @@ router.post('/', (req, res) => {
             title,
             description,
             titleNotice : 'セキュリティ上の観点からタイトルに「+, -, %, ;」は使えません',
+            orgData,
           });
         });
       }
@@ -107,6 +110,7 @@ router.post('/', (req, res) => {
             title,
             description,
             descriptionNotice : 'セキュリティ上の観点から説明文に「+, -, %, ;」は使えません',
+            orgData,
           });
         });
       }
@@ -125,6 +129,7 @@ router.post('/', (req, res) => {
             title,
             description,
             titleNotice : 'タイトルは32文字以内です',
+            orgData,
           });
         });
       }
@@ -143,6 +148,7 @@ router.post('/', (req, res) => {
             title,
             description,
             descriptionNotice : '説明文は128文字以内です',
+            orgData,
           });
         });
       }
@@ -160,6 +166,7 @@ router.post('/', (req, res) => {
           title,
           description,
           networkNotice : 'URLが正しいかどうかをご確認の上、ネットワーク接続をお確かめ下さい。',
+          orgData,
         });
       });
     });
@@ -183,11 +190,13 @@ router.post('/submitUrl', (req, res) => {
         bookmarkData,
         title : result.$('title').text(),
         url,
+        orgData,
       });
     }, () => {
       res.render('myPage.ejs', {
         bookmarkData,
         networkNotice : 'URLが正しいかをご確認の上、ネットワーク接続をお確かめください。',
+        orgData,
       });
     });
   }else{
@@ -197,6 +206,7 @@ router.post('/submitUrl', (req, res) => {
       res.render('myPage.ejs', {
         bookmarkData,
         urlNotice : 'http://もしくはhttp://から始まる正しいURLを入力してください',
+        orgData,
       });
     });
   }
@@ -256,6 +266,7 @@ router.post('/searchBookmark', (req, res) => {
       res.render('myPage.ejs', {
         bookmarkData,
         searchedBookmarks,
+        orgData,
       });
     });
   }else if(searchFromTitle === undefined && searchFromDescription === 'on' && searchFromTextsOnSites === undefined){
@@ -287,6 +298,7 @@ router.post('/searchBookmark', (req, res) => {
       res.render('myPage.ejs', {
         bookmarkData,
         searchedBookmarks,
+        orgData,
       });
     });
   }else if(searchFromTitle === undefined && searchFromDescription === undefined && searchFromTextsOnSites === 'on'){
@@ -311,6 +323,7 @@ router.post('/searchBookmark', (req, res) => {
         res.render('myPage.ejs', {
           bookmarkData,
           searchedBookmarks,
+          orgData,
         });
       });
     });
@@ -361,6 +374,7 @@ router.post('/searchBookmark', (req, res) => {
       res.render('myPage.ejs', {
         bookmarkData,
         searchedBookmarks,
+        orgData,
       });
     });
   }else if(searchFromTitle === 'on' && searchFromDescription === undefined && searchFromTextsOnSites === 'on'){
@@ -404,6 +418,7 @@ router.post('/searchBookmark', (req, res) => {
         res.render('myPage.ejs', {
           bookmarkData,
           searchedBookmarks,
+          orgData,
         });
       });
     });
@@ -455,6 +470,7 @@ router.post('/searchBookmark', (req, res) => {
       res.render('myPage.ejs', {
         bookmarkData,
         searchedBookmarks,
+        orgData,
       });
     });
   }else if(searchFromTitle === 'on' && searchFromDescription === 'on' && searchFromTextsOnSites === 'on'){
@@ -526,6 +542,7 @@ router.post('/searchBookmark', (req, res) => {
       res.render('myPage.ejs', {
         bookmarkData,
         searchedBookmarks,
+        orgData,
       });
     });
   }
