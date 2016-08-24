@@ -189,10 +189,20 @@ router.post('/searchBookmark', (req, res) => {
   var searchFromDescription = req.body.searchFromDescription;
   var searchFromTextsOnSites = req.body.searchFromTextsOnSites;
   var checkInjection = /[%;+-]+/g;
+  var checkSpace = /[\S]+/g;
   var splitKeyWord = /[\S]+/g;
   var keyWords = keyWord.match(splitKeyWord);
   var keyWordsForQuery;
   (() => {
+    var promise = new Promise((resolve) => {
+      if(checkSpace.test(keyWord)){
+        resolve();
+      }else{
+        res.redirect('/PHH_Bookmark/myPage');
+      }
+    });
+    return promise;
+  })().then(() => {
     var promise = new Promise((resolve) => {
       if(!checkInjection.test(keyWord)){
         resolve();
@@ -204,7 +214,7 @@ router.post('/searchBookmark', (req, res) => {
       }
     });
     return promise;
-  })().then(() => {
+  }).then(() => {
     if(searchFromTitle === 'on' && searchFromDescription === undefined && searchFromTextsOnSites === undefined){
       (() => {
         var promise = new Promise((resolve) => {
