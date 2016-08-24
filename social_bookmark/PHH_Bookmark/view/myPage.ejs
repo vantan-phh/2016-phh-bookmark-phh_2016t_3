@@ -18,6 +18,9 @@
           <input type="submit" value="検索">
         </form>
       </div>
+      <% if(typeof keyWordNotice !== 'undefined'){ %>
+        <p><%= keyWordNotice %></p>
+      <% } %>
       <% if(typeof searchedBookmarks !== 'undefined'){ %>
         <div>検索結果</div>
         <% if(searchedBookmarks.length > 0){ %>
