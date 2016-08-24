@@ -21,6 +21,7 @@ router.get('/', (req, res) => {
       introduction = '自己紹介';
     }
     res.render('myProfile.ejs', {
+      userName,
       nickName,
       thumbnailPath,
       introduction,
