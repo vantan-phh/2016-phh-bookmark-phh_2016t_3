@@ -4,6 +4,7 @@ var router = express.Router();
 var connection = require('../mysqlConnection');
 
 var myUserName;
+var cannotRenounce;
 
 router.get('/', (req, res) => {
   var orgId = req.session.org_id;
@@ -177,17 +178,32 @@ router.get('/', (req, res) => {
       }else{
         var selectMyUserName = 'SELECT `name` FROM `users` WHERE `user_id` = ?';
         connection.query(selectMyUserName, [myId]).then((result) => {
-          myUserName = result[0];
-          res.render('switchAuthority.ejs', {
-            orgName,
-            orgIntroduction,
-            orgThumbnail,
-            adminUserNames,
-            adminNickNames,
-            notAdminUserNames : undefined,
-            notAdminNickNames : undefined,
-            myUserName,
-          });
+          myUserName = result[0][0].name;
+          if(cannotRenounce === 1){
+            cannotRenounce = 0;
+            res.render('switchAuthority.ejs', {
+              orgName,
+              orgIntroduction,
+              orgThumbnail,
+              adminUserNames,
+              adminNickNames,
+              notAdminUserNames : undefined,
+              notAdminNickNames : undefined,
+              myUserName,
+              authorityNotice : '管理者が1名のみのため権限の放棄はできません。',
+            });
+          }else{
+            res.render('switchAuthority.ejs', {
+              orgName,
+              orgIntroduction,
+              orgThumbnail,
+              adminUserNames,
+              adminNickNames,
+              notAdminUserNames : undefined,
+              notAdminNickNames : undefined,
+              myUserName,
+            });
+          }
         });
       }
     });
@@ -240,16 +256,31 @@ router.get('/', (req, res) => {
     var selectMyUserName = 'SELECT `name` FROM `users` WHERE `user_id` = ?';
     connection.query(selectMyUserName, [myId]).then((result) => {
       myUserName = result[0][0].name;
-      res.render('switchAuthority.ejs', {
-        orgName,
-        orgThumbnail,
-        orgIntroduction,
-        adminNickNames,
-        adminUserNames,
-        notAdminNickNames,
-        notAdminUserNames,
-        myUserName,
-      });
+      if(cannotRenounce === 1){
+        cannotRenounce = 0;
+        res.render('switchAuthority.ejs', {
+          orgName,
+          orgThumbnail,
+          orgIntroduction,
+          adminNickNames,
+          adminUserNames,
+          notAdminNickNames,
+          notAdminUserNames,
+          myUserName,
+          authorityNotice : '管理者が1名のみのため、権限の放棄はできません。',
+        });
+      }else{
+        res.render('switchAuthority.ejs', {
+          orgName,
+          orgThumbnail,
+          orgIntroduction,
+          adminNickNames,
+          adminUserNames,
+          notAdminNickNames,
+          notAdminUserNames,
+          myUserName,
+        });
+      }
     });
   });
 });
@@ -279,11 +310,24 @@ router.post('/give', (req, res) => {
 router.post('/renounce', (req, res) => {
   var orgId = req.session.org_id;
   var myId = req.session.user_id;
-
-  var renounce = 'UPDATE `organization_memberships` SET `is_admin` = false WHERE `user_id` = ? AND `org_id` = ?';
-
-  connection.query(renounce, [myId, orgId]).then(() => {
-    res.redirect('/PHH_Bookmark/switchAuthority');
+  (() => {
+    var promise = new Promise((resolve) => {
+      var selectAdmins = 'SELECT `user_id` FROM `organization_memberships` WHERE `org_id` = ? AND `is_admin` = true';
+      connection.query(selectAdmins, [orgId]).then((result) => {
+        if(result[0].length > 1){
+          resolve();
+        }else{
+          cannotRenounce = 1;
+          res.redirect('/PHH_Bookmark/switchAuthority');
+        }
+      });
+    });
+    return promise;
+  })().then(() => {
+    var renounce = 'UPDATE `organization_memberships` SET `is_admin` = false WHERE `user_id` = ? AND `org_id` = ?';
+    connection.query(renounce, [myId, orgId]).then(() => {
+      res.redirect('/PHH_Bookmark/switchAuthority');
+    });
   });
 });
 

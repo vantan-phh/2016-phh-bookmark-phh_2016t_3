@@ -5,7 +5,7 @@
       <a id="headerMenu1" href="/PHH_Bookmark/myPage">My Page</a>
       <input id="headerSearch" type="text" placeholder="Search Bookmarks">
       <span id="headerLoginUser"><%= nickName%><div id="headerUserName">(<%= userName %>)</div></span>
-      <a id="headerMyImg" href="/PHH_Bookmark/myProfile"><img src="http://res.cloudinary.com/dy4f7hul5/image/upload/v1469676799/iucwtxf12o9ztvb3tm14.png"></a>
+      <a id="headerMyImg" href="/PHH_Bookmark/myProfile"><img src="<%= thumbnail %>"></a>
       <div id="headerOpenMenu" onclick="obj=document.getElementById('headerMenuList').style; obj.display=(obj.display=='none')?'block':'none';">
         <a style="cursor:pointer;">▼</a>
       </div>

@@ -15,6 +15,9 @@
           <div><%= adminNickNames[i] %><%= adminUserNames[i] %>
           <% if(myUserName === adminUserNames[i]){ %>
             <input type="button" value="管理者権限を放棄" id="renounce">
+            <% if(typeof authorityNotice !== 'undefined'){ %>
+              <p><%= authorityNotice %></p>
+            <% } %>
           </div>
           <% } %>
         <% } %>
