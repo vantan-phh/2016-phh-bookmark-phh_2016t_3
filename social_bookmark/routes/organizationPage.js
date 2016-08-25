@@ -10,6 +10,7 @@ var ownBookmarkIds;
 var orgName;
 var orgIntroduction;
 var orgThumbnail;
+var addedUserNickNames;
 
 router.post('/submitOrgId', (req, res) => {
   var orgId = req.body.result;
@@ -55,6 +56,24 @@ router.get('/', (req, res) => {
     return promise;
   }).then(() => {
     var promise = new Promise((resolve) => {
+      var selectNickName = 'SELECT `nick_name` FROM `users` WHERE `user_id` = ?';
+      if(bookmarkData.length > 0){
+        addedUserNickNames = [];
+        bookmarkData.forEach((currentValue, index, array) => {
+          connection.query(selectNickName, [currentValue.user_id]).then((result) => {
+            addedUserNickNames.push(result[0][0].nick_name);
+            if(array.length === addedUserNickNames.length){
+              resolve();
+            }
+          });
+        });
+      }else{
+        resolve();
+      }
+    });
+    return promise;
+  }).then(() => {
+    var promise = new Promise((resolve) => {
       connection.query(selectOwnBookmarkIds, [myId, orgId]).then((result) => {
         ownBookmarkIds = result[0];
         resolve();
@@ -69,6 +88,7 @@ router.get('/', (req, res) => {
       bookmarkData,
       ownBookmarkIds,
       isAdmin,
+      addedUserNickNames,
     });
   });
 });
@@ -88,6 +108,7 @@ router.post('/submitUrl', (req, res) => {
           bookmarkData,
           ownBookmarkIds,
           isAdmin,
+          addedUserNickNames,
           urlNotice : 'http://もしくはhttp://から始まる正しいURLを入力してください',
         });
       }
@@ -103,6 +124,7 @@ router.post('/submitUrl', (req, res) => {
         orgIntroduction,
         orgThumbnail,
         url,
+        addedUserNickNames,
         title : result.$('title').text(),
       });
     }, () => {
@@ -113,6 +135,7 @@ router.post('/submitUrl', (req, res) => {
         bookmarkData,
         ownBookmarkIds,
         isAdmin,
+        addedUserNickNames,
         networkNotice : 'URLが正しいかをご確認の上、ネットワーク接続をお確かめください。',
       });
     });
@@ -143,6 +166,7 @@ router.post('/', (req, res) => {
           url,
           title,
           description,
+          addedUserNickNames,
           urlNotice : 'http://もしくはhttp://から始まる正しいURLを入力してください',
         });
       }
@@ -163,6 +187,7 @@ router.post('/', (req, res) => {
           url,
           title,
           description,
+          addedUserNickNames,
           titleNotice : 'タイトルを入力してください',
         });
       }
@@ -183,6 +208,7 @@ router.post('/', (req, res) => {
           url,
           title,
           description,
+          addedUserNickNames,
           titleNotice : 'セキュリティ上の観点からタイトルに「+, -, %, ;」は使えません',
         });
       }
@@ -203,6 +229,7 @@ router.post('/', (req, res) => {
           url,
           title,
           description,
+          addedUserNickNames,
           descriptionNotice : 'セキュリティ上の観点から説明文に「+, -, %, ;」は使えません',
         });
       }
@@ -223,6 +250,7 @@ router.post('/', (req, res) => {
           url,
           title,
           description,
+          addedUserNickNames,
           titleNotice : 'タイトルは32文字以下です',
         });
       }
@@ -243,6 +271,7 @@ router.post('/', (req, res) => {
           url,
           title,
           description,
+          addedUserNickNames,
           descriptionNotice : '説明文は128文字以下です',
         });
       }
@@ -261,6 +290,7 @@ router.post('/', (req, res) => {
           bookmarkData,
           ownBookmarkIds,
           isAdmin,
+          addedUserNickNames,
           networkNotice : 'URLが正しいかをご確認の上、ネットワーク接続をお確かめください。',
         });
       });
@@ -294,6 +324,7 @@ router.post('/searchBookmark', (req, res) => {
   var splitKeyWord = /[\S]+/g;
   var keyWords = keyWord.match(splitKeyWord);
   var keyWordsForQuery;
+  var addedUserNickNamesForSearched = [];
   (() => {
     var promise = new Promise((resolve) => {
       if(!checkInjection.test(keyWord)){
@@ -305,6 +336,7 @@ router.post('/searchBookmark', (req, res) => {
           orgIntroduction,
           orgThumbnail,
           isAdmin,
+          addedUserNickNames,
           keyWordNotice : 'セキュリティ上の観点から「+, -, %, ;」を含んでの検索はできません',
         });
       }
@@ -337,6 +369,24 @@ router.post('/searchBookmark', (req, res) => {
         return promise;
       }).then((value) => {
         var searchedBookmarks = value;
+        var promise = new Promise((resolve) => {
+          var selectNickName = 'SELECT `nick_name` FROM `users` WHERE `user_id` = ?';
+          if(searchedBookmarks.length > 0){
+            searchedBookmarks.forEach((currentValue) => {
+              connection.query(selectNickName, [currentValue.user_id]).then((result) => {
+                addedUserNickNamesForSearched.push(result[0][0].nick_name);
+                if(searchedBookmarks.length === addedUserNickNamesForSearched.length){
+                  resolve(value);
+                }
+              });
+            });
+          }else{
+            resolve(value);
+          }
+        });
+        return promise;
+      }).then((value) => {
+        var searchedBookmarks = value;
         res.render('organizationPage.ejs', {
           bookmarkData,
           orgName,
@@ -344,6 +394,8 @@ router.post('/searchBookmark', (req, res) => {
           orgThumbnail,
           isAdmin,
           searchedBookmarks,
+          addedUserNickNames,
+          addedUserNickNamesForSearched,
         });
       });
     }else if(searchFromTitle === undefined && searchFromDescription === 'on' && searchFromTextsOnSites === undefined){
@@ -372,6 +424,24 @@ router.post('/searchBookmark', (req, res) => {
         return promise;
       }).then((value) => {
         var searchedBookmarks = value;
+        var promise = new Promise((resolve) => {
+          var selectNickName = 'SELECT `nick_name` FROM `users` WHERE `user_id` = ?';
+          if(searchedBookmarks.length > 0){
+            searchedBookmarks.forEach((currentValue) => {
+              connection.query(selectNickName, [currentValue.user_id]).then((result) => {
+                addedUserNickNamesForSearched.push(result[0][0].nick_name);
+                if(searchedBookmarks.length === addedUserNickNamesForSearched.length){
+                  resolve(value);
+                }
+              });
+            });
+          }else{
+            resolve(value);
+          }
+        });
+        return promise;
+      }).then((value) => {
+        var searchedBookmarks = value;
         res.render('organizationPage.ejs', {
           bookmarkData,
           orgName,
@@ -379,6 +449,8 @@ router.post('/searchBookmark', (req, res) => {
           orgThumbnail,
           isAdmin,
           searchedBookmarks,
+          addedUserNickNames,
+          addedUserNickNamesForSearched,
         });
       });
     }else if(searchFromTitle === undefined && searchFromDescription === undefined && searchFromTextsOnSites === 'on'){
@@ -397,17 +469,43 @@ router.post('/searchBookmark', (req, res) => {
         return promise;
       })().then((value) => { // select this org bookmarks to insert `texts` table only bookmarks that is this orgs'
         keyWordsForQuery = value;
-        var selectSearchedBookmarks = 'SELECT * FROM `bookmarks` WHERE `org_id` = ? AND ( `text` LIKE "' + keyWordsForQuery + '%")';
-        connection.query(selectSearchedBookmarks, [orgId]).then((result) => {
-          var searchedBookmarks = result[0];
-          res.render('organizationPage.ejs', {
-            bookmarkData,
-            orgName,
-            orgIntroduction,
-            orgThumbnail,
-            isAdmin,
-            searchedBookmarks,
+        var promise = new Promise((resolve) => {
+          var selectSearchedBookmarks = 'SELECT * FROM `bookmarks` WHERE `org_id` = ? AND ( `text` LIKE "' + keyWordsForQuery + '%")';
+          connection.query(selectSearchedBookmarks, [orgId]).then((result) => {
+            var searchedBookmarks = result[0];
+            resolve(searchedBookmarks);
           });
+        });
+        return promise;
+      }).then((value) => {
+        var searchedBookmarks = value;
+        var promise = new Promise((resolve) => {
+          if(searchedBookmarks.length > 0){
+            var selectNickName = 'SELECT `nick_name` FROM `users` WHERE `user_id` = ?';
+            searchedBookmarks.forEach((currentValue) => {
+              connection.query(selectNickName, [currentValue.user_id]).then((result) => {
+                addedUserNickNamesForSearched.push(result[0][0].nick_name);
+                if(searchedBookmarks.length === addedUserNickNamesForSearched.length){
+                  resolve(value);
+                }
+              });
+            });
+          }else{
+            resolve(value);
+          }
+        });
+        return promise;
+      }).then((value) => {
+        var searchedBookmarks = value;
+        res.render('organizationPage.ejs', {
+          bookmarkData,
+          orgName,
+          orgIntroduction,
+          orgThumbnail,
+          isAdmin,
+          searchedBookmarks,
+          addedUserNickNames,
+          addedUserNickNamesForSearched,
         });
       });
     }else if(searchFromTitle === 'on' && searchFromDescription === 'on' && searchFromTextsOnSites === undefined){
@@ -453,6 +551,24 @@ router.post('/searchBookmark', (req, res) => {
           });
         });
         return promise;
+      }).then((value) => {
+        var searchedBookmarks = value;
+        var promise = new Promise((resolve) => {
+          var selectNickName = 'SELECT `nick_name` FROM `users` WHERE `user_id` = ?';
+          if(searchedBookmarks.length > 0){
+            searchedBookmarks.forEach((currentValue) => {
+              connection.query(selectNickName, [currentValue.user_id]).then((result) => {
+                addedUserNickNamesForSearched.push(result[0][0].nick_name);
+                if(searchedBookmarks.length === addedUserNickNamesForSearched.length){
+                  resolve(value);
+                }
+              });
+            });
+          }else{
+            resolve(value);
+          }
+        });
+        return promise;
       }).then((searchedBookmarks) => {
         res.render('organizationPage.ejs', {
           bookmarkData,
@@ -461,6 +577,8 @@ router.post('/searchBookmark', (req, res) => {
           orgThumbnail,
           isAdmin,
           searchedBookmarks,
+          addedUserNickNames,
+          addedUserNickNamesForSearched,
         });
       });
     }else if(searchFromTitle === 'on' && searchFromDescription === undefined && searchFromTextsOnSites === 'on'){
@@ -498,17 +616,43 @@ router.post('/searchBookmark', (req, res) => {
       }).then((values) => {
         var keyWordsForQueryWithText = values.keyWordsForQueryWithText;
         var keyWordsForQueryWithTitle = values.keyWordsForQueryWithTitle;
-        var selectSearchedBookmarks = 'SELECT * FROM `bookmarks` WHERE `org_id` = ? AND (( `title` LIKE "' + keyWordsForQueryWithTitle + '%" ) OR ( `text` LIKE "' + keyWordsForQueryWithText + '%" ))';
-        connection.query(selectSearchedBookmarks, [orgId]).then((result) => {
-          var searchedBookmarks = result[0];
-          res.render('organizationPage.ejs', {
-            bookmarkData,
-            orgName,
-            orgIntroduction,
-            orgThumbnail,
-            isAdmin,
-            searchedBookmarks,
+        var promise = new Promise((resolve) => {
+          var selectSearchedBookmarks = 'SELECT * FROM `bookmarks` WHERE `org_id` = ? AND (( `title` LIKE "' + keyWordsForQueryWithTitle + '%" ) OR ( `text` LIKE "' + keyWordsForQueryWithText + '%" ))';
+          connection.query(selectSearchedBookmarks, [orgId]).then((result) => {
+            var searchedBookmarks = result[0];
+            resolve(searchedBookmarks);
           });
+        });
+        return promise;
+      }).then((value) => {
+        var searchedBookmarks = value;
+        var promise = new Promise((resolve) => {
+          var selectNickName = 'SELECT `nick_name` FROM `users` WHERE `user_id` = ?';
+          if(searchedBookmarks.length > 0){
+            searchedBookmarks.forEach((currentValue) => {
+              connection.query(selectNickName, [currentValue.nick_name]).then((result) => {
+                addedUserNickNamesForSearched.push(result[0][0].nick_name);
+                if(searchedBookmarks.length === addedUserNickNamesForSearched.length){
+                  resolve(value);
+                }
+              });
+            });
+          }else{
+            resolve(value);
+          }
+        });
+        return promise;
+      }).then((value) => {
+        var searchedBookmarks = value;
+        res.render('organizationPage.ejs', {
+          bookmarkData,
+          orgName,
+          orgIntroduction,
+          orgThumbnail,
+          isAdmin,
+          searchedBookmarks,
+          addedUserNickNames,
+          addedUserNickNamesForSearched,
         });
       });
     }else if(searchFromTitle === undefined && searchFromDescription === 'on' && searchFromTextsOnSites === 'on'){
@@ -556,6 +700,24 @@ router.post('/searchBookmark', (req, res) => {
         return promise;
       }).then((value) => {
         var searchedBookmarks = value;
+        var promise = new Promise((resolve) => {
+          var selectNickName = 'SELECT `nick_name` FROM `users` WHERE `user_id` = ?';
+          if(searchedBookmarks.length > 0){
+            searchedBookmarks.forEach((currentValue) => {
+              connection.query(selectNickName, [currentValue.nick_name]).then((result) => {
+                addedUserNickNamesForSearched.push(result[0][0].nick_name);
+                if(searchedBookmarks.length === addedUserNickNamesForSearched.length){
+                  resolve(value);
+                }
+              });
+            });
+          }else{
+            resolve(value);
+          }
+        });
+        return promise;
+      }).then((value) => {
+        var searchedBookmarks = value;
         res.render('organizationPage.ejs', {
           bookmarkData,
           orgName,
@@ -563,6 +725,8 @@ router.post('/searchBookmark', (req, res) => {
           orgThumbnail,
           isAdmin,
           searchedBookmarks,
+          addedUserNickNames,
+          addedUserNickNamesForSearched,
         });
       });
     }else if(searchFromTitle === 'on' && searchFromDescription === 'on' && searchFromTextsOnSites === 'on'){
@@ -631,6 +795,24 @@ router.post('/searchBookmark', (req, res) => {
         return promise;
       }).then((value) => {
         var searchedBookmarks = value;
+        var promise = new Promise((resolve) => {
+          var selectNickName = 'SELECT `nick_name` FROM `users` WHERE `user_id` = ?';
+          if(searchedBookmarks.length > 0){
+            searchedBookmarks.forEach((currentValue) => {
+              connection.query(selectNickName, [currentValue.nick_name]).then((result) => {
+                addedUserNickNamesForSearched.push(result[0][0].nick_name);
+                if(searchedBookmarks.length === addedUserNickNamesForSearched.length){
+                  resolve(value);
+                }
+              });
+            });
+          }else{
+            resolve(value);
+          }
+        });
+        return promise;
+      }).then((value) => {
+        var searchedBookmarks = value;
         res.render('organizationPage.ejs', {
           bookmarkData,
           orgName,
@@ -638,6 +820,7 @@ router.post('/searchBookmark', (req, res) => {
           orgThumbnail,
           isAdmin,
           searchedBookmarks,
+          addedUserNickNames,
         });
       });
     }
