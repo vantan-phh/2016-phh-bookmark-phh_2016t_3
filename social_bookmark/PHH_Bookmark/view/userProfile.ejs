@@ -19,6 +19,12 @@
           <%= recentBookmarks[i].description %>
         <% } %>
       <% } %>
+      <% if(typeof orgData !== 'undefined'){ %>
+        <% for(var i = 0; i < orgData.length; i++){ %>
+          <img src="<%= orgData[i].image_path %>">
+          <%= orgData[i].name %>
+        <% } %>
+      <% } %>
       <form name="toSubmitBookmarkData" action="/PHH_Bookmark/submitBookmarkData" method="post">
         <input type="hidden" name="result">
       </form>
