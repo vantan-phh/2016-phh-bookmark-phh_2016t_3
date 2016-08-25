@@ -630,7 +630,7 @@ router.post('/searchBookmark', (req, res) => {
           var selectNickName = 'SELECT `nick_name` FROM `users` WHERE `user_id` = ?';
           if(searchedBookmarks.length > 0){
             searchedBookmarks.forEach((currentValue) => {
-              connection.query(selectNickName, [currentValue.nick_name]).then((result) => {
+              connection.query(selectNickName, [currentValue.user_id]).then((result) => {
                 addedUserNickNamesForSearched.push(result[0][0].nick_name);
                 if(searchedBookmarks.length === addedUserNickNamesForSearched.length){
                   resolve(value);
@@ -704,7 +704,7 @@ router.post('/searchBookmark', (req, res) => {
           var selectNickName = 'SELECT `nick_name` FROM `users` WHERE `user_id` = ?';
           if(searchedBookmarks.length > 0){
             searchedBookmarks.forEach((currentValue) => {
-              connection.query(selectNickName, [currentValue.nick_name]).then((result) => {
+              connection.query(selectNickName, [currentValue.user_id]).then((result) => {
                 addedUserNickNamesForSearched.push(result[0][0].nick_name);
                 if(searchedBookmarks.length === addedUserNickNamesForSearched.length){
                   resolve(value);
@@ -799,7 +799,7 @@ router.post('/searchBookmark', (req, res) => {
           var selectNickName = 'SELECT `nick_name` FROM `users` WHERE `user_id` = ?';
           if(searchedBookmarks.length > 0){
             searchedBookmarks.forEach((currentValue) => {
-              connection.query(selectNickName, [currentValue.nick_name]).then((result) => {
+              connection.query(selectNickName, [currentValue.user_id]).then((result) => {
                 addedUserNickNamesForSearched.push(result[0][0].nick_name);
                 if(searchedBookmarks.length === addedUserNickNamesForSearched.length){
                   resolve(value);
@@ -821,6 +821,7 @@ router.post('/searchBookmark', (req, res) => {
           isAdmin,
           searchedBookmarks,
           addedUserNickNames,
+          addedUserNickNamesForSearched,
         });
       });
     }

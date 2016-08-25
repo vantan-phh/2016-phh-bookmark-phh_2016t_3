@@ -24,6 +24,7 @@ var switchAuthority = require('./routes/switchAuthority');
 var organizationManagement = require('./routes/organizationManagement');
 var organizationMembers = require('./routes/organizationMembers');
 var accountSetting = require('./routes/accountSetting');
+var otherProfile = require('./routes/otherProfile');
 
 var app = express();
 
@@ -85,6 +86,7 @@ app.use('/PHH_Bookmark/switchAuthority', setUser, switchAuthority);
 app.use('/PHH_Bookmark/organizationManagement', setUser, organizationManagement);
 app.use('/PHH_Bookmark/organizationMembers', setUser, organizationMembers);
 app.use('/PHH_Bookmark/accountSetting', setUser, accountSetting);
+app.use('/PHH_Bookmark/otherProfile', setUser, otherProfile);
 
 app.use((req, res, next) => {
   console.log('my custom middleware!');

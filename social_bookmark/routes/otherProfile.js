@@ -3,19 +3,25 @@ var express = require('express');
 var router = express.Router();
 var connection = require('../mysqlConnection');
 
+router.post('/', (req, res) => {
+  var target = req.body.result;
+  if(req.session.target){
+    delete req.session.target;
+  }
+  req.session.target = target;
+  res.redirect('/PHH_Bookmark/otherProfile');
+});
+
 router.get('/', (req, res) => {
-  var userId = req.session.user_id;
+  var target = req.session.target;
   (() => {
     var promise = new Promise((resolve) => {
       var query = 'SELECT `name`,`nick_name`,`image_path`,`introduction` FROM `users` WHERE `user_id` = ?';
-      connection.query(query, [userId]).then((result) => {
+      connection.query(query, [target]).then((result) => {
         var nickName = result[0][0].nick_name;
         var thumbnailPath = result[0][0].image_path;
         var introduction = result[0][0].introduction;
         var userName = result[0][0].name;
-        if(introduction === null || introduction === ''){
-          introduction = '自己紹介';
-        }
         var values = {
           nickName,
           thumbnailPath,
@@ -28,7 +34,7 @@ router.get('/', (req, res) => {
     return promise;
   })().then((values) => {
     var selectRecentBookmarks = 'SELECT * FROM `bookmarks` WHERE `user_id` = ? ORDER BY `bookmark_id` DESC LIMIT 5';
-    connection.query(selectRecentBookmarks, [userId]).then((result) => {
+    connection.query(selectRecentBookmarks, [target]).then((result) => {
       res.render('userProfile.ejs', {
         userName : values.userName,
         nickName : values.nickName,
@@ -39,6 +45,5 @@ router.get('/', (req, res) => {
     });
   });
 });
-
 
 module.exports = router;
