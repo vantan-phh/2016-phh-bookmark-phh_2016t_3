@@ -10,10 +10,28 @@
     <main>
       <a href="/PHH_Bookmark/topPage"><input type="button" value="topPage"></a>
       <p><%= nickName %></p>
-      <% if(thumbnailPath) {%>
-        <img src="<%= thumbnailPath %>" width="128" height="128"></img>
-      <% } %>
+      <img src="<%= thumbnailPath %>" width="128" height="128"></img>
       <p><%= introduction %></p>
+      <% if(typeof recentBookmarks !== 'undefined'){ %>
+        <% for(var i = 0; i < recentBookmarks.length; i++){ %>
+          <a name="bookmarkId<%= recentBookmarks[i].bookmark_id%>"><%= recentBookmarks[i].title %></a>
+          <a href="<%= recentBookmarks[i].url %>"><%= recentBookmarks[i].url %></a>
+          <%= recentBookmarks[i].description %>
+        <% } %>
+      <% } %>
+      <form name="toSubmitBookmarkData" action="/PHH_Bookmark/submitBookmarkData" method="post">
+        <input type="hidden" name="result">
+      </form>
     </main>
   </body>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>
+  $(function(){
+    var $bookmarkId = $("[name^='bookmarkId']");
+    $bookmarkId.click(function(){
+      document.toSubmitBookmarkData.result.value = this.name;
+      document.toSubmitBookmarkData.submit();
+    });
+  });
+  </script>
 </html>
