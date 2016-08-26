@@ -5,6 +5,9 @@
     <title></title>
   </head>
   <body>
+    <h2><%= orgName %></h2>
+    <img src="<%= orgThumbnail %>">
+    <div><%= orgIntroduction %></div>
 
     <div>管理者リスト</div>
       <% if(typeof adminUserNames !== 'undefined'){ %>
@@ -12,6 +15,9 @@
           <div><%= adminNickNames[i] %><%= adminUserNames[i] %>
           <% if(myUserName === adminUserNames[i]){ %>
             <input type="button" value="管理者権限を放棄" id="renounce">
+            <% if(typeof authorityNotice !== 'undefined'){ %>
+              <p><%= authorityNotice %></p>
+            <% } %>
           </div>
           <% } %>
         <% } %>

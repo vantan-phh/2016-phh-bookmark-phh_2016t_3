@@ -4,6 +4,7 @@ var router = express.Router();
 var connection = require('../mysqlConnection');
 
 var myUserName;
+var cannotRenounce;
 
 router.get('/', (req, res) => {
   var orgId = req.session.org_id;
@@ -41,14 +42,18 @@ router.get('/', (req, res) => {
     var promise = new Promise((resolve) => {
       var selectNotAdmins = 'SELECT `user_id` FROM `organization_memberships` WHERE `org_id` = ? AND `is_admin` = ?';
       connection.query(selectNotAdmins, [orgId, 0]).then((result) => {
-        result[0].forEach((currentValue, index, array) => {
-          if(index + 1 === array.length){
-            notAdminIds.push(currentValue);
-            resolve();
-          }else{
-            notAdminIds.push(currentValue);
-          }
-        });
+        if(result[0].length > 0){
+          result[0].forEach((currentValue, index, array) => {
+            if(index + 1 === array.length){
+              notAdminIds.push(currentValue);
+              resolve();
+            }else{
+              notAdminIds.push(currentValue);
+            }
+          });
+        }else{
+          resolve();
+        }
       });
     });
     return promise;
@@ -69,18 +74,26 @@ router.get('/', (req, res) => {
     var adminIdsForQuery = value;
     var promise = new Promise((resolve) => {
       var notAdminIdsForQuery = '';
-      notAdminIds.forEach((currentValue, index, array) => {
-        if(index + 1 === array.length){
-          notAdminIdsForQuery += currentValue.user_id;
-          var values = {
-            adminIdsForQuery,
-            notAdminIdsForQuery,
-          };
-          resolve(values);
-        }else{
-          notAdminIdsForQuery += currentValue.user_id + ' OR  `user_id` = ';
-        }
-      });
+      if(notAdminIds.length > 0){
+        notAdminIds.forEach((currentValue, index, array) => {
+          if(index + 1 === array.length){
+            notAdminIdsForQuery += currentValue.user_id;
+            var values = {
+              adminIdsForQuery,
+              notAdminIdsForQuery,
+            };
+            resolve(values);
+          }else{
+            notAdminIdsForQuery += currentValue.user_id + ' OR  `user_id` = ';
+          }
+        });
+      }else{
+        var values = {
+          adminIdsForQuery,
+          notAdminIdsForQuery,
+        };
+        resolve(values);
+      }
     });
     return promise;
   }).then((values) => {
@@ -137,9 +150,23 @@ router.get('/', (req, res) => {
     });
     return promise;
   }).then((values) => {
+    var promise = new Promise((resolve) => {
+      var selectOrgData = 'SELECT * FROM `organizations` WHERE `id` = ?';
+      connection.query(selectOrgData, [orgId]).then((result) => {
+        values.orgName = result[0][0].name;
+        values.orgIntroduction = result[0][0].introduction;
+        values.orgThumbnail = result[0][0].image_path;
+        resolve(values);
+      });
+    });
+    return promise;
+  }).then((values) => {
     var notAdminIdsForQuery = values.notAdminIdsForQuery;
     var adminUserNames = values.adminUserNames;
     var adminNickNames = values.adminNickNames;
+    var orgName = values.orgName;
+    var orgIntroduction = values.orgIntroduction;
+    var orgThumbnail = values.orgThumbnail;
     var promise = new Promise((resolve) => {
       if(notAdminIds.length > 0){
         var selectUserNames = 'SELECT `name` FROM `users` WHERE `user_id` = ' + notAdminIdsForQuery;
@@ -151,14 +178,32 @@ router.get('/', (req, res) => {
       }else{
         var selectMyUserName = 'SELECT `name` FROM `users` WHERE `user_id` = ?';
         connection.query(selectMyUserName, [myId]).then((result) => {
-          myUserName = result[0];
-          res.render('switchAuthority.ejs', {
-            adminUserNames,
-            adminNickNames,
-            notAdminUserNames : undefined,
-            notAdminNickNames : undefined,
-            myUserName,
-          });
+          myUserName = result[0][0].name;
+          if(cannotRenounce === 1){
+            cannotRenounce = 0;
+            res.render('switchAuthority.ejs', {
+              orgName,
+              orgIntroduction,
+              orgThumbnail,
+              adminUserNames,
+              adminNickNames,
+              notAdminUserNames : undefined,
+              notAdminNickNames : undefined,
+              myUserName,
+              authorityNotice : '管理者が1名のみのため権限の放棄はできません。',
+            });
+          }else{
+            res.render('switchAuthority.ejs', {
+              orgName,
+              orgIntroduction,
+              orgThumbnail,
+              adminUserNames,
+              adminNickNames,
+              notAdminUserNames : undefined,
+              notAdminNickNames : undefined,
+              myUserName,
+            });
+          }
         });
       }
     });
@@ -201,6 +246,9 @@ router.get('/', (req, res) => {
     });
     return promise;
   }).then((values) => {
+    var orgName = values.orgName;
+    var orgIntroduction = values.orgIntroduction;
+    var orgThumbnail = values.orgThumbnail;
     var adminUserNames = values.adminUserNames;
     var adminNickNames = values.adminNickNames;
     var notAdminUserNames = values.notAdminUserNames;
@@ -208,13 +256,31 @@ router.get('/', (req, res) => {
     var selectMyUserName = 'SELECT `name` FROM `users` WHERE `user_id` = ?';
     connection.query(selectMyUserName, [myId]).then((result) => {
       myUserName = result[0][0].name;
-      res.render('switchAuthority.ejs', {
-        adminNickNames,
-        adminUserNames,
-        notAdminNickNames,
-        notAdminUserNames,
-        myUserName,
-      });
+      if(cannotRenounce === 1){
+        cannotRenounce = 0;
+        res.render('switchAuthority.ejs', {
+          orgName,
+          orgThumbnail,
+          orgIntroduction,
+          adminNickNames,
+          adminUserNames,
+          notAdminNickNames,
+          notAdminUserNames,
+          myUserName,
+          authorityNotice : '管理者が1名のみのため、権限の放棄はできません。',
+        });
+      }else{
+        res.render('switchAuthority.ejs', {
+          orgName,
+          orgThumbnail,
+          orgIntroduction,
+          adminNickNames,
+          adminUserNames,
+          notAdminNickNames,
+          notAdminUserNames,
+          myUserName,
+        });
+      }
     });
   });
 });
@@ -223,10 +289,8 @@ router.get('/', (req, res) => {
 router.post('/give', (req, res) => {
   var orgId = req.session.org_id;
   var authorizedUserName = req.body.result;
-
   var selectUserId = 'SELECT `user_id` FROM `users` WHERE `name` = ?';
   var authorize = 'UPDATE `organization_memberships` SET `is_admin` = true WHERE `user_id` = ? AND `org_id` = ?';
-
   (() => {
     var promise = new Promise((resolve) => {
       connection.query(selectUserId, [authorizedUserName]).then((result) => {
@@ -246,11 +310,24 @@ router.post('/give', (req, res) => {
 router.post('/renounce', (req, res) => {
   var orgId = req.session.org_id;
   var myId = req.session.user_id;
-
-  var renounce = 'UPDATE `organization_memberships` SET `is_admin` = false WHERE `user_id` = ? AND `org_id` = ?';
-
-  connection.query(renounce, [myId, orgId]).then(() => {
-    res.redirect('/PHH_Bookmark/switchAuthority');
+  (() => {
+    var promise = new Promise((resolve) => {
+      var selectAdmins = 'SELECT `user_id` FROM `organization_memberships` WHERE `org_id` = ? AND `is_admin` = true';
+      connection.query(selectAdmins, [orgId]).then((result) => {
+        if(result[0].length > 1){
+          resolve();
+        }else{
+          cannotRenounce = 1;
+          res.redirect('/PHH_Bookmark/switchAuthority');
+        }
+      });
+    });
+    return promise;
+  })().then(() => {
+    var renounce = 'UPDATE `organization_memberships` SET `is_admin` = false WHERE `user_id` = ? AND `org_id` = ?';
+    connection.query(renounce, [myId, orgId]).then(() => {
+      res.redirect('/PHH_Bookmark/switchAuthority');
+    });
   });
 });
 

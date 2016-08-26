@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+    <h2><%= orgName %></h2>
+    <img src="<%= orgThumbnail %>">
+    <div><%= orgIntroduction %></div>
+
+    <form action="/PHH_Bookmark/organizationMembers/leave" method="post">
+      <div>管理者一覧</div>
+      <% for(var i = 0; i < selectedAdminData.length; i++){ %>
+        <a name="<%= selectedAdminData[i].user_id %>" class="userId"><%= selectedAdminData[i].nick_name%></a>
+        <a name="<%= selectedAdminData[i].user_id %>" class="userId"><%= selectedAdminData[i].name %></a>
+        <% if(selectedAdminData[i].name === myUserName){ %>
+          <input type="submit" value="脱退">
+          <% if(typeof cannotLeaveNotice !== 'undefined'){ %>
+            <p><%= cannotLeaveNotice %></p>
+          <% } %>
+        <% } %>
+      <% } %>
+
+      <div>一般メンバー一覧</div>
+      <% if(typeof selectedNotAdminData !== 'undefined'){ %>
+        <% for(var i = 0; i < selectedNotAdminData.length; i++){%>
+          <a name="<%= selectedNotAdminData[i].user_id %>" class="userId"><%= selectedNotAdminData[i].nick_name %></a>
+          <a name="<%= selectedNotAdminData[i].user_id %>" class="userId"><%= selectedNotAdminData[i].name %></a>
+          <% if (selectedNotAdminData[i].name === myUserName){ %>
+            <input type="submit" value="脱退">
+          <% } %>
+        <% } %>
+      <% } %>
+    </form>
+    <form action="/PHH_Bookmark/otherProfile" name="toOtherProfile" method="post">
+      <input type="hidden" name="result">
+    </form>
+  </body>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>
+  $(function(){
+    var $userId = $('.userId');
+    $userId.click(function(){
+      document.toOtherProfile.result.value = this.name;
+      document.toOtherProfile.submit();
+    });
+  });
+  </script>
+</html>

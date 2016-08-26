@@ -17,6 +17,9 @@
       <input type="text" placeholder="検索ワードを入力" name="keyWord">
       <input type="submit" value="検索">
     </form>
+    <% if(typeof keyWordNotice !== 'undefined'){ %>
+      <p><%= keyWordNotice %></p>
+    <% } %>
 
     <form action="/PHH_Bookmark/organizationPage" method="post">
       <% if(typeof url !== 'undefined'){ %>
@@ -61,6 +64,7 @@
           <% for(var i = 0; i < searchedBookmarks.length; i++){ %>
             <div id="result"><a href="/PHH_Bookmark/bookmarkPage"><%= searchedBookmarks[i].title %></a><a href="<%= searchedBookmarks[i].url%>"><%= searchedBookmarks[i].url%></a>
             <%= searchedBookmarks[i].description %>
+            <a name="searchedBookmarks[i].user_id" class="userId"><%= addedUserNickNamesForSearched[i]%></a>
           </div>
           <% } %>
         <% }else{ %>
@@ -82,7 +86,8 @@
                 <% } %>
               <% } %>
             <% } %>
-            <a href="/PHH_Bookmark/bookmarkPage"><%= bookmarkData[i].title %></a><a href="<%= bookmarkData[i].url %>"><%= bookmarkData[i].url %></a><%= bookmarkData[i].description %>
+            <a name="bookmarkId<%= bookmarkData[i].bookmark_id%>"><%= bookmarkData[i].title %></a><a href="<%= bookmarkData[i].url %>"><%= bookmarkData[i].url %></a><%= bookmarkData[i].description %>
+            <a name="<%= bookmarkData[i].user_id %>" class="userId"><%= addedUserNickNames[i] %></a>
             <% if(isAdmin){ %>
               <input type="button" value="編集" name="<%= bookmarkData[i].bookmark_id %>" class="edit">
             <% } else if(ownBookmarkIds.length > 0){ %>
@@ -106,6 +111,13 @@
       <a href="/PHH_Bookmark/membersManagement">メンバー管理ページへ</a>
     <% } %>
     <a href="/PHH_Bookmark/organizationMembers">メンバー一覧へ</a>
+
+    <form name="toSubmitBookmarkData" action="/PHH_Bookmark/submitBookmarkData" method="post">
+      <input type="hidden" name="result">
+    </form>
+    <form name="toOtherProfile" action="/PHH_Bookmark/otherProfile" method="post">
+      <input type="hidden" name="result">
+    </form>
   </body>
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
   <script>
@@ -113,6 +125,8 @@
     var $url = $('#url');
     var $submitUrlButton = $('#submitUrl');
     var $edit = $('.edit');
+    var $bookmarkId = $("[name^='bookmarkId']");
+    var $userId = $('.userId');
     $submitUrlButton.click(function(){
       var url = $url.val();
       document.submitUrl.result.value = url;
@@ -121,6 +135,14 @@
     $edit.click(function(){
       document.toOrgBookmarkEdit.result.value = this.name;
       document.toOrgBookmarkEdit.submit();
+    });
+    $bookmarkId.click(function(){
+      document.toSubmitBookmarkData.result.value = this.name;
+      document.toSubmitBookmarkData.submit();
+    });
+    $userId.click(function(){
+      document.toOtherProfile.result.value = this.name;
+      document.toOtherProfile.submit();
     });
   });
   </script>

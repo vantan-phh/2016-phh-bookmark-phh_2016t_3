@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+    <div><%= myData.name %></div>
+    <div>現在登録されているメールアドレス</div>
+    <div><%= myData.mail %></div>
+    <form action="/PHH_Bookmark/accountSetting/mail" method="post">
+      <input type="text" value="<%= myData.mail %>" placeholder="メールアドレスを入力" name="mail">
+      <input type="submit" value="メールアドレスを変更">
+    </form>
+    <form action="/PHH_Bookmark/accountSetting/password" method="post">
+      <div>パスワードの変更</div>
+      <input type="text" placeholder="現在のパスワード" name="currentPassword">
+      <% if(typeof passwordNotice !== 'undefined'){ %>
+        <p><%= passwordNotice %></p>
+      <% } %>
+      <input type="text" placeholder="新しいパスワード" name="newPassword">
+      <input type="text" placeholder="新しいパスワードの確認" name="newPasswordConfirm">
+      <% if(typeof confirmNotice !== 'undefined'){ %>
+        <p><%= confirmNotice %></p>
+      <% } %>
+      <input type="submit" value="パスワードを変更">
+      <% if(typeof finishChangingPassword !== 'undefined'){ %>
+        <p><%= finishChangingPassword %></p>
+      <% } %>
+    </form>
+  </body>
+</html>

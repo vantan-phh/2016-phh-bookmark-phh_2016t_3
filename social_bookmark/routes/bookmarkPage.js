@@ -19,19 +19,7 @@ router.get('/', (req, res) => {
     var promise = new Promise((resolve) => {
       var queryResult = value;
       if(queryResult.length > 0){
-        var bookmarkIdsForQuery = '';
-        queryResult.forEach((currentValue, index, array) => {
-          if(index + 1 === array.length){
-            bookmarkIdsForQuery += currentValue.bookmark_id;
-            var values = {
-              queryResult,
-              bookmarkIdsForQuery,
-            };
-            resolve(values);
-          }else{
-            bookmarkIdsForQuery += currentValue.bookmark_id + ' OR `bookmark_id` = ';
-          }
-        });
+        resolve(queryResult);
       }else{
         var pullBookmark = 'SELECT * FROM `bookmarks` WHERE `bookmark_id` = ?';
         connection.query(pullBookmark, [bookmarkId]).then((result) => {
@@ -43,18 +31,24 @@ router.get('/', (req, res) => {
       }
     });
     return promise;
-  }).then((values) => {
-    var userIdsForQuery = values.userIdsForQuery;
-    var queryResult = values.queryResult;
+  }).then((value) => {
+    var queryResult = value;
     var promise = new Promise((resolve) => {
-      var pullNickName = 'SELECT `nick_name` FROM `users` WHERE `user_id` = ' + userIdsForQuery;
-      connection.query(pullNickName).then((result) => {
-        var nickNames = result[0];
-        values = {
-          nickNames,
-          queryResult,
-        };
-        resolve(values);
+      var nickNames = [];
+      queryResult.forEach((currentValue, index, array) => {
+        var pullNickName = 'SELECT `nick_name` FROM `users` WHERE `user_id` = ?';
+        connection.query(pullNickName, [currentValue.user_id]).then((result) => {
+          if(index + 1 === array.length){
+            nickNames.push(result[0][0].nick_name);
+            var values = {
+              queryResult,
+              nickNames,
+            };
+            resolve(values);
+          }else{
+            nickNames.push(result[0][0].nick_name);
+          }
+        });
       });
     });
     return promise;
@@ -96,41 +90,45 @@ router.post('/', (req, res) => {
         });
         return promise;
       })().then((value) => {
+        var promise = new Promise((resolve) => {
+          var queryResult = value;
+          if(queryResult.length > 0){
+            resolve(queryResult);
+          }else{
+            var pullBookmark = 'SELECT * FROM `bookmarks` WHERE `bookmark_id` = ?';
+            connection.query(pullBookmark, [bookmarkId]).then((result) => {
+              res.render('bookmarkPage.ejs', {
+                bookmark : result[0],
+                browsingUserId : userId,
+              });
+            });
+          }
+        });
+        return promise;
+      }).then((value) => {
         var queryResult = value;
         var promise = new Promise((resolve) => {
-          var userIdsForQuery = '';
+          var nickNames = [];
           queryResult.forEach((currentValue, index, array) => {
-            if(index + 1 === array.length){
-              userIdsForQuery += currentValue;
-              var values = {
-                queryResult,
-                userIdsForQuery,
-              };
-              resolve(values);
-            }else{
-              userIdsForQuery += currentValue + ' OR `user_id` = ';
-            }
+            var pullNickName = 'SELECT `nick_name` FROM `users` WHERE `user_id` = ?';
+            connection.query(pullNickName, [currentValue.user_id]).then((result) => {
+              if(index + 1 === array.length){
+                nickNames.push(result[0][0].nick_name);
+                var values = {
+                  queryResult,
+                  nickNames,
+                };
+                resolve(values);
+              }else{
+                nickNames.push(result[0][0].nick_name);
+              }
+            });
           });
         });
         return promise;
       }).then((values) => {
-        var queryResult = values.queryResult;
-        var userIdsForQuery = values.userIdsForQuery;
-        var promise = new Promise((resolve) => {
-          var pullNickName = 'SELECT `nick_name` FROM `users` WHERE `user_id` = ' + userIdsForQuery;
-          connection.query(pullNickName).then((result) => {
-            var nickNames = result[0];
-            values = {
-              queryResult,
-              nickNames,
-            };
-            resolve(values);
-          });
-        });
-        return promise;
-      }).then((values) => {
-        var queryResult = values.queryResult;
         var nickNames = values.nickNames;
+        var queryResult = values.queryResult;
         var pullBookmark = 'SELECT * FROM `bookmarks` WHERE `bookmark_id` = ?';
         connection.query(pullBookmark, [bookmarkId]).then((result) => {
           res.render('bookmarkPage.ejs', {

@@ -152,10 +152,19 @@ router.post('/', upload.single('image_file'), (req, res) => {
     return promise;
   }).then((value) => {
     var imagePath = value;
-    var editProfileQuery = 'UPDATE `users` SET `nick_name` = ?, `image_path` = ?, `introduction` = ? WHERE `user_id` = ?';
-    connection.query(editProfileQuery, [nickName, imagePath, introduction, userId]).then(() => {
-      res.redirect('/PHH_Bookmark/myProfile');
-    });
+    if(imagePath === undefined){
+      res.render('myProfileEdit.ejs', {
+        nickName,
+        imagePath,
+        introduction,
+        thumbailNotice : '画像ファイルが正しく読み込めませんでした。',
+      });
+    }else{
+      var editProfileQuery = 'UPDATE `users` SET `nick_name` = ?, `image_path` = ?, `introduction` = ? WHERE `user_id` = ?';
+      connection.query(editProfileQuery, [nickName, imagePath, introduction, userId]).then(() => {
+        res.redirect('/PHH_Bookmark/myProfile');
+      });
+    }
   });
 });
 

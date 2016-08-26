@@ -23,6 +23,9 @@
             <img src="<%= imagePath %>" width="128" height="128"></img>
           <% } %>
           <input type="file" name="image_file" accept="image/*">
+          <% if(typeof thumbailNotice !== 'undefined'){%>
+            <p><%= thumbailNotice %></p>
+          <% } %>
 
           <% if(introduction) { %>
             <input type="text" name="introduction" placeholder="自己紹介文" value="<%= introduction %>">

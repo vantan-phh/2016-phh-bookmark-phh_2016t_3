@@ -395,7 +395,17 @@ router.post('/create', upload.single('image_file'), (req, res) => {
           var path = req.file.path;
           cloudinary.uploader.upload(path, (result) => {
             var orgThumbnail = result.url;
-            resolve(orgThumbnail);
+            if(orgThumbnail === undefined){
+              res.render('createOrganization', {
+                orgName,
+                orgIntroduction,
+                selectedUserNames,
+                selectedNickNames,
+                thumbailNotice : '画像ファイルが正しく読み込めませんでした。',
+              });
+            }else{
+              resolve(orgThumbnail);
+            }
           });
         });
         return promise;
