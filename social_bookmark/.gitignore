@@ -2,3 +2,7 @@ node_modules
 .DS_Store
 PHH_Bookmark/view/img/uploads
 npm-debug.log
+<<<<<<< HEAD
+=======
+.eslintrc
+>>>>>>> 1a200460a973891df9b112fde14832cbb2ecb29a

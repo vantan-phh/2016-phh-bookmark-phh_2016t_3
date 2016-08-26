@@ -11,19 +11,28 @@
       <% } else { %>
         <input type="text" placeholder="組織名" name="orgName" id="orgName">
       <% } %>
+      <% if(typeof orgNameNotice !== 'undefined'){ %>
+        <p><%= orgNameNotice %></p>
+      <% } %>
       <% if(typeof orgIntroduction !== 'undefined') { %>
         <input type="text" placeholder="description" name="orgIntroduction" id="orgIntroduction" value="<%= orgIntroduction %>">
       <% } else {%>
         <input type="text" placeholder="description" name="orgIntroduction" id="orgIntroduction">
       <% } %>
+      <% if(typeof orgIntroductionNotice !== 'undefined'){ %>
+        <p><%= orgIntroductionNotice %></p>
+      <% } %>
       <input type="file" accept="image/*" name="image_file">
       <input type="text" placeholder="招待メンバー" name="invitedUser" id="invitedUser">
+      <% if(typeof searchUserNotice !== 'undefined'){ %>
+        <p><%= searchUserNotice %></p>
+      <% } %>
       <input type="button" value="検索" id="searchUser">
-      <% if(typeof searchedUserName !== 'undefined'){%>
+      <% if(typeof searchedUserNames !== 'undefined'){%>
         <div>検索にヒットしたユーザー</div>
-        <% for(var i = 0; i < searchedUserName.length; i++){ %>
-          <div><%= searchedUserNickName[i] %> <%= searchedUserName[i] %>
-            <input type="button" value="決定" class="set" name="<%= searchedUserName[i] %>,<%= searchedUserNickName[i] %>">
+        <% for(var i = 0; i < searchedUserNames.length; i++){ %>
+          <div><%= searchedNickNames[i] %> <%= searchedUserNames[i] %>
+            <input type="button" value="決定" class="set" name="<%= searchedUserNames[i] %>,<%= searchedNickNames[i] %>">
           </div>
         <% } %>
       <% } %>
@@ -37,10 +46,10 @@
       <div><%= orgNameExists %></div>
     <% } %>
     <div id="memberList">
-      <% if(typeof selectedUserNickNames !== 'undefined') { %>
+      <% if(typeof selectedNickNames !== 'undefined') { %>
         選択されたユーザー
-        <% for(var i = 0; i < selectedUserNickNames.length; i++){ %>
-          <div><%= selectedUserNickNames[i] %><%= selectedUserNames[i] %><input type="button" value="削除" name="<%= selectedUserNames[i] %>" class="deleteButton"></div>
+        <% for(var i = 0; i < selectedNickNames.length; i++){ %>
+          <div><%= selectedNickNames[i] %><%= selectedUserNames[i] %><input type="button" value="削除" name="<%= selectedUserNames[i] %>" class="deleteButton"></div>
         <% } %>
       <% } %>
     </div>
