@@ -10,7 +10,7 @@
     <div><%= myData.mail %></div>
     <form action="/PHH_Bookmark/accountSetting/mail" method="post">
       <input type="text" value="<%= myData.mail %>" placeholder="メールアドレスを入力" name="mail">
-      <input type="submit" value="メールアドレスを変更">
+      <input type="submit" value="メールアドレスを変更" class="button">
     </form>
     <% if(typeof mailNotice !== 'undefined'){ %>
       <p><%= mailNotice %></p>
@@ -23,7 +23,7 @@
       <% if(typeof confirmNotice !== 'undefined'){ %>
         <p><%= confirmNotice %></p>
       <% } %>
-      <input type="submit" value="パスワードを変更">
+      <input type="submit" value="パスワードを変更" class="button">
       <% if(typeof finishChangingPassword !== 'undefined'){ %>
         <p><%= finishChangingPassword %></p>
       <% } %>
@@ -32,4 +32,14 @@
       <p><%= passwordNotice %></p>
     <% } %>
   </body>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>
+    $(function(){
+      var $button = $(".button");
+      $button.click(function(){
+        this.disabled = true;
+        this.form.submit();
+      });
+    });
+  </script>
 </html>

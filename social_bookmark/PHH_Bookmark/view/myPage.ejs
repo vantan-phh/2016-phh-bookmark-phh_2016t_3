@@ -15,7 +15,7 @@
           <input type="checkbox" name="searchFromDescription">説明文
           <input type="checkbox" name="searchFromTextsOnSites">URL先のテキスト
           <input type="text" placeholder="検索ワードを入力" name="keyWord">
-          <input type="submit" value="検索">
+          <input type="submit" value="検索" class="button">
         </form>
       </div>
       <% if(typeof keyWordNotice !== 'undefined'){ %>
@@ -50,10 +50,10 @@
           <% } %>
           <% if(typeof description !== 'undefined'){ %>
             <input type="text" placeholder="コメント" id="description" name="description" value="<%= description %>">
-            <input type="submit" value="送信">
+            <input type="submit" value="送信" class="button">
           <% }else if(typeof url !== 'undefined'){ %>
             <input type="text" placeholder="コメント" id="description" name="description">
-            <input type="submit" value="送信">
+            <input type="submit" value="送信" class="button">
           <% } %>
           <% if(typeof titleNotice !== 'undefined'){ %>
             <p><%= titleNotice %></p>
@@ -71,7 +71,7 @@
               <input type="button" value="編集" name="<%= bookmarkData[i].bookmark_id %>" class="edit">
             </div>
           <% } %>
-          <button type="submit">削除</button>
+          <button type="submit" class="button">削除</button>
         </form>
         <% if(typeof orgData !== 'undefined'){ %>
           <% for(var i = 0; i < orgData.length; i++){ %>
@@ -105,6 +105,7 @@
         var $submitUrlButton = $('#submitUrl');
         var $url = $('#url');
         var $orgName = $(".orgName");
+        var $button = $(".button");
         $edit.click(function(){
           document.toEdit.result.value = this.name;
           document.toEdit.submit();
@@ -121,6 +122,10 @@
           document.submitOrgId.result.value = this.name;
           document.submitOrgId.submit();
         })
+        $button.click(function(){
+          this.disabled = true;
+          this.form.submit();
+        });
       });
     </script>
   </body>

@@ -31,7 +31,7 @@
         <% if (typeof passwordNotice !== 'undefined') { %>
           <p class="error"><%= passwordNotice %></p>
         <% } %>
-        <input id="submitBtn" type="submit" value="Create an account">
+        <input id="submitBtn" type="submit" value="Create an account" class="button">
       </form>
     </main>
     <!-- <footer>
@@ -46,5 +46,14 @@
       </a>
     </footer> -->
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script>
+      $(function(){
+        var $button = $(".button");
+        $button.click(function(){
+          this.disabled = true;
+          this.form.submit();
+        });
+      });
+    </script>
   </body>
 </html>

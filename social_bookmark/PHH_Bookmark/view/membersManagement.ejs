@@ -21,7 +21,7 @@
     <% } %>
     <form action="/PHH_Bookmark/membersManagement/searchUser" method="post">
       <input type="text" placeholder="ユーザー名を入力" name="searchedUser">
-      <input type="submit" value="検索">
+      <input type="submit" value="検索" class="button">
     </form>
 
     <% if(typeof notice !== 'undefined'){ %>
@@ -76,6 +76,11 @@
     var $makeJoinButton = $('#makeJoin');
     var $expelButton = $('.expel');
     var $leaveButton = $('#leave');
+    var $button = $(".button");
+    $button.click(function(){
+      this.disabled = true;
+      this.form.submit();
+    });
     $selectButton.click(function(){
       document.selectUser.result.value = this.name;
       document.selectUser.submit();

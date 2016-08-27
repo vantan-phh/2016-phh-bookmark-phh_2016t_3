@@ -15,7 +15,7 @@
         <a name="<%= selectedAdminData[i].user_id %>" class="userId"><%= selectedAdminData[i].nick_name%></a>
         <a name="<%= selectedAdminData[i].user_id %>" class="userId"><%= selectedAdminData[i].name %></a>
         <% if(selectedAdminData[i].name === myUserName){ %>
-          <input type="submit" value="脱退">
+          <input type="submit" value="脱退" class="button">
           <% if(typeof cannotLeaveNotice !== 'undefined'){ %>
             <p><%= cannotLeaveNotice %></p>
           <% } %>
@@ -28,7 +28,7 @@
           <a name="<%= selectedNotAdminData[i].user_id %>" class="userId"><%= selectedNotAdminData[i].nick_name %></a>
           <a name="<%= selectedNotAdminData[i].user_id %>" class="userId"><%= selectedNotAdminData[i].name %></a>
           <% if (selectedNotAdminData[i].name === myUserName){ %>
-            <input type="submit" value="脱退">
+            <input type="submit" value="脱退" class="button">
           <% } %>
         <% } %>
       <% } %>
@@ -41,6 +41,11 @@
   <script>
   $(function(){
     var $userId = $('.userId');
+    var $button = $(".button");
+    $button.click(function(){
+      this.disabled = true;
+      this.form.submit();
+    });
     $userId.click(function(){
       document.toOtherProfile.result.value = this.name;
       document.toOtherProfile.submit();

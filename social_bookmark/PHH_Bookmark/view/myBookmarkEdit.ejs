@@ -31,7 +31,7 @@
           <% if(typeof descriptionNotice !== 'undefined'){ %>
             <p><%= descriptionNotice %></p>
           <% } %>
-          <input type="submit" value="送信">
+          <input type="submit" value="送信" class="button">
         </form>
         <% if (typeof user !== 'undefined') { %>
           <span class="login-user"><%= user.name %>さんとしてログインしています</span>
@@ -39,6 +39,15 @@
       </div>
     </main>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script>
+      $(function(){
+        var $button = $(".button");
+        $button.click(function(){
+          this.disabled = true;
+          this.form.submit();
+        });
+      });
+    </script>
     <!-- <script src="/test.js"></script> -->
   </body>
 </html>

@@ -42,7 +42,7 @@
       <% if(typeof noUser !== 'undefined'){ %>
         <%= noUser %>
       <% } %>
-      <input type="submit" value="作成" id="createOrg" name="createOrg">
+      <input type="submit" value="作成" id="createOrg" name="createOrg" class="button">
       <input type="hidden" name="result" value="">
     </form>
     <% if(typeof orgNameExists !== 'undefined'){%>
@@ -89,6 +89,11 @@ $(function(){
   var $createOrg = $('#createOrg');
   var $deleteButton = $('.deleteButton');
   var beSetUsers = [];
+  var $button = $(".button");
+  $button.click(function(){
+    this.disabled = true;
+    this.form.submit();
+  });
   $searchUser.click(function(){
     $invitedUser = $invitedUser.val();
     $orgName = $orgName.val();
