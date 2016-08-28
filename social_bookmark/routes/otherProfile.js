@@ -16,7 +16,7 @@ router.get('/', (req, res) => {
   var target = req.session.target;
   (() => {
     var promise = new Promise((resolve) => {
-      var query = 'SELECT `name`,`nick_name`,`image_path`,`introduction` FROM `users` WHERE `user_id` = ?';
+      var query = 'SELECT `name`, `nick_name`, `image_path`, `introduction` FROM `users` WHERE `user_id` = ?';
       connection.query(query, [target]).then((result) => {
         var nickName = result[0][0].nick_name;
         var thumbnailPath = result[0][0].image_path;

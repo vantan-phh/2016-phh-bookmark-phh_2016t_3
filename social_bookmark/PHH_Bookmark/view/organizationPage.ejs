@@ -63,7 +63,7 @@
         <% for(var i = 0; i < searchedBookmarks.length; i++){ %>
           <a href="/PHH_Bookmark/bookmarkPage"><%= searchedBookmarks[i].title %></a><a href="<%= searchedBookmarks[i].url%>"><%= searchedBookmarks[i].url%></a>
           <%= searchedBookmarks[i].description %>
-          <a name="searchedBookmarks[i].user_id" class="userId"><%= addedUserNickNamesForSearched[i]%></a>
+          <a name="<%= searchedBookmarks[i].user_id %>" class="userId"><%= addedUserNickNamesForSearched[i]%></a>
         <% } %>
       <% }else{ %>
         一致する項目は見つかりませんでした。

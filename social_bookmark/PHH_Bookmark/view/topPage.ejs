@@ -15,39 +15,84 @@
       <div id="organization_list">
         <div>
           <h3>links to organization</h3>
-        </div>
-        <div>
-          <a href="">org</a>
-          <a href="">org2</a>
-          <a href="">org3</a>
+          <% if(typeof orgData !== 'undefined'){ %>
+            <% for(var i = 0; i < orgData.length; i++){ %>
+              <img src="<%= orgData[i].image_path %>">
+              <a class="orgId" name="<%= orgData[i].id %>"><%= orgData[i].name %></a>
+              <div><%= orgData[i].introduction %></div>
+            <% } %>
+          <% } %>
         </div>
       </div>
       <div id="organization_some_new_bookmarks">
         <div>
           <h3>organization some new bookmarks</h3>
-        </div>
-        <div>
-          <h4>comments</h4>
+          <% if(typeof orgBookmarks !== 'undefined'){ %>
+            <% for(var i = 0; i < selectedOrgDataForOrgBookmarks.length; i++){ %>
+              <% for(var key in orgBookmarks){ %>
+                <% if(selectedOrgDataForOrgBookmarks[i].id == key){ %>
+                  <% if(orgBookmarks[key].length > 0){ %>
+                    <div>
+                      <img src="<%= selectedOrgDataForOrgBookmarks[i].image_path %>">
+                      <a name="<%= selectedOrgDataForOrgBookmarks[i].id %>" class="orgId"><%= selectedOrgDataForOrgBookmarks[i].name %></a>
+                      <% for(var j = 0; j < orgBookmarks[key].length; j++){ %>
+                        <div>
+                          <a name="bookmarkId<%= orgBookmarks[key][j].bookmark_id %>" class="bookmarkId"><%= orgBookmarks[key][j].title %></a>
+                          <a href="<%= orgBookmarks[key][j].url %>"><%= orgBookmarks[key][j].url %></a>
+                          <%= orgBookmarks[key][j].description %>
+                          コメント<%= orgBookmarks[key][j].numberOfComments %>件
+                        </div>
+                      <% } %>
+                  </div>
+                  <% } %>
+                <% } %>
+              <% } %>
+            <% } %>
+          <% } %>
         </div>
       </div>
       <div id="my_some_new_bookmarks">
         <div>
           <h3>my some new bookmarks</h3>
-        </div>
-        <div>
-          <h4>comments</h4>
+          <% if(typeof myBookmarks !== 'undefined'){ %>
+            <% for(var i = 0; i < myBookmarks.length; i++){ %>
+              <div>
+                <a name="bookmarkId<%= myBookmarks[i].bookmark_id %>" class="bookmarkId"><%= myBookmarks[i].title%></a>
+                <a href="<%= myBookmarks[i].url%>"><%= myBookmarks[i].url %></a>
+                <%= myBookmarks[i].description %>
+                コメント<%= myBookmarks[i].numberOfComments %>件
+              </div>
+            <% } %>
+          <% } %>
         </div>
       </div>
+      <form name="submitOrgId" action="/PHH_Bookmark/organizationPage/submitOrgId" method="post">
+        <input type="hidden" name="result">
+      </form>
+      <form name="toSubmitBookmarkData" action="/PHH_Bookmark/submitBookmarkData" method="post">
+        <input type="hidden" name="result">
+      </form>
     </main>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-    <!--script src="/test.js"></script-->
     <script>
+    $(function(){
+      var $bookmarkId = $('.bookmarkId');
+      var $orgId = $('.orgId');
+      $bookmarkId.click(function(){
+        document.toSubmitBookmarkData.result.value = this.name;
+        document.toSubmitBookmarkData.submit();
+      });
+      $orgId.click(function(){
+        document.submitOrgId.result.value = this.name;
+        document.submitOrgId.submit();
+      });
       document.body.addEventListener('click',function(e){
         var mouseX = e.pageX;
         var mouseY = e.pageY;
         console.log("x" + mouseX);
         console.log("y" + mouseY);
-      })
+      });
+    });
     </script>
   </body>
 </html>
