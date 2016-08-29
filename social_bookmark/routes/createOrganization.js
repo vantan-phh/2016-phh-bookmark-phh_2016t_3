@@ -99,56 +99,16 @@ router.post('/searchUser', (req, res) => {
         return promise;
       }).then((_value) => {
         overlapUsers = _value;
-        var promise = new Promise((resolve) => {
-          var excludeOverlapUsers = 'SELECT `name` FROM `users` WHERE `user_id` NOT IN (?)';
-          connection.query(excludeOverlapUsers, [overlapUsers]).then((result) => {
-            if(result[0].length > 0){
-              var hitUserNames = result[0];
-              resolve(hitUserNames);
-            }else{ // when no user hits
-              res.render('createOrganization', {
-                orgName,
-                orgIntroduction,
-                selectedUserNames,
-                selectedNickNames,
-                noUser : '該当するユーザーが見つかりません。',
-              });
-            }
-          });
-        });
-        return promise;
-      }).then((_value) => {
-        var hitUserNames = _value;
-        var promise = new Promise((resolve) => {
-          var searchedUserNames = [];
-          invitedUser = new RegExp('.*' + invitedUser + '.*');
-          hitUserNames.forEach((currentValue, index, array) => {
-            var invitedUserName = currentValue.name;
-            if(invitedUser.test(invitedUserName)){
-              searchedUserNames.push(currentValue.name);
-            }
-            if(index + 1 === array.length){
-              resolve(searchedUserNames);
-            }
-          });
-        });
-        return promise;
-      }).then((_value) => {
-        var searchedUserNames = _value;
-        var promise = new Promise((resolve) => {
-          if(searchedUserNames.length > 0){
-            var userNamesForQuery = '';
-            searchedUserNames.forEach((currentValue, index, array) => {
-              if(index + 1 === array.length){
-                userNamesForQuery += '"' + currentValue + '"';
-                var values = {
-                  searchedUserNames,
-                  userNamesForQuery,
-                };
-                resolve(values);
-              }else{
-                userNamesForQuery += '"' + currentValue + '" OR `name` = ';
-              }
+        var excludeOverlapUsers = 'SELECT `name`, `nick_name` FROM (SELECT * FROM `users` WHERE `user_id` NOT IN (?)) AS `a` WHERE `name` LIKE "%' + invitedUser + '%"';
+        connection.query(excludeOverlapUsers, [overlapUsers]).then((result) => {
+          if(result[0].length > 0){
+            var searchedUsers = result[0];
+            res.render('createOrganization.ejs', {
+              orgName,
+              orgIntroduction,
+              selectedUserNames,
+              selectedNickNames,
+              searchedUsers,
             });
           }else{ // when no user hits
             res.render('createOrganization.ejs', {
@@ -159,151 +119,28 @@ router.post('/searchUser', (req, res) => {
               noUser : '該当するユーザーが見つかりません。',
             });
           }
-        });
-        return promise;
-      }).then((_values) => {
-        var userNamesForQuery = _values.userNamesForQuery;
-        var searchedUserNames = _values.searchedUserNames;
-        var promise = new Promise((resolve) => {
-          var selectNickName = 'SELECT `nick_name` FROM `users` WHERE `name` = ' + userNamesForQuery;
-          connection.query(selectNickName).then((result) => {
-            var hitNickNames = result[0];
-            var values = {
-              searchedUserNames,
-              hitNickNames,
-            };
-            resolve(values);
-          });
-        });
-        return promise;
-      }).then((_values) => {
-        var hitNickNames = _values.hitNickNames;
-        var searchedUserNames = _values.searchedUserNames;
-        var promise = new Promise((resolve) => {
-          var searchedNickNames = [];
-          hitNickNames.forEach((currentValue, index, array) => {
-            searchedNickNames.push(currentValue.nick_name);
-            if(index + 1 === array.length){
-              var values = {
-                searchedUserNames,
-                searchedNickNames,
-              };
-              resolve(values);
-            }
-          });
-        });
-        return promise;
-      }).then((_values) => {
-        var searchedNickNames = _values.searchedNickNames;
-        var searchedUserNames = _values.searchedUserNames;
-        res.render('createOrganization', {
-          orgName,
-          orgIntroduction,
-          searchedUserNames,
-          searchedNickNames,
-          selectedUserNames,
-          selectedNickNames,
         });
       });
     }else{ // when no one selected still
-      (() => {
-        var promise = new Promise((resolve) => {
-          var excludeOwnData = 'SELECT `name` FROM `users` WHERE `name` NOT IN (?)';
-          connection.query(excludeOwnData, [ownUserName]).then((result) => {
-            if(result[0].length > 0){
-              var searchedUserNames = [];
-              invitedUser = new RegExp('.*' + invitedUser + '.*');
-              result[0].forEach((currentValue, index, array) => {
-                if(invitedUser.test(currentValue.name)){
-                  searchedUserNames.push(currentValue.name);
-                }
-                if(index + 1 === array.length){
-                  resolve(searchedUserNames);
-                }
-              });
-            }else{ // when no user hits
-              res.render('createOrganization', {
-                orgName,
-                orgIntroduction,
-                selectedUserNames,
-                selectedNickNames,
-                noUser : '該当するユーザーが見つかりません。',
-              });
-            }
+      var excludeOwnData = 'SELECT `name`, `nick_name` FROM (SELECT * FROM `users` WHERE `name` NOT IN (?)) AS `a` WHERE `name` LIKE "%' + invitedUser + '%"';
+      connection.query(excludeOwnData, [ownUserName]).then((result) => {
+        if(result[0].length > 0){
+          res.render('createOrganization.ejs', {
+            orgName,
+            orgIntroduction,
+            selectedUserNames,
+            selectedNickNames,
+            searchedUsers : result[0],
           });
-        });
-        return promise;
-      })().then((_value) => {
-        var searchedUserNames = _value;
-        var promise = new Promise((resolve) => {
-          if(searchedUserNames.length > 0){
-            var userNamesForQuery = '';
-            searchedUserNames.forEach((currentValue, index, array) => {
-              if(index + 1 === array.length){
-                userNamesForQuery += '"' + currentValue + '"';
-                var values = {
-                  searchedUserNames,
-                  userNamesForQuery,
-                };
-                resolve(values);
-              }else{
-                userNamesForQuery += '"' + currentValue + '" OR `name` = ';
-              }
-            });
-          }else{ // when no user hits
-            res.render('createOrganization.ejs', {
-              orgName,
-              orgIntroduction,
-              selectedUserNames,
-              selectedNickNames,
-              noUser : '該当するユーザーが見つかりません。',
-            });
-          }
-        });
-        return promise;
-      }).then((_values) => {
-        var searchedUserNames = _values.searchedUserNames;
-        var userNamesForQuery = _values.userNamesForQuery;
-        var promise = new Promise((resolve) => {
-          var selectNickName = 'SELECT `nick_name` FROM `users` WHERE `name` = ' + userNamesForQuery;
-          connection.query(selectNickName).then((result) => {
-            var hitNickNames = result[0];
-            var values = {
-              searchedUserNames,
-              hitNickNames,
-            };
-            resolve(values);
+        }else{ // when no user hits
+          res.render('createOrganization', {
+            orgName,
+            orgIntroduction,
+            selectedUserNames,
+            selectedNickNames,
+            noUser : '該当するユーザーが見つかりません。',
           });
-        });
-        return promise;
-      }).then((_values) => {
-        var searchedUserNames = _values.searchedUserNames;
-        var hitNickNames = _values.hitNickNames;
-        var promise = new Promise((resolve) => {
-          var searchedNickNames = [];
-          hitNickNames.forEach((currentValue, index, array) => {
-            searchedNickNames.push(currentValue.nick_name);
-            if(index + 1 === array.length){
-              var values = {
-                searchedUserNames,
-                searchedNickNames,
-              };
-              resolve(values);
-            }
-          });
-        });
-        return promise;
-      }).then((_values) => {
-        var searchedUserNames = _values.searchedUserNames;
-        var searchedNickNames = _values.searchedNickNames;
-        res.render('createOrganization.ejs', {
-          orgName,
-          orgIntroduction,
-          searchedUserNames,
-          searchedNickNames,
-          selectedUserNames,
-          selectedNickNames,
-        });
+        }
       });
     }
   });

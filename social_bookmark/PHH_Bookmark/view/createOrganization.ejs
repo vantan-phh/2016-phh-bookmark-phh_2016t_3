@@ -31,11 +31,11 @@
         <p><%= searchUserNotice %></p>
       <% } %>
       <input type="button" value="検索" id="searchUser">
-      <% if(typeof searchedUserNames !== 'undefined'){%>
+      <% if(typeof searchedUsers !== 'undefined'){%>
         <div>検索にヒットしたユーザー</div>
-        <% for(var i = 0; i < searchedUserNames.length; i++){ %>
-          <div><%= searchedNickNames[i] %> <%= searchedUserNames[i] %>
-            <input type="button" value="決定" class="set" name="<%= searchedUserNames[i] %>,<%= searchedNickNames[i] %>">
+        <% for(var i = 0; i < searchedUsers.length; i++){ %>
+          <div><%= searchedUsers[i].nick_name %> <%= searchedUsers[i].name %>
+            <input type="button" value="決定" class="set" name="<%= searchedUsers[i].name %>,<%= searchedUsers[i].nick_name %>">
           </div>
         <% } %>
       <% } %>
