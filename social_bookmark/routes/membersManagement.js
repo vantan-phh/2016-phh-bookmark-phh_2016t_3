@@ -223,113 +223,33 @@ router.post('/searchUser', (req, res) => {
       })().then((_values) => {
         var excludeUsers = _values.excludeUsers;
         excludeUsers = excludeUsers.concat(selectedUserNames);
-        var promise = new Promise((resolve) => {
-          var exclude = 'SELECT `name` FROM `users` WHERE `name` NOT IN (?)';
-          connection.query(exclude, [excludeUsers]).then((result) => {
-            if(result[0].length > 0){
-              _values.selectedUsers = result[0];
-              resolve(_values);
-            }else{
-              res.render('membersManagement.ejs', {
-                orgName,
-                orgIntroduction,
-                orgThumbnail,
-                selectedUserNames,
-                selectedNickNames,
-                memberUserNames,
-                memberNickNames,
-                notice : '該当するユーザーが見つかりません。',
-                myUserName,
-              });
-            }
-          });
-        });
-        return promise;
-      }).then((_values) => {
-        var selectedUsers = _values.selectedUsers;
-        var promise = new Promise((resolve) => {
-          var searchedUserNames = [];
-          searchedUser = new RegExp('.*' + searchedUser + '.*');
-          selectedUsers.forEach((currentValue, index, array) => {
-            if(searchedUser.test(currentValue.name)){
-              searchedUserNames.push(currentValue.name);
-            }
-            if(index + 1 === array.length){
-              _values.searchedUserNames = searchedUserNames;
-              resolve(_values);
-            }
-          });
-        });
-        return promise;
-      }).then((_values) => {
-        var searchedUserNames = _values.searchedUserNames;
-        var promise = new Promise((resolve) => {
-          if(searchedUserNames.length > 0){
-            var userNamesForQuery = '';
-            searchedUserNames.forEach((currentValue, index, array) => {
-              if(index + 1 === array.length){
-                userNamesForQuery += '"' + currentValue + '"';
-                _values.userNamesForQuery = userNamesForQuery;
-                resolve(_values);
-              }else{
-                userNamesForQuery += '"' + currentValue + '" OR `name` = ';
-              }
-            });
-          }else{
+        var searchUser = 'SELECT `name`, `nick_name` FROM (SELECT * FROM `users` WHERE `name` NOT IN (?)) AS `a` WHERE `name` LIKE "%' + searchedUser + '%"';
+        connection.query(searchUser, [excludeUsers]).then((result) => {
+          if(result[0].length > 0){
             res.render('membersManagement.ejs', {
-              memberUserNames,
-              memberNickNames,
-              selectedUserNames,
-              selectedNickNames,
               orgName,
               orgIntroduction,
               orgThumbnail,
+              selectedUserNames,
+              selectedNickNames,
+              memberUserNames,
+              memberNickNames,
+              myUserName,
+              searchedUsers : result[0],
+            });
+          }else{
+            res.render('membersManagement.ejs', {
+              orgName,
+              orgIntroduction,
+              orgThumbnail,
+              selectedUserNames,
+              selectedNickNames,
+              memberUserNames,
+              memberNickNames,
               notice : '該当するユーザーが見つかりません。',
               myUserName,
             });
           }
-        });
-        return promise;
-      }).then((_values) => {
-        var userNamesForQuery = _values.userNamesForQuery;
-        var promise = new Promise((resolve) => {
-          var selectNickName = 'SELECT `nick_name` FROM `users` WHERE `name` = ' + userNamesForQuery;
-          connection.query(selectNickName).then((result) => {
-            _values.hitNickNames = result[0];
-            resolve(_values);
-          });
-        });
-        return promise;
-      }).then((_values) => {
-        var hitNickNames = _values.hitNickNames;
-        var promise = new Promise((resolve) => {
-          var searchedNickNames = [];
-          hitNickNames.forEach((currentValue, index, array) => {
-            searchedNickNames.push(currentValue.nick_name);
-            if(index + 1 === array.length){
-              _values.searchedNickNames = searchedNickNames;
-              resolve(_values);
-            }
-          });
-        });
-        return promise;
-      }).then((_values) => {
-        orgName = _values.orgName;
-        orgIntroduction = _values.orgIntroduction;
-        orgThumbnail = _values.orgThumbnail;
-        var searchedUserNames = _values.searchedUserNames;
-        var searchedNickNames = _values.searchedNickNames;
-        res.render('membersManagement.ejs', {
-          orgName,
-          orgIntroduction,
-          orgThumbnail,
-          memberUserNames,
-          memberNickNames,
-          searchedNickNames,
-          searchedUserNames,
-          selectedUserNames,
-          selectedNickNames,
-          myUserName,
         });
       });
     }else{
@@ -366,120 +286,33 @@ router.post('/searchUser', (req, res) => {
         orgIntroduction = _values.orgIntroduction;
         orgThumbnail = _values.orgThumbnail;
         var excludeUsers = _values.excludeUsers;
-        var promise = new Promise((resolve) => {
-          var exclude = 'SELECT `name` FROM `users` WHERE `name` NOT IN (?)';
-          connection.query(exclude, [excludeUsers]).then((result) => {
-            if(result[0].length){
-              _values.hitUserNames = result[0];
-              resolve(_values);
-            }else{
-              res.render('membersManagement.ejs', {
-                orgName,
-                orgIntroduction,
-                orgThumbnail,
-                selectedUserNames,
-                selectedNickNames,
-                notice : '該当するユーザーが見つかりません。',
-                memberUserNames,
-                memberNickNames,
-                myUserName,
-              });
-            }
-          });
-        });
-        return promise;
-      }).then((_values) => {
-        var hitUserNames = _values.hitUserNames;
-        var promise = new Promise((resolve) => {
-          var searchedUserNames = [];
-          searchedUser = new RegExp('.*' + searchedUser + '.*');
-          hitUserNames.forEach((currentValue, index, array) => {
-            if(searchedUser.test(currentValue.name)){
-              searchedUserNames.push(currentValue.name);
-            }
-            if(index + 1 === array.length){
-              _values.searchedUserNames = searchedUserNames;
-              resolve(_values);
-            }
-          });
-        });
-        return promise;
-      }).then((_values) => {
-        var searchedUserNames = _values.searchedUserNames;
-        var promise = new Promise((resolve) => {
-          if(searchedUserNames.length > 0){
-            resolve(_values);
-          }else{
+        var searchUser = 'SELECT * FROM `users` WHERE `name` NOT IN (?)';
+        connection.query(searchUser, [excludeUsers]).then((result) => {
+          if(result[0].length){
             res.render('membersManagement.ejs', {
-              memberUserNames,
-              memberNickNames,
-              selectedUserNames,
-              selectedNickNames,
               orgName,
               orgIntroduction,
               orgThumbnail,
+              selectedUserNames,
+              selectedNickNames,
+              memberUserNames,
+              memberNickNames,
+              myUserName,
+              searchedUsers : result[0],
+            });
+          }else{
+            res.render('membersManagement.ejs', {
+              orgName,
+              orgIntroduction,
+              orgThumbnail,
+              selectedUserNames,
+              selectedNickNames,
               notice : '該当するユーザーが見つかりません。',
+              memberUserNames,
+              memberNickNames,
               myUserName,
             });
           }
-        });
-        return promise;
-      }).then((_values) => {
-        var searchedUserNames = _values.searchedUserNames;
-        var promise = new Promise((resolve) => {
-          var userNamesForQuery = '';
-          searchedUserNames.forEach((currentValue, index, array) => {
-            if(index + 1 === array.length){
-              userNamesForQuery += '"' + currentValue + '"';
-              _values.userNamesForQuery = userNamesForQuery;
-              resolve(_values);
-            }else {
-              userNamesForQuery += '"' + currentValue + '" OR `name` = ';
-            }
-          });
-        });
-        return promise;
-      }).then((_values) => {
-        var userNamesForQuery = _values.userNamesForQuery;
-        var promise = new Promise((resolve) => {
-          var selectNickName = 'SELECT `nick_name` FROM `users` WHERE `name` = ' + userNamesForQuery;
-          connection.query(selectNickName).then((result) => {
-            var hitNickNames = result[0];
-            _values.hitNickNames = hitNickNames;
-            resolve(_values);
-          });
-        });
-        return promise;
-      }).then((_values) => {
-        var hitNickNames = _values.hitNickNames;
-        var promise = new Promise((resolve) => {
-          var searchedNickNames = [];
-          hitNickNames.forEach((currentValue, index, array) => {
-            searchedNickNames.push(currentValue.nick_name);
-            if(index + 1 === array.length){
-              _values.searchedNickNames = searchedNickNames;
-              resolve(_values);
-            }
-          });
-        });
-        return promise;
-      }).then((_values) => {
-        orgName = _values.orgName;
-        orgIntroduction = _values.orgIntroduction;
-        orgThumbnail = _values.orgThumbnail;
-        var searchedNickNames = _values.searchedNickNames;
-        var searchedUserNames = _values.searchedUserNames;
-        res.render('membersManagement.ejs', {
-          orgName,
-          orgIntroduction,
-          orgThumbnail,
-          searchedUserNames,
-          searchedNickNames,
-          memberUserNames,
-          memberNickNames,
-          selectedUserNames,
-          selectedNickNames,
-          myUserName,
         });
       });
     }
