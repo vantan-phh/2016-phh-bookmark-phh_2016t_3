@@ -8,9 +8,9 @@ module.exports = (req, res, next) => {
       res.locals.userName = result[0].length ? result[0][0].name : false;
       res.locals.nickName = result[0].length ? result[0][0].nick_name : false;
       res.locals.thumbnail = result[0].length ? result[0][0].image_path : false;
+      next();
     });
   }else{
     res.redirect('/PHH_Bookmark/login');
   }
-  next();
 };
