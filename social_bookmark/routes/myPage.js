@@ -4,8 +4,13 @@ var router = express.Router();
 var connection = require('../mysqlConnection');
 var client = require('cheerio-httpcli');
 
-var bookmarkData;
+var allBookmarkData;
 var orgData;
+
+router.param('index', (req, res, next, value) => {
+  req.params.name = value;
+  next();
+});
 
 router.get('/', (req, res) => {
   var userId = req.session.user_id;
@@ -46,14 +51,33 @@ router.get('/', (req, res) => {
     orgData = value;
     var query = 'SELECT * FROM `bookmarks` WHERE `user_id` = ?';
     connection.query(query, [userId]).then((result) => {
-      bookmarkData = result[0];
-      res.render('myPage.ejs', {
-        bookmarkData,
-        orgData,
-      });
+      var n = 12;
+      allBookmarkData = [];
+      for (var i = 0; i < result[0].length; i+=n) {
+        allBookmarkData.push(result[0].slice(i, i + n));
+      }
+      res.redirect('/PHH_Bookmark/myPage/1');
     });
   });
 });
+
+router.get('/:index', (req, res) => {
+  var pageLength = allBookmarkData.length;
+  var index = req.params.name;
+  index = parseInt(index, 10);
+  if(pageLength < index){
+    res.redirect('/PHH_Bookmark/myPage/1');
+  }else{
+    var bookmarkData = allBookmarkData[index - 1];
+    res.render('myPage.ejs', {
+      bookmarkData,
+      orgData,
+      pageLength,
+      index,
+    });
+  }
+});
+
 router.post('/', (req, res) => {
   var userId = req.session.user_id;
   var url = req.body.url;

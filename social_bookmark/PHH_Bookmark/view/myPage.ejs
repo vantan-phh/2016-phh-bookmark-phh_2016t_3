@@ -64,15 +64,23 @@
         </form>
         <form name="my_bookmark" action="/PHH_Bookmark/myPage/delete" method="post">
           <% for(var i = 0; i < bookmarkData.length; i++){ %>
-            <div>
               <input type="checkbox" class="checkbox" name="<%= bookmarkData[i].bookmark_id %>">
               <a name="bookmarkId<%= bookmarkData[i].bookmark_id%>"><%= bookmarkData[i].title %></a>
               <a href="<%= bookmarkData[i].url %>"><%= bookmarkData[i].url %></a><%= bookmarkData[i].description %>
               <input type="button" value="編集" name="<%= bookmarkData[i].bookmark_id %>" class="edit">
-            </div>
           <% } %>
-          <button type="submit" class="button">削除</button>
         </form>
+        <button type="submit" class="button">削除</button>
+        <% if(index !== 1){ %>
+          <% var backIndex = index - 1; %>
+          <% var backUrl = "/PHH_Bookmark/myPage/" + backIndex; %>
+          <a href="<%= backUrl %>">前へ</a>
+        <% } %>
+        <% if(index !== pageLength){ %>
+          <% var nextIndex = index + 1; %>
+          <% var nextUrl = "/PHH_Bookmark/myPage/" + nextIndex; %>
+          <a href="<%= nextUrl %>">次へ</a>
+        <% } %>
         <% if(typeof orgData !== 'undefined'){ %>
           <% for(var i = 0; i < orgData.length; i++){ %>
             <img src="<%= orgData[i].image_path %>">
@@ -106,6 +114,7 @@
         var $url = $('#url');
         var $orgName = $(".orgName");
         var $button = $(".button");
+
         $edit.click(function(){
           document.toEdit.result.value = this.name;
           document.toEdit.submit();
@@ -126,6 +135,19 @@
           this.disabled = true;
           this.form.submit();
         });
+        //console.log($list);
+        //var length = $list.length;
+        //var lengthLimit = Math.floor(length / 10);
+        /*console.time('a');
+        var count = 0;
+        for (var i = 0; i < 10; i++) {
+          var $list = $('[id^=bookmark]:eq(' + count + ')');
+          $list.css("display", "inline");
+          count++;
+          console.log($list);
+          console.log(count);
+        }
+        console.timeEnd('a');*/
       });
     </script>
   </body>
