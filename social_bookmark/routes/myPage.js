@@ -65,9 +65,7 @@ router.get('/:index', (req, res) => {
   var pageLength = allBookmarkData.length;
   var index = req.params.name;
   index = parseInt(index, 10);
-  if(pageLength < index){
-    res.redirect('/PHH_Bookmark/myPage/1');
-  }else{
+  if(pageLength > index && index > 0){
     var bookmarkData = allBookmarkData[index - 1];
     res.render('myPage.ejs', {
       bookmarkData,
@@ -75,6 +73,8 @@ router.get('/:index', (req, res) => {
       pageLength,
       index,
     });
+  }else{
+    res.redirect('/PHH_Bookmark/myPage/1');
   }
 });
 
