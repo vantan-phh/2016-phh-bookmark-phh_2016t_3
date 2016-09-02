@@ -254,6 +254,7 @@ router.post('/searchBookmark', (req, res) => {
         resolve();
       }else{
         res.render('myPage.ejs', {
+          orgData,
           bookmarkData,
           keyWordNotice : 'セキュリティ上の観点から「+, -, %, ;」を含んでの検索はできません',
         });
@@ -322,6 +323,7 @@ router.post('/searchBookmark', (req, res) => {
         res.render('myPage.ejs', {
           bookmarkData,
           searchedBookmarks,
+          orgData,
         });
       });
     }else if(searchFromTitle === undefined && searchFromDescription === undefined && searchFromTextsOnSites === 'on'){
@@ -346,6 +348,7 @@ router.post('/searchBookmark', (req, res) => {
           res.render('myPage.ejs', {
             bookmarkData,
             searchedBookmarks,
+            orgData,
           });
         });
       });
@@ -440,6 +443,7 @@ router.post('/searchBookmark', (req, res) => {
           res.render('myPage.ejs', {
             bookmarkData,
             searchedBookmarks,
+            orgData,
           });
         });
       });
@@ -491,6 +495,7 @@ router.post('/searchBookmark', (req, res) => {
         res.render('myPage.ejs', {
           bookmarkData,
           searchedBookmarks,
+          orgData,
         });
       });
     }else if(searchFromTitle === 'on' && searchFromDescription === 'on' && searchFromTextsOnSites === 'on'){
@@ -562,6 +567,7 @@ router.post('/searchBookmark', (req, res) => {
         res.render('myPage.ejs', {
           bookmarkData,
           searchedBookmarks,
+          orgData,
         });
       });
     }
