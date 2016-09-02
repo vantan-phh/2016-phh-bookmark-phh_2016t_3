@@ -311,7 +311,7 @@ router.post('/searchBookmark', (req, res) => {
       })().then((value) => {
         keyWordsForQuery = value;
         var promise = new Promise((resolve) => {
-          var selectSearchedBookmarks = 'SELECT * FROM `bookamrks` WHERE `user_id` = ? AND ( `description` LIKE "' + keyWordsForQuery + '%" )';
+          var selectSearchedBookmarks = 'SELECT * FROM `bookmarks` WHERE `user_id` = ? AND ( `description` LIKE "' + keyWordsForQuery + '%" )';
           connection.query(selectSearchedBookmarks, [myId]).then((result) => {
             var searchedBookmarks = result[0];
             resolve(searchedBookmarks);

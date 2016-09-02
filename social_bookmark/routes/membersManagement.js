@@ -497,9 +497,44 @@ router.post('/expelUser', (req, res) => {
 router.post('/leave', (req, res) => {
   var orgId = req.session.org_id;
   var myId = req.session.user_id;
-  var leave = 'DELETE FROM `organization_memberships` WHERE `user_id` = ? AND `org_id` = ?';
-  connection.query(leave, [myId, orgId]).then(() => {
-    res.redirect('/PHH_Bookmark/topPage');
+  (() => {
+    var promise = new Promise((resolve) => {
+      var specifyOrg = 'SELECT * FROM `organizations` WHERE `id` = ?';
+      connection.query(specifyOrg, [orgId]).then((result) => {
+        var values = {
+          orgName : result[0][0].name,
+          orgIntroduction : result[0][0].introduction,
+          orgThumbnail : result[0][0].image_path,
+        };
+        resolve(values);
+      });
+    });
+    return promise;
+  })().then((values) => {
+    var promise = new Promise((resolve) => {
+      var selectAdmins = 'SELECT `user_id` FROM `organization_memberships` WHERE `org_id` = ? AND `is_admin` = true';
+      connection.query(selectAdmins, [orgId]).then((result) => {
+        if(result[0].length > 1){
+          resolve();
+        }else{
+          res.render('membersManagement.ejs', {
+            memberUserNames,
+            memberNickNames,
+            orgName : values.orgName,
+            orgThumbnail : values.image_path,
+            orgIntroduction : values.orgIntroduction,
+            myUserName,
+            authorityNotice : '管理者が一人のみのため脱退はできません。',
+          });
+        }
+      });
+    });
+    return promise;
+  }).then(() => {
+    var leave = 'DELETE FROM `organization_memberships` WHERE `user_id` = ? AND `org_id` = ?';
+    connection.query(leave, [myId, orgId]).then(() => {
+      res.redirect('/PHH_Bookmark/topPage');
+    });
   });
 });
 module.exports = router;
