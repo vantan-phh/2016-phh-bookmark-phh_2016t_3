@@ -25,6 +25,7 @@ var organizationManagement = require('./routes/organizationManagement');
 var organizationMembers = require('./routes/organizationMembers');
 var accountSetting = require('./routes/accountSetting');
 var otherProfile = require('./routes/otherProfile');
+var welcome = require('./routes/welcome');
 
 var app = express();
 
@@ -68,7 +69,8 @@ app.use(session({
   },
 }));
 
-app.use('/PHH_Bookmark', createAccount);
+app.use('/PHH_Bookmark', welcome);
+app.use('/PHH_Bookmark/createAccount', createAccount);
 app.use('/PHH_Bookmark/topPage', setUser, topPage);
 app.use('/PHH_Bookmark/login', login);
 app.use('/PHH_Bookmark/logout', setUser, logout);

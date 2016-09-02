@@ -4,6 +4,7 @@ var router = express.Router();
 var connection = require('../mysqlConnection');
 
 router.get('/', (req, res) => {
+  if(req.session.comment) delete req.session.comment;
   var userId = req.session.user_id;
   var bookmarkId = req.session.bookmark_id;
   (() => {
@@ -82,6 +83,16 @@ router.post('/', (req, res) => {
     }else{
       (() => {
         var promise = new Promise((resolve) => {
+          if(req.session.comment === commentText){
+            delete req.session.comment;
+            res.redirect('/PHH_Bookmark/bookmarkPage');
+          }else{
+            resolve();
+          }
+        });
+        return promise;
+      })().then(() => {
+        var promise = new Promise((resolve) => {
           var query = 'SELECT * FROM `comments` WHERE `bookmark_id` = ?';
           connection.query(query, [bookmarkId]).then((result) => {
             var queryResult = result[0];
@@ -89,7 +100,7 @@ router.post('/', (req, res) => {
           });
         });
         return promise;
-      })().then((value) => {
+      }).then((value) => {
         var promise = new Promise((resolve) => {
           var queryResult = value;
           if(queryResult.length > 0){
@@ -97,6 +108,8 @@ router.post('/', (req, res) => {
           }else{
             var pullBookmark = 'SELECT * FROM `bookmarks` WHERE `bookmark_id` = ?';
             connection.query(pullBookmark, [bookmarkId]).then((result) => {
+              if(req.session.comment) delete req.session.comment;
+              req.session.comment = commentText;
               res.render('bookmarkPage.ejs', {
                 bookmark : result[0],
                 browsingUserId : userId,
@@ -131,6 +144,8 @@ router.post('/', (req, res) => {
         var queryResult = values.queryResult;
         var pullBookmark = 'SELECT * FROM `bookmarks` WHERE `bookmark_id` = ?';
         connection.query(pullBookmark, [bookmarkId]).then((result) => {
+          if(req.session.comment) delete req.session.comment;
+          req.session.comment = commentText;
           res.render('bookmarkPage.ejs', {
             comments : queryResult,
             bookmark : result[0],
@@ -142,11 +157,14 @@ router.post('/', (req, res) => {
       });
     }
   }else{
+    if(req.session.comment) delete req.session.comment;
+    req.session.comment = commentText;
     res.redirect('/PHH_Bookmark/bookmarkPage');
   }
 });
 
 router.post('/delete', (req, res) => {
+  if(req.session.comment) delete req.session.comment;
   var deleteComment = req.body.result;
   var query = 'DELETE FROM `comments` WHERE `comment_id` = ?';
   connection.query(query, [deleteComment]).then(() => {

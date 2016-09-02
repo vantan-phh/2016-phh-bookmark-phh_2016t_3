@@ -44,81 +44,98 @@ router.get('/', (req, res) => {
 });
 
 router.post('/', (req, res) => {
-  if(req.session.user_id){
-    delete req.session.user_id;
-  }
   var eMail = req.body.email;
   var userName = req.body.user_name;
   var password = req.body.password;
   var checkForm = /^[a-zA-Z0-9]+$/;
   var checkEmail = /^([a-zA-Z0-9])+([a-zA-Z0-9\._-])*@([a-zA-Z0-9_-])+([a-zA-Z0-9\._-]+)+$/;
   var againPassword = req.body.again_password;
-  if(password === againPassword){
-    if(checkEmail.test(eMail)){
+  (() => {
+    var promise = new Promise((resolve) => {
+      if(password === againPassword){
+        resolve();
+      }else{
+        res.render('createAccount.ejs', {
+          passwordNotice : 'パスワードが一致しません',
+        });
+      }
+    });
+    return promise;
+  })().then(() => {
+    var promise = new Promise((resolve) => {
+      if(checkEmail.test(eMail)){
+        resolve();
+      }else{
+        res.render('createAccount.ejs', {
+          mailNotice : '正しいメールアドレスを入力してください',
+        });
+      }
+    });
+    return promise;
+  }).then(() => {
+    var promise = new Promise((resolve) => {
       if(checkForm.test(userName) && userName.length <= 16){
-        if(checkForm.test(password) && password.length >= 8){
-          var existsEmailQuery = 'SELECT `mail` FROM `users` WHERE `mail` = ?';
-          var existsUserNameQuery = 'SELECT `name` FROM `users` WHERE `name` = ?';
-          var createAccount = 'INSERT INTO `users` (`name`,`mail`,`salt`,`hash`,`nick_name`,`image_path`) VALUES(?, ?, ?, ?, ?, ?)';
-          (() => {
-            var promise = new Promise((resolve) => {
-              connection.query(existsEmailQuery, [eMail]).then((result) => {
-                if(result[0].length > 0){
-                  res.render('createAccount.ejs', {
-                    eMailExists : '既に登録されているメールアドレスです',
-                  });
-                }else{
-                  resolve();
-                }
-              });
-            });
-            return promise;
-          })().then(() => {
-            var promise = new Promise((resolve) => {
-              connection.query(existsUserNameQuery, [userName]).then((result) => {
-                if(result[0].length > 0){
-                  res.render('createAccount.ejs', {
-                    userNameExists : '既に登録されているユーザーネームです。',
-                  });
-                }else{
-                  resolve();
-                }
-              });
-            });
-            return promise;
-          }).then(() => {
-            var promise = new Promise((resolve) => {
-              var passwordAndHash = hashPassword(password);
-              resolve(passwordAndHash);
-            });
-            return promise;
-          }).then((value) => {
-            password = value[0];
-            var salt = value[1];
-            connection.query(createAccount, [userName, eMail, salt, password, userName, 'http://res.cloudinary.com/dy4f7hul5/image/upload/v1469220623/sample.jpg']).then(() => {
-              res.redirect('/PHH_Bookmark/login');
-            });
-          });
-        }else{
-          res.render('createAccount.ejs', {
-            passwordNotice : 'パスワードは半角英数8文字以上です',
-          });
-        }
+        resolve();
       }else{
         res.render('createAccount.ejs', {
           usernameNotice : 'ユーザーネームは半角英数16文字以下です',
         });
       }
-    }else{
-      res.render('createAccount.ejs', {
-        mailNotice : '正しいメールアドレスを入力してください',
-      });
-    }
-  }else{
-    res.render('createAccount.ejs', {
-      passwordNotice : 'パスワードが一致しません',
     });
-  }
+    return promise;
+  }).then(() => {
+    var promise = new Promise((resolve) => {
+      if(checkForm.test(password) && password.length >= 8){
+        resolve();
+      }else{
+        res.render('createAccount.ejs', {
+          passwordNotice : 'パスワードは半角英数8文字以上です',
+        });
+      }
+    });
+    return promise;
+  }).then(() => {
+    var promise = new Promise((resolve) => {
+      var existsEmailQuery = 'SELECT `mail` FROM `users` WHERE `mail` = ?';
+      connection.query(existsEmailQuery, [eMail]).then((result) => {
+        if(result[0].length > 0){
+          res.render('createAccount.ejs', {
+            eMailExists : '既に登録されているメールアドレスです',
+          });
+        }else{
+          resolve();
+        }
+      });
+    });
+    return promise;
+  }).then(() => {
+    var promise = new Promise((resolve) => {
+      var existsUserNameQuery = 'SELECT `name` FROM `users` WHERE `name` = ?';
+      connection.query(existsUserNameQuery, [userName]).then((result) => {
+        if(result[0].length > 0){
+          res.render('createAccount.ejs', {
+            userNameExists : '既に登録されているユーザーネームです。',
+          });
+        }else{
+          resolve();
+        }
+      });
+    });
+    return promise;
+  }).then(() => {
+    var promise = new Promise((resolve) => {
+      var passwordAndHash = hashPassword(password);
+      resolve(passwordAndHash);
+    });
+    return promise;
+  }).then((value) => {
+    password = value[0];
+    var salt = value[1];
+    var createAccount = 'INSERT INTO `users` (`name`,`mail`,`salt`,`hash`,`nick_name`,`image_path`) VALUES(?, ?, ?, ?, ?, ?)';
+    connection.query(createAccount, [userName, eMail, salt, password, userName, 'http://res.cloudinary.com/dy4f7hul5/image/upload/v1469220623/sample.jpg']).then(() => {
+      res.redirect('/PHH_Bookmark/login');
+    });
+  });
 });
 
 module.exports = router;

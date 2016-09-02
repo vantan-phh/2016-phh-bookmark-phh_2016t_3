@@ -14,6 +14,8 @@ router.get('/', (req, res) => {
   selectedNickNames = [];
   var orgId = req.session.org_id;
   var myId = req.session.user_id;
+  if(req.session.selectUserInMemberManagement) delete req.session.selectUserInMemberManagement;
+  if(req.session.excludeUserInMemberManagement) delete req.session.excludeUserInMemberManagement;
   (() => {
     var promise = new Promise((resolve) => {
       var checkAuthority = 'SELECT `user_id` FROM `organization_memberships` WHERE `user_id` = ? AND `org_id` = ? AND `is_admin` = true';
@@ -156,6 +158,8 @@ router.get('/', (req, res) => {
 });
 
 router.post('/searchUser', (req, res) => {
+  if(req.session.selectUserInMemberManagement) delete req.session.selectUserInMemberManagement;
+  if(req.session.excludeUserInMemberManagement) delete req.session.excludeUserInMemberManagement;
   var orgId = req.session.org_id;
   var searchedUser = req.body.searchedUser;
   var myId = req.session.user_id;
@@ -321,37 +325,56 @@ router.post('/searchUser', (req, res) => {
 
 router.post('/selectUser', (req, res) => {
   var results = req.body.result;
-  results = results.split(',');
-  var selectedUserName = results[0];
-  var selectedNickName = results[1];
-  selectedUserNames.push(selectedUserName);
-  selectedNickNames.push(selectedNickName);
-  var orgId = req.session.org_id;
-  var specifyOrg = 'SELECT * FROM `organizations` WHERE `id` = ?';
-  connection.query(specifyOrg, [orgId]).then((result) => {
-    var orgName = result[0][0].name;
-    var orgIntroduction = result[0][0].introduction;
-    var orgThumbnail = result[0][0].image_path;
-    res.render('membersManagement.ejs', {
-      orgName,
-      orgIntroduction,
-      orgThumbnail,
-      selectedUserNames,
-      selectedNickNames,
-      memberNickNames,
-      memberUserNames,
-      myUserName,
+  if(req.session.excludeUserInMemberManagement) delete req.session.excludeUserInMemberManagement;
+  if(req.session.selectUserInMemberManagement === req.body.result){
+    delete req.session.selectUserInMemberManagement;
+    res.redirect('/PHH_Bookmark/membersManagement');
+  }else{
+    results = results.split(',');
+    var selectedUserName = results[0];
+    var selectedNickName = results[1];
+    selectedUserNames.push(selectedUserName);
+    selectedNickNames.push(selectedNickName);
+    var orgId = req.session.org_id;
+    var specifyOrg = 'SELECT * FROM `organizations` WHERE `id` = ?';
+    connection.query(specifyOrg, [orgId]).then((result) => {
+      var orgName = result[0][0].name;
+      var orgIntroduction = result[0][0].introduction;
+      var orgThumbnail = result[0][0].image_path;
+      if(req.session.selectUserInMemberManagement) delete req.session.selectUserInMemberManagement;
+      req.session.selectUserInMemberManagement = req.body.result;
+      res.render('membersManagement.ejs', {
+        orgName,
+        orgIntroduction,
+        orgThumbnail,
+        selectedUserNames,
+        selectedNickNames,
+        memberNickNames,
+        memberUserNames,
+        myUserName,
+      });
     });
-  });
+  }
 });
 
 router.post('/excludeUser', (req, res) => {
+  if(req.session.selectUserInMemberManagement) delete req.session.selectUserInMemberManagement;
   var results = req.body.result;
   results = results.split(',');
   var excludeUserName = results[0];
   var excludeNickName = results[1];
   var orgId = req.session.org_id;
   (() => {
+    var promise = new Promise((resolve) => {
+      if(req.session.excludeUserInMemberManagement === req.body.result){
+        delete req.session.excludeUserInMemberManagement;
+        res.redirect('/PHH_Bookmark/membersManagement');
+      }else{
+        resolve();
+      }
+    });
+    return promise;
+  })().then(() => {
     var promise = new Promise((resolve) => {
       var specifyOrg = 'SELECT * FROM `organizations` WHERE `id` = ?';
       connection.query(specifyOrg, [orgId]).then((result) => {
@@ -367,12 +390,13 @@ router.post('/excludeUser', (req, res) => {
       });
     });
     return promise;
-  })().then((values) => {
+  }).then((values) => {
     var promise = new Promise((resolve) => {
       selectedUserNames.some((currentValue, index) => {
         if(currentValue === excludeUserName){
           selectedUserNames.splice(index, 1);
         }
+        return 0;
       });
       resolve(values);
     });
@@ -383,6 +407,7 @@ router.post('/excludeUser', (req, res) => {
         if(currentValue === excludeNickName){
           selectedNickNames.splice(index, 1);
         }
+        return 0;
       });
       resolve(values);
     });
@@ -391,6 +416,7 @@ router.post('/excludeUser', (req, res) => {
     var orgName = values.orgName;
     var orgIntroduction = values.orgIntroduction;
     var orgThumbnail = values.orgThumbnail;
+    req.session.excludeUserInMemberManagement = req.body.result;
     res.render('membersManagement.ejs', {
       orgName,
       orgIntroduction,
