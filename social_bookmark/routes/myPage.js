@@ -6,9 +6,17 @@ var client = require('cheerio-httpcli');
 
 var allBookmarkData;
 var orgData;
+var index;
+var allSearchedBookmarkData;
+var searchIndex;
 
 router.param('index', (req, res, next, value) => {
-  req.params.name = value;
+  index = value;
+  next();
+});
+
+router.param('searchIndex', (req, res, next, value) => {
+  searchIndex = value;
   next();
 });
 
@@ -56,33 +64,52 @@ router.get('/', (req, res) => {
       for (var i = 0; i < result[0].length; i+=n) {
         allBookmarkData.push(result[0].slice(i, i + n));
       }
-      res.redirect('/PHH_Bookmark/myPage/1');
+      res.redirect('/PHH_Bookmark/myPage/bookmarkList/1/searchBookmarkList/0');
     });
   });
 });
 
-router.get('/:index', (req, res) => {
+router.get('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) => {
   var pageLength = allBookmarkData.length;
-  var index = req.params.name;
   index = parseInt(index, 10);
-  if(pageLength > index && index > 0){
+  searchIndex = parseInt(searchIndex, 10);
+  if(searchIndex === 0){
+    if(pageLength >= index && index > 0){
+      var bookmarkData = allBookmarkData[index - 1];
+      res.render('myPage.ejs', {
+        bookmarkData,
+        orgData,
+        pageLength,
+        index,
+        searchIndex,
+      });
+    }else{
+      res.redirect('/PHH_Bookmark/myPage/bookmarkList/1');
+    }
+  }else{
     var bookmarkData = allBookmarkData[index - 1];
+    var searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
+    var searchPageLength = allSearchedBookmarkData.length;
     res.render('myPage.ejs', {
       bookmarkData,
+      searchedBookmarkData,
       orgData,
       pageLength,
+      searchPageLength,
       index,
+      searchIndex,
     });
-  }else{
-    res.redirect('/PHH_Bookmark/myPage/1');
   }
 });
 
-router.post('/', (req, res) => {
+router.post('/bookmarkList/:index', (req, res) => {
   var userId = req.session.user_id;
   var url = req.body.url;
   var title = req.body.title;
   var description = req.body.description;
+  var pageLength = allBookmarkData.length;
+  index = parseInt(index, 10);
+  var bookmarkData = allBookmarkData[index - 1];
   var checkUrl = /^(https?)(:\/\/[-_.!~*\'()a-zA-Z0-9;\/?:\@&=+\$,%#]+)$/;
   var checkInjection = /[%;+-]+/g;
   var query = 'SELECT * FROM `bookmarks` WHERE `user_id` = ?';
@@ -91,13 +118,12 @@ router.post('/', (req, res) => {
       if(checkUrl.test(url)){
         resolve();
       }else{
-        connection.query(query, [userId]).then((result) => {
-          bookmarkData = result[0];
-          res.render('myPage.ejs', {
-            bookmarkData,
-            urlNotice : 'http://もしくはhttp://から始まる正しいURLを入力してください',
-            orgData,
-          });
+        res.render('myPage.ejs', {
+          bookmarkData,
+          urlNotice : 'http://もしくはhttp://から始まる正しいURLを入力してください',
+          orgData,
+          pageLength,
+          index,
         });
       }
     });
@@ -107,16 +133,15 @@ router.post('/', (req, res) => {
       if(!checkInjection.test(title)){
         resolve();
       }else{
-        connection.query(query, [userId]).then((result) => {
-          bookmarkData = result[0];
-          res.render('myPage.ejs', {
-            bookmarkData,
-            url,
-            title,
-            description,
-            titleNotice : 'セキュリティ上の観点からタイトルに「+, -, %, ;」は使えません',
-            orgData,
-          });
+        res.render('myPage.ejs', {
+          bookmarkData,
+          url,
+          title,
+          description,
+          titleNotice : 'セキュリティ上の観点からタイトルに「+, -, %, ;」は使えません',
+          orgData,
+          pageLength,
+          index,
         });
       }
     });
@@ -126,16 +151,15 @@ router.post('/', (req, res) => {
       if(!checkInjection.test(description)){
         resolve();
       }else{
-        connection.query(query, [userId]).then((result) => {
-          bookmarkData = result[0];
-          res.render('myPage.ejs', {
-            bookmarkData,
-            url,
-            title,
-            description,
-            descriptionNotice : 'セキュリティ上の観点から説明文に「+, -, %, ;」は使えません',
-            orgData,
-          });
+        res.render('myPage.ejs', {
+          bookmarkData,
+          url,
+          title,
+          description,
+          descriptionNotice : 'セキュリティ上の観点から説明文に「+, -, %, ;」は使えません',
+          orgData,
+          pageLength,
+          index,
         });
       }
     });
@@ -145,16 +169,15 @@ router.post('/', (req, res) => {
       if(title.length <= 32){
         resolve();
       }else{
-        connection.query(query, [userId]).then((result) => {
-          bookmarkData = result[0];
-          res.render('myPage.ejs', {
-            bookmarkData,
-            url,
-            title,
-            description,
-            titleNotice : 'タイトルは32文字以内です',
-            orgData,
-          });
+        res.render('myPage.ejs', {
+          bookmarkData,
+          url,
+          title,
+          description,
+          titleNotice : 'タイトルは32文字以内です',
+          orgData,
+          pageLength,
+          index,
         });
       }
     });
@@ -164,16 +187,15 @@ router.post('/', (req, res) => {
       if(description.length <= 128){
         resolve();
       }else{
-        connection.query(query, [userId]).then((result) => {
-          bookmarkData = result[0];
-          res.render('myPage.ejs', {
-            bookmarkData,
-            url,
-            title,
-            description,
-            descriptionNotice : '説明文は128文字以内です',
-            orgData,
-          });
+        res.render('myPage.ejs', {
+          bookmarkData,
+          url,
+          title,
+          description,
+          descriptionNotice : '説明文は128文字以内です',
+          orgData,
+          pageLength,
+          index,
         });
       }
     });
@@ -191,6 +213,8 @@ router.post('/', (req, res) => {
           description,
           networkNotice : 'URLが正しいかどうかをご確認の上、ネットワーク接続をお確かめ下さい。',
           orgData,
+          pageLength,
+          index,
         });
       });
     });
@@ -204,36 +228,53 @@ router.post('/', (req, res) => {
   });
 });
 
-router.post('/submitUrl', (req, res) => {
+router.post('/bookmarkList/:index/submitUrl', (req, res) => {
   var url = req.body.result;
   var userId = req.session.user_id;
   var checkUrl = /^(https?)(:\/\/[-_.!~*\'()a-zA-Z0-9;\/?:\@&=+\$,%#]+)$/;
-  if(checkUrl.test(url)){
-    client.fetch(url).then((result) => {
-      res.render('myPage.ejs', {
-        bookmarkData,
-        title : result.$('title').text(),
-        url,
-        orgData,
-      });
-    }, () => {
-      res.render('myPage.ejs', {
-        bookmarkData,
-        networkNotice : 'URLが正しいかをご確認の上、ネットワーク接続をお確かめください。',
-        orgData,
-      });
+  var pageLength = allBookmarkData.length;
+  index = parseInt(index, 10);
+  var bookmarkData = allBookmarkData[index - 1];
+  (() => {
+    var promise = new Promise((resolve) => {
+      if(pageLength >= index && index > 0){
+        resolve();
+      }else{
+        res.redirect('/PHH_Bookmark/myPage/bookmarkList/1');
+      }
     });
-  }else{
-    var query = 'SELECT * FROM `bookmarks` WHERE `user_id` = ?';
-    connection.query(query, [userId]).then((result) => {
-      bookmarkData = result[0];
+    return promise;
+  })().then(() => {
+    if(checkUrl.test(url)){
+      client.fetch(url).then((result) => {
+        res.render('myPage.ejs', {
+          bookmarkData,
+          title : result.$('title').text(),
+          url,
+          orgData,
+          pageLength,
+          index,
+        });
+      }, () => {
+        res.render('myPage.ejs', {
+          bookmarkData,
+          networkNotice : 'URLが正しいかをご確認の上、ネットワーク接続をお確かめください。',
+          orgData,
+          pageLength,
+          index,
+        });
+      });
+    }else{
+      var query = 'SELECT * FROM `bookmarks` WHERE `user_id` = ?';
       res.render('myPage.ejs', {
         bookmarkData,
         urlNotice : 'http://もしくはhttp://から始まる正しいURLを入力してください',
         orgData,
+        pageLength,
+        index,
       });
-    });
-  }
+    }
+  });
 });
 
 router.post('/delete', (req, res) => {
@@ -252,12 +293,16 @@ router.post('/delete', (req, res) => {
   });
 });
 
-router.post('/searchBookmark', (req, res) => {
+router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) => {
   var myId = req.session.user_id;
   var keyWord = req.body.keyWord;
   var searchFromTitle = req.body.searchFromTitle;
   var searchFromDescription = req.body.searchFromDescription;
   var searchFromTextsOnSites = req.body.searchFromTextsOnSites;
+  var pageLength = allBookmarkData.length;
+  index = parseInt(index, 10);
+  searchIndex = parseInt(searchIndex, 10);
+  var bookmarkData = allBookmarkData[index - 1];
   var checkInjection = /[%;+-]+/g;
   var checkSpace = /[\S]+/g;
   var splitKeyWord = /[\S]+/g;
@@ -280,6 +325,8 @@ router.post('/searchBookmark', (req, res) => {
         res.render('myPage.ejs', {
           bookmarkData,
           keyWordNotice : 'セキュリティ上の観点から「+, -, %, ;」を含んでの検索はできません',
+          pageLength,
+          index,
         });
       }
     });
@@ -304,17 +351,30 @@ router.post('/searchBookmark', (req, res) => {
         var promise = new Promise((resolve) => {
           var selectSearchedBookmarks = 'SELECT * FROM `bookmarks` WHERE `user_id` = ? AND ( `title` LIKE "' + keyWordsForQuery + '%" )';
           connection.query(selectSearchedBookmarks, [myId]).then((result) => {
-            var searchedBookmarks = result[0];
-            resolve(searchedBookmarks);
+            var n = 12;
+            allSearchedBookmarkData = [];
+            if(result[0].length === 0){
+              allSearchedBookmarkData.push([]);
+            }else{
+              for (var i = 0; i < result[0].length; i+=n) {
+                allSearchedBookmarkData.push(result[0].slice(i, i + n));
+              }
+            }
+            resolve();
           });
         });
         return promise;
-      }).then((value) => {
-        var searchedBookmarks = value;
+      }).then(() => {
+        var searchPageLength = allSearchedBookmarkData.length;
+        var searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
         res.render('myPage.ejs', {
           bookmarkData,
-          searchedBookmarks,
+          searchedBookmarkData,
           orgData,
+          pageLength,
+          searchPageLength,
+          index,
+          searchIndex,
         });
       });
     }else if(searchFromTitle === undefined && searchFromDescription === 'on' && searchFromTextsOnSites === undefined){
@@ -334,18 +394,32 @@ router.post('/searchBookmark', (req, res) => {
       })().then((value) => {
         keyWordsForQuery = value;
         var promise = new Promise((resolve) => {
-          var selectSearchedBookmarks = 'SELECT * FROM `bookamrks` WHERE `user_id` = ? AND ( `description` LIKE "' + keyWordsForQuery + '%" )';
+          var selectSearchedBookmarks = 'SELECT * FROM `bookmarks` WHERE `user_id` = ? AND ( `description` LIKE "' + keyWordsForQuery + '%" )';
           connection.query(selectSearchedBookmarks, [myId]).then((result) => {
-            var searchedBookmarks = result[0];
-            resolve(searchedBookmarks);
+            var n = 12;
+            allSearchedBookmarkData = [];
+            if(result[0].length === 0){
+              allSearchedBookmarkData.push([]);
+            }else{
+              for (var i = 0; i < result[0].length; i+=n) {
+                allSearchedBookmarkData.push(result[0].slice(i, i + n));
+              }
+            }
+            resolve();
           });
         });
         return promise;
-      }).then((value) => {
-        var searchedBookmarks = value;
+      }).then(() => {
+        var searchPageLength = allSearchedBookmarkData.length;
+        var searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
         res.render('myPage.ejs', {
           bookmarkData,
-          searchedBookmarks,
+          searchedBookmarkData,
+          orgData,
+          pageLength,
+          searchPageLength,
+          index,
+          searchIndex,
         });
       });
     }else if(searchFromTitle === undefined && searchFromDescription === undefined && searchFromTextsOnSites === 'on'){
@@ -366,10 +440,25 @@ router.post('/searchBookmark', (req, res) => {
         keyWordsForQuery = value;
         var selectSearchedBookmarks = 'SELECT * FROM `bookmarks` WHERE `user_id` = ? AND ( `text` LIKE "' + keyWordsForQuery + '%")';
         connection.query(selectSearchedBookmarks, [myId]).then((result) => {
-          var searchedBookmarks = result[0];
+          var n = 12;
+          allSearchedBookmarkData = [];
+          if(result[0].length === 0){
+            allSearchedBookmarkData.push([]);
+          }else{
+            for (var i = 0; i < result[0].length; i+=n) {
+              allSearchedBookmarkData.push(result[0].slice(i, i + n));
+            }
+          }
+          var searchPageLength = allSearchedBookmarkData.length;
+          var searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
           res.render('myPage.ejs', {
             bookmarkData,
-            searchedBookmarks,
+            searchedBookmarkData,
+            orgData,
+            pageLength,
+            searchPageLength,
+            index,
+            searchIndex,
           });
         });
       });
@@ -411,16 +500,30 @@ router.post('/searchBookmark', (req, res) => {
         var selectSearchedBookmarks = 'SELECT * FROM `bookmarks` WHERE `user_id` = ? AND (( `title` LIKE "' + keyWordsForQueryByTitle + '%" ) OR ( `description` LIKE "' + keyWordsForQueryByDescription + '%"))';
         var promise = new Promise((resolve) => {
           connection.query(selectSearchedBookmarks, [myId]).then((result) => {
-            var searchedBookmarks = result[0];
-            resolve(searchedBookmarks);
+            var n = 12;
+            allSearchedBookmarkData = [];
+            if(result[0].length === 0){
+              allSearchedBookmarkData.push([]);
+            }else{
+              for (var i = 0; i < result[0].length; i+=n) {
+                allSearchedBookmarkData.push(result[0].slice(i, i + n));
+              }
+            }
+            resolve();
           });
         });
         return promise;
-      }).then((searchedBookmarks) => {
+      }).then(() => {
+        var searchPageLength = allSearchedBookmarkData.length;
+        var searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
         res.render('myPage.ejs', {
           bookmarkData,
-          searchedBookmarks,
+          searchedBookmarkData,
           orgData,
+          pageLength,
+          searchPageLength,
+          index,
+          searchIndex,
         });
       });
     }else if(searchFromTitle === 'on' && searchFromDescription === undefined && searchFromTextsOnSites === 'on'){
@@ -460,10 +563,25 @@ router.post('/searchBookmark', (req, res) => {
         var keyWordsForQueryWithTitle = values.keyWordsForQueryWithTitle;
         var selectSearchedBookmarks = 'SELECT * FROM `bookmarks` WHERE `user_id` = ? AND (( `title` LIKE "' + keyWordsForQueryWithTitle + '%" ) OR ( `text` LIKE "' + keyWordsForQueryWithText + '%" ))';
         connection.query(selectSearchedBookmarks, [myId]).then((result) => {
-          var searchedBookmarks = result[0];
+          var n = 12;
+          allSearchedBookmarkData = [];
+          if(result[0].length === 0){
+            allSearchedBookmarkData.push([]);
+          }else{
+            for (var i = 0; i < result[0].length; i+=n) {
+              allSearchedBookmarkData.push(result[0].slice(i, i + n));
+            }
+          }
+          var searchPageLength = allSearchedBookmarkData.length;
+          var searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
           res.render('myPage.ejs', {
             bookmarkData,
-            searchedBookmarks,
+            searchedBookmarkData,
+            orgData,
+            pageLength,
+            searchPageLength,
+            index,
+            searchIndex,
           });
         });
       });
@@ -505,16 +623,30 @@ router.post('/searchBookmark', (req, res) => {
         var promise = new Promise((resolve) => {
           var selectSearchedBookmarks = 'SELECT * FROM `bookmarks` WHERE `user_id` = ? AND (( `description` LIKE "' + keyWordsForQueryWithDescription + '%" ) OR ( "' + keyWordsForQueryWithText + '%" ))';
           connection.query(selectSearchedBookmarks, [myId]).then((result) => {
-            var searchedBookmarks = result[0];
-            resolve(searchedBookmarks);
+            var n = 12;
+            allSearchedBookmarkData = [];
+            if(result[0].length === 0){
+              allSearchedBookmarkData.push([]);
+            }else{
+              for (var i = 0; i < result[0].length; i+=n) {
+                allSearchedBookmarkData.push(result[0].slice(i, i + n));
+              }
+            }
+            resolve();
           });
         });
         return promise;
-      }).then((value) => {
-        var searchedBookmarks = value;
+      }).then(() => {
+        var searchPageLength = allSearchedBookmarkData.length;
+        var searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
         res.render('myPage.ejs', {
           bookmarkData,
-          searchedBookmarks,
+          searchedBookmarkData,
+          orgData,
+          pageLength,
+          searchPageLength,
+          index,
+          searchIndex,
         });
       });
     }else if(searchFromTitle === 'on' && searchFromDescription === 'on' && searchFromTextsOnSites === 'on'){
@@ -576,16 +708,30 @@ router.post('/searchBookmark', (req, res) => {
         var promise = new Promise((resolve) => {
           var selectSearchedBookmarks = 'SELECT * FROM `bookmarks` WHERE `user_id` = ? AND (( `title` LIKE "' + keyWordsForQueryWithTitle + '%" ) OR ( `description` LIKE "' + keyWordsForQueryWithDescription + '%" ) OR ( `text` LIKE "' + keyWordsForQueryWithText + '%" ))';
           connection.query(selectSearchedBookmarks, [myId]).then((result) => {
-            var searchedBookmarks = result[0];
-            resolve(searchedBookmarks);
+            var n = 12;
+            allSearchedBookmarkData = [];
+            if(result[0].length === 0){
+              allSearchedBookmarkData.push([]);
+            }else{
+              for (var i = 0; i < result[0].length; i+=n) {
+                allSearchedBookmarkData.push(result[0].slice(i, i + n));
+              }
+            }
+            resolve();
           });
         });
         return promise;
-      }).then((value) => {
-        var searchedBookmarks = value;
+      }).then(() => {
+        var searchPageLength = allSearchedBookmarkData.length;
+        var searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
         res.render('myPage.ejs', {
           bookmarkData,
-          searchedBookmarks,
+          searchedBookmarkData,
+          orgData,
+          pageLength,
+          searchPageLength,
+          index,
+          searchIndex,
         });
       });
     }
