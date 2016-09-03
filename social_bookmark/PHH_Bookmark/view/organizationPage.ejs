@@ -3,13 +3,18 @@
   <head>
     <meta charset="utf-8">
     <title></title>
+    <style>
+      #test{
+        background-color: red;
+      }
+    </style>
   </head>
   <body>
     <h2><%= orgName %></h2>
     <img src="<%= orgThumbnail %>">
     <div><%= orgIntroduction %></div>
 
-    <form action="/PHH_Bookmark/organizationPage/searchBookmark" method="post">
+    <form action="/PHH_Bookmark/organizationPage/bookmarkList/<%= index %>/searchBookmarkList/1" method="post">
       <input type="checkbox" checked="checked" name="searchFromTitle">タイトル
       <input type="checkbox" name="searchFromDescription">説明文
       <input type="checkbox" name="searchFromTextsOnSites">URL先のテキスト
@@ -20,7 +25,7 @@
       <p><%= keyWordNotice %></p>
     <% } %>
 
-    <form action="/PHH_Bookmark/organizationPage" method="post">
+    <form action="/PHH_Bookmark/organizationPage/bookmarkList/<%= index %>" method="post">
       <% if(typeof url !== 'undefined'){ %>
         <input type="text" placeholder="URLを入力" name="url" id="url" value="<%= url %>">
         <input type="button" value="URLを再送信" name="submitUrlButton" id="submitUrl">
@@ -57,14 +62,15 @@
       <input type="hidden" name="result">
     </form>
 
-    <% if(typeof searchedBookmarks !== 'undefined'){ %>
+    <% if(typeof searchedBookmarkData !== 'undefined'){ %>
       <div>検索結果</div>
-      <% if(searchedBookmarks.length > 0){ %>
-        <% for(var i = 0; i < searchedBookmarks.length; i++){ %>
-          <a href="/PHH_Bookmark/bookmarkPage"><%= searchedBookmarks[i].title %></a><a href="<%= searchedBookmarks[i].url%>"><%= searchedBookmarks[i].url%></a>
-          <%= searchedBookmarks[i].description %>
-          <a name="<%= searchedBookmarks[i].user_id %>" class="userId"><%= addedUserNickNamesForSearched[i]%></a>
+      <% if(searchedBookmarkData.length > 0){ %>
+        <% for(var i = 0; i < searchedBookmarkData.length; i++){ %>
+          <a href="/PHH_Bookmark/bookmarkPage"><%= searchedBookmarkData[i].title %></a><a href="<%= searchedBookmarkData[i].url%>"><%= searchedBookmarkData[i].url%></a>
+          <%= searchedBookmarkData[i].description %>
+          <a name="<%= searchedBookmarkData[i].user_id %>" class="userId"><%= addedUserNickNamesForSearched[i]%></a>
         <% } %>
+        <p><%= searchIndex %>ページ / <%= searchPageLength %>ページ中</p>
       <% }else{ %>
         一致する項目は見つかりませんでした。
       <% } %>
@@ -98,6 +104,7 @@
           </div>
         <% } %>
         <button type="submit" class="button">削除</button>
+        <p><%= index %>ページ / <%= pageLength %>ページ中</p>
       <% } %>
     </form>
 

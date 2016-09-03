@@ -5,12 +5,15 @@ var client = require('cheerio-httpcli');
 var connection = require('../mysqlConnection');
 
 var isAdmin;
-var bookmarkData;
+var allBookmarkData;
 var ownBookmarkIds;
 var orgName;
 var orgIntroduction;
 var orgThumbnail;
-var addedUserNickNames;
+var slicedAddedUserNickNames;
+var index;
+var allSearchedBookmarkData;
+var searchIndex;
 
 router.post('/submitOrgId', (req, res) => {
   var orgId = req.body.result;
@@ -19,6 +22,16 @@ router.post('/submitOrgId', (req, res) => {
   }
   req.session.org_id = orgId;
   res.redirect('/PHH_Bookmark/organizationPage');
+});
+
+router.param('index', (req, res, next, value) => {
+  index = value;
+  next();
+});
+
+router.param('searchIndex', (req, res, next, value) => {
+  searchIndex = value;
+  next();
 });
 
 router.get('/', (req, res) => {
@@ -49,20 +62,30 @@ router.get('/', (req, res) => {
   }).then(() => {
     var promise = new Promise((resolve) => {
       connection.query(selectBookmarkData, [orgId]).then((result) => {
-        bookmarkData = result[0];
-        resolve();
+        var bookmarkData = result[0];
+        resolve(bookmarkData);
       });
     });
     return promise;
-  }).then(() => {
+  }).then((bookmarkData) => {
     var promise = new Promise((resolve) => {
       var selectNickName = 'SELECT `nick_name` FROM `users` WHERE `user_id` = ?';
       if(bookmarkData.length > 0){
-        addedUserNickNames = [];
+        var addedUserNickNames = [];
         bookmarkData.forEach((currentValue, index, array) => {
           connection.query(selectNickName, [currentValue.user_id]).then((result) => {
             addedUserNickNames.push(result[0][0].nick_name);
             if(array.length === addedUserNickNames.length){
+              var n = 12;
+              allBookmarkData = [];
+              for (var i = 0; i < bookmarkData.length; i+=n) {
+                allBookmarkData.push(bookmarkData.slice(i, i + n));
+              }
+              var n = 12;
+              slicedAddedUserNickNames = [];
+              for (var i = 0; i < addedUserNickNames.length; i+=n) {
+                slicedAddedUserNickNames.push(addedUserNickNames.slice(i, i + n));
+              }
               resolve();
             }
           });
@@ -81,16 +104,51 @@ router.get('/', (req, res) => {
     });
     return promise;
   }).then(() => {
+    res.redirect('/PHH_Bookmark/organizationPage/bookmarkList/1/searchBookmarkList/0');
+  });
+});
+
+router.get('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) => {
+  var pageLength = allBookmarkData.length;
+  index = parseInt(index, 10);
+  searchIndex = parseInt(searchIndex, 10);
+  if(searchIndex === 0){
+    if(pageLength >= index && index > 0){
+      var bookmarkData = allBookmarkData[index - 1];
+      var addedUserNickNames = slicedAddedUserNickNames[index - 1];
+      res.render('organizationPage.ejs', {
+        bookmarkData,
+        orgName,
+        orgIntroduction,
+        orgThumbnail,
+        ownBookmarkIds,
+        isAdmin,
+        addedUserNickNames,
+        pageLength,
+        index,
+        searchIndex,
+      });
+    }else{
+      res.redirect('/PHH_Bookmark/myPage/bookmarkList/1');
+    }
+  }else{
+    var bookmarkData = allBookmarkData[index - 1];
+    var searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
+    var searchPageLength = allSearchedBookmarkData.length;
     res.render('organizationPage.ejs', {
+      bookmarkData,
+      searchedBookmarkData,
       orgName,
       orgIntroduction,
       orgThumbnail,
-      bookmarkData,
       ownBookmarkIds,
       isAdmin,
       addedUserNickNames,
+      pageLength,
+      index,
+      searchIndex,
     });
-  });
+  }
 });
 
 router.post('/submitUrl', (req, res) => {
