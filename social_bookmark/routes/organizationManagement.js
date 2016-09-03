@@ -232,4 +232,12 @@ router.post('/', upload.single('image_file'), (req, res) => {
   });
 });
 
+router.post('/dissolve', (req, res) => {
+  var orgId = req.session.orgId;
+  var dissolve = 'DELETE FROM `organizations` WHERE `id` = ?';
+  connection.query(dissolve, [orgId]).then(() => {
+    res.redirect('/PHH_Bookmark/topPage');
+  });
+});
+
 module.exports = router;
