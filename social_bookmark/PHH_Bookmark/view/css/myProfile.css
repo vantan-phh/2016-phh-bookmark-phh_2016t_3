@@ -7,104 +7,73 @@ body{
   margin: 0px;
 }
 /*----------------------------/
-            ヘッダー
------------------------------*/
-header{
-  background-color: white;
-  border-bottom: solid #ccc 1px;
-  padding: 10px;
-  width: 1279px;
-  height: 60px;
-}
-
-#headerFavicon img{
-  position: absolute;
-  left: 140px;
-  top: 5px;
-}
-
-#headerMenu1{
-  text-decoration: none;
-  color: orange;
-  position: absolute;
-  left: 230px;
-  top: 20px;
-}
-
-#headerSearch{
-  border: solid #e1e1e1 2px;
-  outline-color: green;
-  position: absolute;
-  left: 700px;
-  top: 15px;
-  padding: 5px;
-}
-
-#headerLoginUser{
-  white-space: nowrap;
-  font-family: sans-serif;
-  font-size: 15px;
-  position: absolute;
-  left: 900px;
-  top: 20px;
-}
-#headerUserName{
-  color: gray;
-  font-size: 14px;
-  position: absolute;
-  top: 17px;
-}
-#headerMyImg img{
-  position: absolute;
-  left: 1000px;
-  top: 12px;
-  width: 30px;
-  height: 30px;
-}
-#headerOpenMenu{
-  position: absolute;
-  left: 1040px;
-  top: 20px;
-  width: 10px;
-}
-  #headerMenuList{
-    background-color: white;
-    border: solid black 1px;
-    position: absolute;
-    left: 910px;
-    top: 50px;
-    width: 150px;
-    height: 120px;
-  }
-  #headerMenuList a{
-    text-decoration: none;
-  }
-  #headerMenuList li{
-    color: black;
-    font-family: sans-serif;
-    list-style: none;
-    padding: 6px 5px 6px 20px;
-  }
-    #headerMenuList li:hover{
-      background-color: #e1e1e1;
-    }
-/*----------------------------/
           コンテンツ
 -----------------------------*/
 main{
-  background-color: #fafafa;
-  border: solid #e1e1e1 1px;
-  position: absolute;
-  left: 400px;
+  background-color: #fefefe;
+  border: solid 1px gray;
   margin-top: 50px;
-  padding-left: 20px;
-  width: 500px;
-  height: 300px;
-}
-#search{
+  width: 700px;
+  height: 500px;
   position: absolute;
+  left: 300px;
 }
-#list{
+
+#img{
+  display: table-cell;
+  min-width: 150px;
+  min-height: 150px;
   position: absolute;
-  top: 100px;
+  left: 50px;
+  top: 50px;
+}
+#img img{
+  width:auto;
+  height:auto;
+  max-width:150px;
+  max-height:150px;
+  min-height: 150px;
+  min-width: 150px;
+  vertical-align: middle;
+}
+
+#nickname{
+  position: relative;
+  left: 220px;
+  top: 60px;
+}
+#username{
+  font-size: 13px;
+  position: relative;
+  left: 220px;
+  top: 60px;
+}
+
+#intro{
+  font-size: 13px;
+  word-wrap: break-word;
+  width: 400px;
+  position: relative;
+  left: 220px;
+  top: 80px;
+}
+
+#goEditProfile{
+  background: linear-gradient(#07d34f, #05b142);
+  border-radius: 2px;
+  color: white;
+  display: inline-block;
+  font-size: 15px;
+  text-align: center;
+  text-decoration: none;
+  text-shadow: 0.5px 0.5px 0.5px black;
+  width: 100px;
+  height: 30px;
+  padding: 7px;
+  position: relative;
+  left: 550px;
+  top: 70px;
+}
+#goEditProfile:hover{
+  background: linear-gradient(#049336, #036b27);
 }

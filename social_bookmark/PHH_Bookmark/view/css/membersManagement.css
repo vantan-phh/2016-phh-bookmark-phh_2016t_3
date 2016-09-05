@@ -1,0 +1,92 @@
+/*----------------------------/
+          コンテンツ
+-----------------------------*/
+#orgName{
+  display: inline-block;
+  position: relative;
+  left: 100px;
+  top: 20px;
+}
+
+#img{
+  border: solid 4px gray;
+  border-radius: 2px;
+  display: table-cell;
+  min-width: 150px;
+  min-height: 150px;
+  position: relative;
+  left: 100px;
+  top: 50px;
+}
+#img img{
+  width:auto;
+  height:auto;
+  max-width:350px;
+  max-height:150px;
+  min-width: 150px;
+  min-height: 150px;
+  vertical-align: middle;
+}
+
+#introduction{
+  width: 500px;
+  position: absolute;
+  left: 520px;
+  top: 160px;
+}
+
+#search{
+  width: 172px;
+  position: absolute;
+  left: 200px;
+  top: 300px;
+}
+#searchHit{
+  position: absolute;
+  left: 200px;
+  top: 340px;
+}
+#notFound{
+  position: absolute;
+  left: 200px;
+  top: 340px;
+}
+#checkUser{
+  width: 300px;
+  position: absolute;
+  left: 200px;
+  top: 340px;
+}
+
+#memberList{
+  background-color: lightgreen;
+  opacity: 0.8;
+  width: 300px;
+  height: 200px;
+  position: absolute;
+  left: 500px;
+  top: 310px;
+}
+.members{
+  margin: 5px 0 5px 10px;
+}
+#memberName{
+  display: inline-block;
+  width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-text-overflow: ellipsis;
+  -o-text-overflow: ellipsis;
+}
+.members input{
+  float: right;
+  margin: 5px 5px 0 0;
+}
+
+#management{
+  width: 128px;
+  position: absolute;
+  left: 670px;
+  top: 289px;
+}

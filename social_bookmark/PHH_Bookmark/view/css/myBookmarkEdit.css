@@ -84,8 +84,8 @@ header{
           コンテンツ
 -----------------------------*/
 main{
-  background-color: #fafafa;
-  border: solid #e1e1e1 1px;
+  background-color: #fefefe;
+  border: solid 1px gray;
   position: absolute;
   left: 400px;
   margin-top: 50px;

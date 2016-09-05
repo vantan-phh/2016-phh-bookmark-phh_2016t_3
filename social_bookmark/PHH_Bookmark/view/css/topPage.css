@@ -92,13 +92,9 @@ header{
           コンテンツ
 -----------------------------*/
 main{
-  background-color: #fafafa;
-  border: solid #e1e1e1 1px;
-  position: absolute;
-  left: 400px;
   margin-top: 50px;
-  padding-left: 20px;
-  width: 500px;
+  position: absolute;
+  left: 300px;
 }
 
 #goMyPage{
@@ -110,7 +106,3 @@ main{
   padding: 5px;
   text-decoration: none;
 }
-  #goMyPage:hover{
-    background-color: black;
-    color: #00ff00;
-  }

@@ -6,9 +6,14 @@
     <link rel="stylesheet" type="text/css" href="/css/organizationPage.css">
   </head>
   <body>
-    <h2><%= orgName %></h2>
-    <img src="<%= orgThumbnail %>">
-    <div><%= orgIntroduction %></div>
+    <% include layout %>
+    <main>
+      <div id="wrapper">
+        <h2 id="orgName"><%= orgName %></h2>
+        <div id="img">
+          <img src="<%= orgThumbnail %>">
+        </div>
+        <div><%= orgIntroduction %></div>
 
     <form action="/PHH_Bookmark/organizationPage/searchBookmark" method="post">
       <input type="checkbox" checked="checked" name="searchFromTitle">タイトル
@@ -29,21 +34,17 @@
         <input type="text" placeholder="URLを入力" name="url" id="url">
         <input type="button" value="URLを送信" name="submitUrlButton" id="submitUrl">
       <% } %>
-      <div>検索結果</div>
 
-      <% if(typeof urlNotice !== 'undefined'){ %>
-        <p><%= urlNotice %></p>
-      <% } %>
+          <% if(typeof title !== 'undefined'){ %>
+            <input type="text" placeholder="タイトルを入力" name="title" id="title" value="<%= title %>">
+            <input type="text" placeholder="ブックマークの説明文を入力" name="description" id="description">
+            <input type="submit" value="送信">
+          <% } %>
+        </form>
 
-      <% if(typeof description !== 'undefined'){ %>
-        <input type="text" placeholder="タイトルを入力" name="title" id="title" value="<%= title %>">
-        <input type="text" placeholder="ブックマークの説明文を入力" name="description" id="description" value="<%= description %>">
-        <input type="submit" value="送信">
-      <% }else if(typeof title !== 'undefined'){ %>
-        <input type="text" placeholder="タイトルを入力" name="title" id="title" value="<%= title %>">
-        <input type="text" placeholder="ブックマークの説明文を入力" name="description" id="description">
-        <input type="submit" value="送信">
-      <% } %>
+        <form action="/PHH_Bookmark/organizationPage/submitUrl" method="post" name="submitUrl">
+          <input type="hidden" name="result">
+        </form>
 
       <% if(typeof titleNotice !== 'undefined'){ %>
         <p><%= titleNotice %></p>
@@ -63,6 +64,7 @@
       <div id="a">
 
         <% if(searchedBookmarks.length > 0){ %>
+          <div>検索結果</div>
           <% for(var i = 0; i < searchedBookmarks.length; i++){ %>
             <% if(i % 2 === 0){ %>
               <div id="result1">
@@ -95,6 +97,12 @@
               <% for(var j = 0; j < ownBookmarkIds.length; j++){ %>
                 <% if(ownBookmarkIds[j].bookmark_id === bookmarkData[i].bookmark_id){ %>
                   <input type="checkbox" class="checkbox" name="<%= bookmarkData[i].bookmark_id %>">
+                <% } else if(ownBookmarkIds.length > 0){ %>
+                  <% for(var j = 0; j < ownBookmarkIds.length; j++){ %>
+                    <% if(ownBookmarkIds[j].bookmark_id === bookmarkData[i].bookmark_id){ %>
+                      <input type="checkbox" class="checkbox" name="<%= bookmarkData[i].bookmark_id %>">
+                    <% } %>
+                  <% } %>
                 <% } %>
               <% } %>
             <% } %>
@@ -107,8 +115,14 @@
               <% for(var j = 0; j < ownBookmarkIds.length; j++){ %>
                 <% if(ownBookmarkIds[j].bookmark_id === bookmarkData[i].bookmark_id){ %>
                   <input type="button" value="編集" name="<%= bookmarkData[i].bookmark_id %>" class="edit">
+                <% } else if(ownBookmarkIds.length > 0){ %>
+                  <% for(var j = 0; j < ownBookmarkIds.length; j++){ %>
+                    <% if(ownBookmarkIds[j].bookmark_id === bookmarkData[i].bookmark_id){ %>
+                      <input type="button" value="編集" name="<%= bookmarkData[i].bookmark_id %>" class="edit">
+                    <% } %>
+                  <% } %>
                 <% } %>
-              <% } %>
+              </div>
             <% } %>
         <% } %>
         <button type="submit">削除</button>

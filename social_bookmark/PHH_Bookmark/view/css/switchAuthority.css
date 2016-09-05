@@ -1,0 +1,104 @@
+/*----------------------------/
+          コンテンツ
+-----------------------------*/
+main{
+  background-color: #fefefe;
+  border: solid 1px gray;
+  margin-top: 50px;
+  width: 700px;
+  min-height: 0;
+  padding-bottom: 200px;
+  position: absolute;
+  left: 300px;
+}
+
+#orgName{
+  position: relative;
+  left: 50px;
+  top: 50px;
+}
+#img{
+  border: solid 4px gray;
+  border-radius: 2px;
+  display: table-cell;
+  min-width: 150px;
+  min-height: 150px;
+  position: relative;
+  left: 50px;
+  top: 70px;
+}
+#img img{
+  width:auto;
+  height:auto;
+  max-width:350px;
+  max-height:150px;
+  min-width: 150px;
+  min-height: 150px;
+  vertical-align: middle;
+}
+
+#readAdmin{
+  position: relative;
+  left: 150px;
+  top: 100px;
+}
+#adminList{
+  background-color: lightblue;
+  opacity: 0.8;
+  width: 400px;
+  min-height: 200px;
+  overflow: auto;
+  padding-top: 5px;
+  position: relative;
+  left: 150px;
+  top: 100px;
+}
+.admin{
+  margin: 5px 0 5px 10px;
+}
+#adminName{
+  display: inline-block;
+  width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-text-overflow: ellipsis;
+  -o-text-overflow: ellipsis;
+}
+#renounce{
+  float: right;
+  margin: 5px 5px 0 0;
+}
+
+#readMember{
+  position: relative;
+  left: 150px;
+  top: 160px;
+}
+#memberList{
+  background-color: lightgreen;
+  opacity: 0.8;
+  width: 400px;
+  min-height: 200px;
+  overflow: auto;
+  padding-top: 5px;
+  position: relative;
+  left: 150px;
+  top: 160px;
+}
+.member{
+  margin: 5px 0 5px 10px;
+}
+#memberName{
+  display: inline-block;
+  width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-text-overflow: ellipsis;
+  -o-text-overflow: ellipsis;
+}
+#giveAdmin{
+  float: right;
+  margin: 4px 5px 0 0;
+}

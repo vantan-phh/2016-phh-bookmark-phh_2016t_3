@@ -10,32 +10,37 @@
     <main>
       <form action="/PHH_Bookmark/myProfileEdit" method="post" enctype="multipart/form-data">
         <div>
+          <label><p id="readNickname">ニックネーム</p>
           <% if(nickName !== undefined){ %>
-            <input type="text" name="nick_name" placeholder="ニックネーム" value="<%= nickName %>">
+            <input class="nickname" type="text" name="nick_name" placeholder="ニックネーム" value="<%= nickName %>">
           <% } else { %>
-            <input type="text" name="nick_name" placeholder="ニックネーム">
+            <input class="nickname" type="text" name="nick_name" placeholder="ニックネーム"></label>
           <% } %>
           <% if(typeof nickNameNotice !== 'undefined'){ %>
-            <p><%= nickNameNotice %></p>
+            <p id="errorNickname"><%= nickNameNotice %></p>
+          <% } %>
+
+          <label><p id="readIntro">自己紹介</p>
+          <% if(introduction) { %>
+            <textarea class="intro" type="text" name="introduction" placeholder="自己紹介文"><%= introduction %></textarea>
+          <% } else { %>
+            <textarea class="intro" type="text" name="introduction" placeholder="自己紹介文"></textarea></label>
+          <% } %>
+          <% if(typeof introductionNotice !== 'undefined'){ %>
+            <p id="errorIntro"><%= introductionNotice %></p>
           <% } %>
 
           <% if(imagePath) { %>
-            <img src="<%= imagePath %>" width="128" height="128"></img>
+            <img id="img" src="<%= imagePath %>" width="128" height="128">
           <% } %>
-          <input type="file" name="image_file" accept="image/*">
-          <% if(typeof thumbailNotice !== 'undefined'){%>
-            <p><%= thumbailNotice %></p>
-          <% } %>
+          <div id="imgFile">
+            <input type="file" name="image_file" accept="image/*">
+            <% if(typeof thumbailNotice !== 'undefined'){%>
+              <p><%= thumbailNotice %></p>
+            <% } %>
+          </div>
 
-          <% if(introduction) { %>
-            <input type="text" name="introduction" placeholder="自己紹介文" value="<%= introduction %>">
-          <% } else { %>
-            <input type="text" name="introduction" placeholder="自己紹介文">
-          <% } %>
-          <% if(typeof introductionNotice !== 'undefined'){ %>
-            <p><%= introductionNotice %></p>
-          <% } %>
-          <input type="submit" value="送信">
+          <input id="submit" type="submit" value="変更">
         </div>
       </form>
     </main>

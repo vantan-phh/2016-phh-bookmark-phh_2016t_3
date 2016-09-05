@@ -112,8 +112,8 @@ header{
           コンテンツ
 -----------------------------*/
 main{
-  background-color: #fafafa;
-  border: solid #e1e1e1 1px;
+  background-color: #fefefe;
+  border: solid 1px gray;
   position: absolute;
   left: 500px;
   margin-top: 50px;
@@ -131,7 +131,6 @@ label p{
   margin: 0 0 9px 0;
 }
 .input{
-  outline-color: green;
   padding: 5px;
   margin-bottom: 5px;
   width: 230px;
