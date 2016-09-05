@@ -67,10 +67,21 @@ router.get('/', (req, res) => {
 router.post('/mail', (req, res) => {
   var myId = req.session.user_id;
   var mail = req.body.mail;
-  var changeMail = 'UPDATE `users` SET `mail` = ? WHERE `user_id` = ?';
-  connection.query(changeMail, [mail, myId]).then(() => {
-    res.redirect('/PHH_Bookmark/accountSetting');
-  });
+  var checkEmail = /^([a-zA-Z0-9])+([a-zA-Z0-9\._-])*@([a-zA-Z0-9_-])+([a-zA-Z0-9\._-]+)+$/;
+  if(checkEmail.test(mail)){
+    var changeMail = 'UPDATE `users` SET `mail` = ? WHERE `user_id` = ?';
+    connection.query(changeMail, [mail, myId]).then(() => {
+      res.redirect('/PHH_Bookmark/accountSetting');
+    });
+  }else{
+    var selectMyData = 'SELECT * FROM `users` WHERE `user_id` = ?';
+    connection.query(selectMyData, [myId]).then((result) => {
+      res.render('accountSetting.ejs', {
+        myData : result[0][0],
+        mailNotice : '正しいメールアドレスを入力してください',
+      });
+    });
+  }
 });
 
 router.post('/password', (req, res) => {
@@ -78,7 +89,23 @@ router.post('/password', (req, res) => {
   var currentPassword = req.body.currentPassword;
   var newPassword = req.body.newPassword;
   var newPasswordConfirm = req.body.newPasswordConfirm;
+  var checkForm = /^[a-zA-Z0-9]+$/;
   (() => {
+    var promise = new Promise((resolve) => {
+      if(checkForm.test(newPassword) && newPassword.length >= 8){
+        resolve();
+      }else{
+        var selectMyData = 'SELECT * FROM `users` WHERE `user_id` = ?';
+        connection.query(selectMyData, [myId]).then((result) => {
+          res.render('accountSetting.ejs', {
+            myData : result[0][0],
+            passwordNotice : 'パスワードは半角英数8文字以上です',
+          });
+        });
+      }
+    });
+    return promise;
+  })().then(() => {
     var promise = new Promise((resolve) => {
       var selectHashAndSalt = 'SELECT * FROM `users` WHERE `user_id` = ?';
       connection.query(selectHashAndSalt, [myId]).then((result) => {
@@ -90,7 +117,7 @@ router.post('/password', (req, res) => {
       });
     });
     return promise;
-  })().then((values) => {
+  }).then((values) => {
     var promise = new Promise((resolve) => {
       var submittedHash = toHash(currentPassword, values.currentSalt);
       values.submittedHash = submittedHash;

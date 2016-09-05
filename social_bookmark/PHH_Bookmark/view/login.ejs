@@ -23,7 +23,7 @@
           <p><%= passwordNotice %></p>
         <% } %>
 
-        <input id="submitButton" type="submit" value="Login">
+        <input id="submitButton" type="submit" value="Login" class="button">
       </form>
       <% if (typeof noUser !== 'undefined') { %>
         <p id="noUser"><%= noUser %></p>
@@ -41,5 +41,14 @@
       </a>
     </footer>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script>
+      $(function(){
+        var $button = $(".button");
+        $button.click(function(){
+          this.disabled = true;
+          this.form.submit();
+        });
+      });
+    </script>
   </body>
 </html>

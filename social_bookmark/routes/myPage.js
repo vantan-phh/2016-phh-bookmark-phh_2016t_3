@@ -235,22 +235,33 @@ router.post('/searchBookmark', (req, res) => {
   var searchFromDescription = req.body.searchFromDescription;
   var searchFromTextsOnSites = req.body.searchFromTextsOnSites;
   var checkInjection = /[%;+-]+/g;
+  var checkSpace = /[\S]+/g;
   var splitKeyWord = /[\S]+/g;
   var keyWords = keyWord.match(splitKeyWord);
   var keyWordsForQuery;
   (() => {
     var promise = new Promise((resolve) => {
+      if(checkSpace.test(keyWord)){
+        resolve();
+      }else{
+        res.redirect('/PHH_Bookmark/myPage');
+      }
+    });
+    return promise;
+  })().then(() => {
+    var promise = new Promise((resolve) => {
       if(!checkInjection.test(keyWord)){
         resolve();
       }else{
         res.render('myPage.ejs', {
+          orgData,
           bookmarkData,
           keyWordNotice : 'セキュリティ上の観点から「+, -, %, ;」を含んでの検索はできません',
         });
       }
     });
     return promise;
-  })().then(() => {
+  }).then(() => {
     if(searchFromTitle === 'on' && searchFromDescription === undefined && searchFromTextsOnSites === undefined){
       (() => {
         var promise = new Promise((resolve) => {
@@ -300,7 +311,7 @@ router.post('/searchBookmark', (req, res) => {
       })().then((value) => {
         keyWordsForQuery = value;
         var promise = new Promise((resolve) => {
-          var selectSearchedBookmarks = 'SELECT * FROM `bookamrks` WHERE `user_id` = ? AND ( `description` LIKE "' + keyWordsForQuery + '%" )';
+          var selectSearchedBookmarks = 'SELECT * FROM `bookmarks` WHERE `user_id` = ? AND ( `description` LIKE "' + keyWordsForQuery + '%" )';
           connection.query(selectSearchedBookmarks, [myId]).then((result) => {
             var searchedBookmarks = result[0];
             resolve(searchedBookmarks);
@@ -312,6 +323,7 @@ router.post('/searchBookmark', (req, res) => {
         res.render('myPage.ejs', {
           bookmarkData,
           searchedBookmarks,
+          orgData,
         });
       });
     }else if(searchFromTitle === undefined && searchFromDescription === undefined && searchFromTextsOnSites === 'on'){
@@ -336,6 +348,7 @@ router.post('/searchBookmark', (req, res) => {
           res.render('myPage.ejs', {
             bookmarkData,
             searchedBookmarks,
+            orgData,
           });
         });
       });
@@ -430,6 +443,7 @@ router.post('/searchBookmark', (req, res) => {
           res.render('myPage.ejs', {
             bookmarkData,
             searchedBookmarks,
+            orgData,
           });
         });
       });
@@ -481,6 +495,7 @@ router.post('/searchBookmark', (req, res) => {
         res.render('myPage.ejs', {
           bookmarkData,
           searchedBookmarks,
+          orgData,
         });
       });
     }else if(searchFromTitle === 'on' && searchFromDescription === 'on' && searchFromTextsOnSites === 'on'){
@@ -552,6 +567,7 @@ router.post('/searchBookmark', (req, res) => {
         res.render('myPage.ejs', {
           bookmarkData,
           searchedBookmarks,
+          orgData,
         });
       });
     }

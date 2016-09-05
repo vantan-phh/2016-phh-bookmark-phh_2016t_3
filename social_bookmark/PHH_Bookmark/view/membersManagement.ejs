@@ -38,6 +38,7 @@
 
       <% if(typeof notice !== 'undefined'){ %>
         <div id="notFound"><%= notice %></div>
+        </div>
       <% } %>
 
       <div id="searchHit">
@@ -92,6 +93,11 @@
     var $makeJoinButton = $('#makeJoin');
     var $expelButton = $('.expel');
     var $leaveButton = $('#leave');
+    var $button = $(".button");
+    $button.click(function(){
+      this.disabled = true;
+      this.form.submit();
+    });
     $selectButton.click(function(){
       document.selectUser.result.value = this.name;
       document.selectUser.submit();

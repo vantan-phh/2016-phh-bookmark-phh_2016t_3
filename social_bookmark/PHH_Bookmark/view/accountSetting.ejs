@@ -10,23 +10,36 @@
     <div><%= myData.mail %></div>
     <form action="/PHH_Bookmark/accountSetting/mail" method="post">
       <input type="text" value="<%= myData.mail %>" placeholder="メールアドレスを入力" name="mail">
-      <input type="submit" value="メールアドレスを変更">
+      <input type="submit" value="メールアドレスを変更" class="button">
     </form>
+    <% if(typeof mailNotice !== 'undefined'){ %>
+      <p><%= mailNotice %></p>
+    <% } %>
     <form action="/PHH_Bookmark/accountSetting/password" method="post">
       <div>パスワードの変更</div>
       <input type="text" placeholder="現在のパスワード" name="currentPassword">
-      <% if(typeof passwordNotice !== 'undefined'){ %>
-        <p><%= passwordNotice %></p>
-      <% } %>
       <input type="text" placeholder="新しいパスワード" name="newPassword">
       <input type="text" placeholder="新しいパスワードの確認" name="newPasswordConfirm">
       <% if(typeof confirmNotice !== 'undefined'){ %>
         <p><%= confirmNotice %></p>
       <% } %>
-      <input type="submit" value="パスワードを変更">
+      <input type="submit" value="パスワードを変更" class="button">
       <% if(typeof finishChangingPassword !== 'undefined'){ %>
         <p><%= finishChangingPassword %></p>
       <% } %>
     </form>
+    <% if(typeof passwordNotice !== 'undefined'){ %>
+      <p><%= passwordNotice %></p>
+    <% } %>
   </body>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>
+    $(function(){
+      var $button = $(".button");
+      $button.click(function(){
+        this.disabled = true;
+        this.form.submit();
+      });
+    });
+  </script>
 </html>

@@ -46,6 +46,11 @@
   <script>
   $(function(){
     var $deleteComment = $(".delete");
+    var $button = $(".button");
+    $button.click(function(){
+      this.disabled = true;
+      this.form.submit();
+    });
     $deleteComment.click(function(){
       document.deleteComment.result.value = this.name;
       document.deleteComment.submit();

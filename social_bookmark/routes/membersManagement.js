@@ -14,6 +14,8 @@ router.get('/', (req, res) => {
   selectedNickNames = [];
   var orgId = req.session.org_id;
   var myId = req.session.user_id;
+  if(req.session.selectUserInMemberManagement) delete req.session.selectUserInMemberManagement;
+  if(req.session.excludeUserInMemberManagement) delete req.session.excludeUserInMemberManagement;
   (() => {
     var promise = new Promise((resolve) => {
       var checkAuthority = 'SELECT `user_id` FROM `organization_memberships` WHERE `user_id` = ? AND `org_id` = ? AND `is_admin` = true';
@@ -156,6 +158,8 @@ router.get('/', (req, res) => {
 });
 
 router.post('/searchUser', (req, res) => {
+  if(req.session.selectUserInMemberManagement) delete req.session.selectUserInMemberManagement;
+  if(req.session.excludeUserInMemberManagement) delete req.session.excludeUserInMemberManagement;
   var orgId = req.session.org_id;
   var searchedUser = req.body.searchedUser;
   var myId = req.session.user_id;
@@ -223,113 +227,33 @@ router.post('/searchUser', (req, res) => {
       })().then((_values) => {
         var excludeUsers = _values.excludeUsers;
         excludeUsers = excludeUsers.concat(selectedUserNames);
-        var promise = new Promise((resolve) => {
-          var exclude = 'SELECT `name` FROM `users` WHERE `name` NOT IN (?)';
-          connection.query(exclude, [excludeUsers]).then((result) => {
-            if(result[0].length > 0){
-              _values.selectedUsers = result[0];
-              resolve(_values);
-            }else{
-              res.render('membersManagement.ejs', {
-                orgName,
-                orgIntroduction,
-                orgThumbnail,
-                selectedUserNames,
-                selectedNickNames,
-                memberUserNames,
-                memberNickNames,
-                notice : '該当するユーザーが見つかりません。',
-                myUserName,
-              });
-            }
-          });
-        });
-        return promise;
-      }).then((_values) => {
-        var selectedUsers = _values.selectedUsers;
-        var promise = new Promise((resolve) => {
-          var searchedUserNames = [];
-          searchedUser = new RegExp('.*' + searchedUser + '.*');
-          selectedUsers.forEach((currentValue, index, array) => {
-            if(searchedUser.test(currentValue.name)){
-              searchedUserNames.push(currentValue.name);
-            }
-            if(index + 1 === array.length){
-              _values.searchedUserNames = searchedUserNames;
-              resolve(_values);
-            }
-          });
-        });
-        return promise;
-      }).then((_values) => {
-        var searchedUserNames = _values.searchedUserNames;
-        var promise = new Promise((resolve) => {
-          if(searchedUserNames.length > 0){
-            var userNamesForQuery = '';
-            searchedUserNames.forEach((currentValue, index, array) => {
-              if(index + 1 === array.length){
-                userNamesForQuery += '"' + currentValue + '"';
-                _values.userNamesForQuery = userNamesForQuery;
-                resolve(_values);
-              }else{
-                userNamesForQuery += '"' + currentValue + '" OR `name` = ';
-              }
-            });
-          }else{
+        var searchUser = 'SELECT `name`, `nick_name` FROM (SELECT * FROM `users` WHERE `name` NOT IN (?)) AS `a` WHERE `name` LIKE "%' + searchedUser + '%"';
+        connection.query(searchUser, [excludeUsers]).then((result) => {
+          if(result[0].length > 0){
             res.render('membersManagement.ejs', {
-              memberUserNames,
-              memberNickNames,
-              selectedUserNames,
-              selectedNickNames,
               orgName,
               orgIntroduction,
               orgThumbnail,
+              selectedUserNames,
+              selectedNickNames,
+              memberUserNames,
+              memberNickNames,
+              myUserName,
+              searchedUsers : result[0],
+            });
+          }else{
+            res.render('membersManagement.ejs', {
+              orgName,
+              orgIntroduction,
+              orgThumbnail,
+              selectedUserNames,
+              selectedNickNames,
+              memberUserNames,
+              memberNickNames,
               notice : '該当するユーザーが見つかりません。',
               myUserName,
             });
           }
-        });
-        return promise;
-      }).then((_values) => {
-        var userNamesForQuery = _values.userNamesForQuery;
-        var promise = new Promise((resolve) => {
-          var selectNickName = 'SELECT `nick_name` FROM `users` WHERE `name` = ' + userNamesForQuery;
-          connection.query(selectNickName).then((result) => {
-            _values.hitNickNames = result[0];
-            resolve(_values);
-          });
-        });
-        return promise;
-      }).then((_values) => {
-        var hitNickNames = _values.hitNickNames;
-        var promise = new Promise((resolve) => {
-          var searchedNickNames = [];
-          hitNickNames.forEach((currentValue, index, array) => {
-            searchedNickNames.push(currentValue.nick_name);
-            if(index + 1 === array.length){
-              _values.searchedNickNames = searchedNickNames;
-              resolve(_values);
-            }
-          });
-        });
-        return promise;
-      }).then((_values) => {
-        orgName = _values.orgName;
-        orgIntroduction = _values.orgIntroduction;
-        orgThumbnail = _values.orgThumbnail;
-        var searchedUserNames = _values.searchedUserNames;
-        var searchedNickNames = _values.searchedNickNames;
-        res.render('membersManagement.ejs', {
-          orgName,
-          orgIntroduction,
-          orgThumbnail,
-          memberUserNames,
-          memberNickNames,
-          searchedNickNames,
-          searchedUserNames,
-          selectedUserNames,
-          selectedNickNames,
-          myUserName,
         });
       });
     }else{
@@ -366,120 +290,33 @@ router.post('/searchUser', (req, res) => {
         orgIntroduction = _values.orgIntroduction;
         orgThumbnail = _values.orgThumbnail;
         var excludeUsers = _values.excludeUsers;
-        var promise = new Promise((resolve) => {
-          var exclude = 'SELECT `name` FROM `users` WHERE `name` NOT IN (?)';
-          connection.query(exclude, [excludeUsers]).then((result) => {
-            if(result[0].length){
-              _values.hitUserNames = result[0];
-              resolve(_values);
-            }else{
-              res.render('membersManagement.ejs', {
-                orgName,
-                orgIntroduction,
-                orgThumbnail,
-                selectedUserNames,
-                selectedNickNames,
-                notice : '該当するユーザーが見つかりません。',
-                memberUserNames,
-                memberNickNames,
-                myUserName,
-              });
-            }
-          });
-        });
-        return promise;
-      }).then((_values) => {
-        var hitUserNames = _values.hitUserNames;
-        var promise = new Promise((resolve) => {
-          var searchedUserNames = [];
-          searchedUser = new RegExp('.*' + searchedUser + '.*');
-          hitUserNames.forEach((currentValue, index, array) => {
-            if(searchedUser.test(currentValue.name)){
-              searchedUserNames.push(currentValue.name);
-            }
-            if(index + 1 === array.length){
-              _values.searchedUserNames = searchedUserNames;
-              resolve(_values);
-            }
-          });
-        });
-        return promise;
-      }).then((_values) => {
-        var searchedUserNames = _values.searchedUserNames;
-        var promise = new Promise((resolve) => {
-          if(searchedUserNames.length > 0){
-            resolve(_values);
-          }else{
+        var searchUser = 'SELECT * FROM `users` WHERE `name` NOT IN (?)';
+        connection.query(searchUser, [excludeUsers]).then((result) => {
+          if(result[0].length){
             res.render('membersManagement.ejs', {
-              memberUserNames,
-              memberNickNames,
-              selectedUserNames,
-              selectedNickNames,
               orgName,
               orgIntroduction,
               orgThumbnail,
+              selectedUserNames,
+              selectedNickNames,
+              memberUserNames,
+              memberNickNames,
+              myUserName,
+              searchedUsers : result[0],
+            });
+          }else{
+            res.render('membersManagement.ejs', {
+              orgName,
+              orgIntroduction,
+              orgThumbnail,
+              selectedUserNames,
+              selectedNickNames,
               notice : '該当するユーザーが見つかりません。',
+              memberUserNames,
+              memberNickNames,
               myUserName,
             });
           }
-        });
-        return promise;
-      }).then((_values) => {
-        var searchedUserNames = _values.searchedUserNames;
-        var promise = new Promise((resolve) => {
-          var userNamesForQuery = '';
-          searchedUserNames.forEach((currentValue, index, array) => {
-            if(index + 1 === array.length){
-              userNamesForQuery += '"' + currentValue + '"';
-              _values.userNamesForQuery = userNamesForQuery;
-              resolve(_values);
-            }else {
-              userNamesForQuery += '"' + currentValue + '" OR `name` = ';
-            }
-          });
-        });
-        return promise;
-      }).then((_values) => {
-        var userNamesForQuery = _values.userNamesForQuery;
-        var promise = new Promise((resolve) => {
-          var selectNickName = 'SELECT `nick_name` FROM `users` WHERE `name` = ' + userNamesForQuery;
-          connection.query(selectNickName).then((result) => {
-            var hitNickNames = result[0];
-            _values.hitNickNames = hitNickNames;
-            resolve(_values);
-          });
-        });
-        return promise;
-      }).then((_values) => {
-        var hitNickNames = _values.hitNickNames;
-        var promise = new Promise((resolve) => {
-          var searchedNickNames = [];
-          hitNickNames.forEach((currentValue, index, array) => {
-            searchedNickNames.push(currentValue.nick_name);
-            if(index + 1 === array.length){
-              _values.searchedNickNames = searchedNickNames;
-              resolve(_values);
-            }
-          });
-        });
-        return promise;
-      }).then((_values) => {
-        orgName = _values.orgName;
-        orgIntroduction = _values.orgIntroduction;
-        orgThumbnail = _values.orgThumbnail;
-        var searchedNickNames = _values.searchedNickNames;
-        var searchedUserNames = _values.searchedUserNames;
-        res.render('membersManagement.ejs', {
-          orgName,
-          orgIntroduction,
-          orgThumbnail,
-          searchedUserNames,
-          searchedNickNames,
-          memberUserNames,
-          memberNickNames,
-          selectedUserNames,
-          selectedNickNames,
-          myUserName,
         });
       });
     }
@@ -488,37 +325,56 @@ router.post('/searchUser', (req, res) => {
 
 router.post('/selectUser', (req, res) => {
   var results = req.body.result;
-  results = results.split(',');
-  var selectedUserName = results[0];
-  var selectedNickName = results[1];
-  selectedUserNames.push(selectedUserName);
-  selectedNickNames.push(selectedNickName);
-  var orgId = req.session.org_id;
-  var specifyOrg = 'SELECT * FROM `organizations` WHERE `id` = ?';
-  connection.query(specifyOrg, [orgId]).then((result) => {
-    var orgName = result[0][0].name;
-    var orgIntroduction = result[0][0].introduction;
-    var orgThumbnail = result[0][0].image_path;
-    res.render('membersManagement.ejs', {
-      orgName,
-      orgIntroduction,
-      orgThumbnail,
-      selectedUserNames,
-      selectedNickNames,
-      memberNickNames,
-      memberUserNames,
-      myUserName,
+  if(req.session.excludeUserInMemberManagement) delete req.session.excludeUserInMemberManagement;
+  if(req.session.selectUserInMemberManagement === req.body.result){
+    delete req.session.selectUserInMemberManagement;
+    res.redirect('/PHH_Bookmark/membersManagement');
+  }else{
+    results = results.split(',');
+    var selectedUserName = results[0];
+    var selectedNickName = results[1];
+    selectedUserNames.push(selectedUserName);
+    selectedNickNames.push(selectedNickName);
+    var orgId = req.session.org_id;
+    var specifyOrg = 'SELECT * FROM `organizations` WHERE `id` = ?';
+    connection.query(specifyOrg, [orgId]).then((result) => {
+      var orgName = result[0][0].name;
+      var orgIntroduction = result[0][0].introduction;
+      var orgThumbnail = result[0][0].image_path;
+      if(req.session.selectUserInMemberManagement) delete req.session.selectUserInMemberManagement;
+      req.session.selectUserInMemberManagement = req.body.result;
+      res.render('membersManagement.ejs', {
+        orgName,
+        orgIntroduction,
+        orgThumbnail,
+        selectedUserNames,
+        selectedNickNames,
+        memberNickNames,
+        memberUserNames,
+        myUserName,
+      });
     });
-  });
+  }
 });
 
 router.post('/excludeUser', (req, res) => {
+  if(req.session.selectUserInMemberManagement) delete req.session.selectUserInMemberManagement;
   var results = req.body.result;
   results = results.split(',');
   var excludeUserName = results[0];
   var excludeNickName = results[1];
   var orgId = req.session.org_id;
   (() => {
+    var promise = new Promise((resolve) => {
+      if(req.session.excludeUserInMemberManagement === req.body.result){
+        delete req.session.excludeUserInMemberManagement;
+        res.redirect('/PHH_Bookmark/membersManagement');
+      }else{
+        resolve();
+      }
+    });
+    return promise;
+  })().then(() => {
     var promise = new Promise((resolve) => {
       var specifyOrg = 'SELECT * FROM `organizations` WHERE `id` = ?';
       connection.query(specifyOrg, [orgId]).then((result) => {
@@ -534,12 +390,13 @@ router.post('/excludeUser', (req, res) => {
       });
     });
     return promise;
-  })().then((values) => {
+  }).then((values) => {
     var promise = new Promise((resolve) => {
       selectedUserNames.some((currentValue, index) => {
         if(currentValue === excludeUserName){
           selectedUserNames.splice(index, 1);
         }
+        return 0;
       });
       resolve(values);
     });
@@ -550,6 +407,7 @@ router.post('/excludeUser', (req, res) => {
         if(currentValue === excludeNickName){
           selectedNickNames.splice(index, 1);
         }
+        return 0;
       });
       resolve(values);
     });
@@ -558,6 +416,7 @@ router.post('/excludeUser', (req, res) => {
     var orgName = values.orgName;
     var orgIntroduction = values.orgIntroduction;
     var orgThumbnail = values.orgThumbnail;
+    req.session.excludeUserInMemberManagement = req.body.result;
     res.render('membersManagement.ejs', {
       orgName,
       orgIntroduction,
@@ -638,9 +497,44 @@ router.post('/expelUser', (req, res) => {
 router.post('/leave', (req, res) => {
   var orgId = req.session.org_id;
   var myId = req.session.user_id;
-  var leave = 'DELETE FROM `organization_memberships` WHERE `user_id` = ? AND `org_id` = ?';
-  connection.query(leave, [myId, orgId]).then(() => {
-    res.redirect('/PHH_Bookmark/topPage');
+  (() => {
+    var promise = new Promise((resolve) => {
+      var specifyOrg = 'SELECT * FROM `organizations` WHERE `id` = ?';
+      connection.query(specifyOrg, [orgId]).then((result) => {
+        var values = {
+          orgName : result[0][0].name,
+          orgIntroduction : result[0][0].introduction,
+          orgThumbnail : result[0][0].image_path,
+        };
+        resolve(values);
+      });
+    });
+    return promise;
+  })().then((values) => {
+    var promise = new Promise((resolve) => {
+      var selectAdmins = 'SELECT `user_id` FROM `organization_memberships` WHERE `org_id` = ? AND `is_admin` = true';
+      connection.query(selectAdmins, [orgId]).then((result) => {
+        if(result[0].length > 1){
+          resolve();
+        }else{
+          res.render('membersManagement.ejs', {
+            memberUserNames,
+            memberNickNames,
+            orgName : values.orgName,
+            orgThumbnail : values.image_path,
+            orgIntroduction : values.orgIntroduction,
+            myUserName,
+            authorityNotice : '管理者が一人のみのため脱退はできません。',
+          });
+        }
+      });
+    });
+    return promise;
+  }).then(() => {
+    var leave = 'DELETE FROM `organization_memberships` WHERE `user_id` = ? AND `org_id` = ?';
+    connection.query(leave, [myId, orgId]).then(() => {
+      res.redirect('/PHH_Bookmark/topPage');
+    });
   });
 });
 module.exports = router;

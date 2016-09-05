@@ -232,4 +232,22 @@ router.post('/', upload.single('image_file'), (req, res) => {
   });
 });
 
+router.post('/dissolve', (req, res) => {
+  var orgId = req.session.org_id;
+  (() => {
+    var promise = new Promise((resolve) => {
+      var deleteOrg = 'DELETE FROM `organizations` WHERE `id` = ?';
+      connection.query(deleteOrg, [orgId]).then(() => {
+        resolve();
+      });
+    });
+    return promise;
+  })().then(() => {
+    var deleteMemberShip = 'DELETE FROM `organization_memberships` WHERE `org_id` = ?';
+    connection.query(deleteMemberShip, [orgId]).then(() => {
+      res.redirect('/PHH_Bookmark/topPage');
+    });
+  });
+});
+
 module.exports = router;
