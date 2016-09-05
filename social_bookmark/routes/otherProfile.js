@@ -16,25 +16,27 @@ router.get('/', (req, res) => {
   var target = req.session.target;
   (() => {
     var promise = new Promise((resolve) => {
-      var query = 'SELECT `name`,`nick_name`,`image_path`,`introduction` FROM `users` WHERE `user_id` = ?';
-      connection.query(query, [target]).then((result) => {
-        var nickName = result[0][0].nick_name;
-        var thumbnailPath = result[0][0].image_path;
-        var introduction = result[0][0].introduction;
-        var userName = result[0][0].name;
-        if(introduction === null || introduction === ''){
-          introduction = '自己紹介';
-        }
-        var values = {
-          nickName,
-          thumbnailPath,
-          introduction,
-          userName,
-        };
-        resolve(values);
-      });
+    var query = 'SELECT `name`, `nick_name`, `image_path`, `introduction` FROM `users` WHERE `user_id` = ?';
+    connection.query(query, [target]).then((result) => {
+      console.log(result);
+      console.log(target);
+      var nickName = result[0][0].nick_name;
+      var thumbnailPath = result[0][0].image_path;
+      var introduction = result[0][0].introduction;
+      var userName = result[0][0].name;
+      if(introduction === null || introduction === ''){
+        introduction = '自己紹介';
+      }
+      var values = {
+        nickName,
+        thumbnailPath,
+        introduction,
+        userName,
+      };
+      resolve(values);
     });
-    return promise;
+  });
+  return promise;
   })().then((values) => {
     var promise = new Promise((resolve) => {
       var selectBelongOrg = 'SELECT `org_id` FROM `organization_memberships` WHERE `user_id` = ?';

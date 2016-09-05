@@ -4,6 +4,7 @@
 }
 body{
   background-color: #fafafa;
+  width: 100%;
   margin: 0px;
 }
 /*----------------------------/
@@ -98,7 +99,7 @@ header{
 /*----------------------------
             コンテンツ
 -----------------------------*/
-#result{
+#result1{
   background-color: #e1e1e1;
   border-radius: 10px;
   float: left;
@@ -106,5 +107,43 @@ header{
   margin: 0 10px 10px 0;
   width: 200px;
   height: 150px;
-  word-break: break-all;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-text-overflow: ellipsis;
+  -o-text-overflow: ellipsis;
+}
+#result2{
+  background-color: green;
+  border-radius: 10px;
+  float: left;
+  padding: 0 5px 0 0;
+  margin: 0 10px 10px 0;
+  width: 200px;
+  height: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-text-overflow: ellipsis;
+  -o-text-overflow: ellipsis;
+}
+#a{
+  position: relative;
+  margin-right: 0px;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;;
+  width: 700px;
+
+}
+#nickName{
+  color: red;
+  font-weight: bolder;
+}
+#nickName:hover{
+  color: #123456;
+  cursor: pointer;
+}
+#tes{
+ background-color: lightgreen;
+ float: left;
 }
