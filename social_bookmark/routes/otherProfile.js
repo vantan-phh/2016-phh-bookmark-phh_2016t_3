@@ -34,8 +34,7 @@ router.get('/', (req, res) => {
         resolve(values);
       });
     });
-  });
-  return promise;
+    return promise;
   })().then((values) => {
     var promise = new Promise((resolve) => {
       var selectBelongOrg = 'SELECT `org_id` FROM `organization_memberships` WHERE `user_id` = ?';
