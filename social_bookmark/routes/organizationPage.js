@@ -11,6 +11,7 @@ var orgName;
 var orgIntroduction;
 var orgThumbnail;
 var slicedAddedUserNickNames;
+var slicedAddedUserNickNamesForSearched;
 var index;
 var allSearchedBookmarkData;
 var searchIndex;
@@ -129,10 +130,12 @@ router.get('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =>
         searchIndex,
       });
     }else{
-      res.redirect('/PHH_Bookmark/myPage/bookmarkList/1');
+      res.redirect('/PHH_Bookmark/myPage/bookmarkList/1/searchBookmarkList/0');
     }
   }else{
     var bookmarkData = allBookmarkData[index - 1];
+    var addedUserNickNames = slicedAddedUserNickNames[index - 1];
+    var addedUserNickNamesForSearched = slicedAddedUserNickNamesForSearched[searchIndex - 1];
     var searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
     var searchPageLength = allSearchedBookmarkData.length;
     res.render('organizationPage.ejs', {
@@ -144,17 +147,33 @@ router.get('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =>
       ownBookmarkIds,
       isAdmin,
       addedUserNickNames,
+      addedUserNickNamesForSearched,
       pageLength,
       index,
       searchIndex,
+      searchPageLength,
     });
   }
 });
 
-router.post('/submitUrl', (req, res) => {
+router.post('/bookmarkList/:index/submitUrl', (req, res) => {
   var url = req.body.result;
   var checkUrl = /^(https?)(:\/\/[-_.!~*\'()a-zA-Z0-9;\/?:\@&=+\$,%#]+)$/;
+  var pageLength = allBookmarkData.length;
+  index = parseInt(index, 10);
+  searchIndex = 0;
+  var bookmarkData = allBookmarkData[index - 1];
+  var addedUserNickNames = slicedAddedUserNickNames[index - 1];
   (() => {
+    var promise = new Promise((resolve) => {
+      if(pageLength >= index && index > 0){
+        resolve();
+      }else{
+        res.redirect('/PHH_Bookmark/organizationPage/bookmarkList/1');
+      }
+    });
+    return promise;
+  })().then(() => {
     var promise = new Promise((resolve) => {
       if(checkUrl.test(url)){
         resolve();
@@ -167,12 +186,15 @@ router.post('/submitUrl', (req, res) => {
           ownBookmarkIds,
           isAdmin,
           addedUserNickNames,
+          pageLength,
+          index,
+          searchIndex,
           urlNotice : 'http://もしくはhttp://から始まる正しいURLを入力してください',
         });
       }
     });
     return promise;
-  })().then(() => {
+  }).then(() => {
     client.fetch(url).then((result) => {
       res.render('organizationPage.ejs', {
         bookmarkData,
@@ -183,6 +205,9 @@ router.post('/submitUrl', (req, res) => {
         orgThumbnail,
         url,
         addedUserNickNames,
+        pageLength,
+        index,
+        searchIndex,
         title : result.$('title').text(),
       });
     }, () => {
@@ -194,18 +219,25 @@ router.post('/submitUrl', (req, res) => {
         ownBookmarkIds,
         isAdmin,
         addedUserNickNames,
+        pageLength,
+        index,
+        searchIndex,
         networkNotice : 'URLが正しいかをご確認の上、ネットワーク接続をお確かめください。',
       });
     });
   });
 });
 
-router.post('/', (req, res) => {
+router.post('/bookmarkList/:index', (req, res) => {
   var url = req.body.url;
   var title = req.body.title;
   var description = req.body.description;
   var orgId = req.session.org_id;
   var userId = req.session.user_id;
+  var pageLength = allBookmarkData.length;
+  index = parseInt(index, 10);
+  var bookmarkData = allBookmarkData[index - 1];
+  var addedUserNickNames = slicedAddedUserNickNames[index - 1];
   var checkUrl = /^(https?)(:\/\/[-_.!~*\'()a-zA-Z0-9;\/?:\@&=+\$,%#]+)$/;
   var checkInjection = /[%;+-]+/g;
   var checkSpace = /[\S]+/g;
@@ -225,6 +257,8 @@ router.post('/', (req, res) => {
           title,
           description,
           addedUserNickNames,
+          pageLength,
+          index,
           urlNotice : 'http://もしくはhttp://から始まる正しいURLを入力してください',
         });
       }
@@ -246,6 +280,8 @@ router.post('/', (req, res) => {
           title,
           description,
           addedUserNickNames,
+          pageLength,
+          index,
           titleNotice : 'タイトルを入力してください',
         });
       }
@@ -267,6 +303,8 @@ router.post('/', (req, res) => {
           title,
           description,
           addedUserNickNames,
+          pageLength,
+          index,
           titleNotice : 'セキュリティ上の観点からタイトルに「+, -, %, ;」は使えません',
         });
       }
@@ -288,6 +326,8 @@ router.post('/', (req, res) => {
           title,
           description,
           addedUserNickNames,
+          pageLength,
+          index,
           descriptionNotice : 'セキュリティ上の観点から説明文に「+, -, %, ;」は使えません',
         });
       }
@@ -309,6 +349,8 @@ router.post('/', (req, res) => {
           title,
           description,
           addedUserNickNames,
+          pageLength,
+          index,
           titleNotice : 'タイトルは32文字以下です',
         });
       }
@@ -330,6 +372,8 @@ router.post('/', (req, res) => {
           title,
           description,
           addedUserNickNames,
+          pageLength,
+          index,
           descriptionNotice : '説明文は128文字以下です',
         });
       }
@@ -349,6 +393,8 @@ router.post('/', (req, res) => {
           ownBookmarkIds,
           isAdmin,
           addedUserNickNames,
+          pageLength,
+          index,
           networkNotice : 'URLが正しいかをご確認の上、ネットワーク接続をお確かめください。',
         });
       });
@@ -372,12 +418,17 @@ router.post('/toOrgBookmarkEdit', (req, res) => {
   res.redirect('/PHH_Bookmark/orgBookmarkEdit');
 });
 
-router.post('/searchBookmark', (req, res) => {
+router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) => {
   var orgId = req.session.org_id;
   var keyWord = req.body.keyWord;
   var searchFromTitle = req.body.searchFromTitle;
   var searchFromDescription = req.body.searchFromDescription;
   var searchFromTextsOnSites = req.body.searchFromTextsOnSites;
+  var pageLength = allBookmarkData.length;
+  index = parseInt(index, 10);
+  searchIndex = parseInt(searchIndex, 10);
+  var bookmarkData = allBookmarkData[index - 1];
+  var addedUserNickNames = slicedAddedUserNickNames[index - 1];
   var checkInjection = /[%;+-]+/g;
   var splitKeyWord = /[\S]+/g;
   var checkSpace = /[\S]+/g;
@@ -405,6 +456,8 @@ router.post('/searchBookmark', (req, res) => {
           orgThumbnail,
           isAdmin,
           addedUserNickNames,
+          pageLength,
+          index,
           keyWordNotice : 'セキュリティ上の観点から「+, -, %, ;」を含んでの検索はできません',
         });
       }
@@ -430,40 +483,59 @@ router.post('/searchBookmark', (req, res) => {
         var promise = new Promise((resolve) => {
           var selectSearchedBookmarks = 'SELECT * FROM `bookmarks` WHERE `org_id` = ? AND ( `title` LIKE "' + keyWordsForQuery + '%" )';
           connection.query(selectSearchedBookmarks, [orgId]).then((result) => {
-            var searchedBookmarks = result[0];
-            resolve(searchedBookmarks);
+            var searchedBookmarkData = result[0];
+            resolve(searchedBookmarkData);
           });
         });
         return promise;
-      }).then((value) => {
-        var searchedBookmarks = value;
+      }).then((searchedBookmarkData) => {
         var promise = new Promise((resolve) => {
           var selectNickName = 'SELECT `nick_name` FROM `users` WHERE `user_id` = ?';
-          if(searchedBookmarks.length > 0){
-            searchedBookmarks.forEach((currentValue) => {
+          if(searchedBookmarkData.length > 0){
+            searchedBookmarkData.forEach((currentValue) => {
               connection.query(selectNickName, [currentValue.user_id]).then((result) => {
                 addedUserNickNamesForSearched.push(result[0][0].nick_name);
-                if(searchedBookmarks.length === addedUserNickNamesForSearched.length){
-                  resolve(value);
+                if(searchedBookmarkData.length === addedUserNickNamesForSearched.length){
+                  var n = 12;
+                  allSearchedBookmarkData = [];
+                  if(searchedBookmarkData.length === 0){
+                    allSearchedBookmarkData.push([]);
+                  }else{
+                    for (var i = 0; i < searchedBookmarkData.length; i+=n) {
+                      allSearchedBookmarkData.push(searchedBookmarkData.slice(i, i + n));
+                    }
+                  }
+                  var n = 12;
+                  slicedAddedUserNickNamesForSearched = [];
+                  for (var i = 0; i < addedUserNickNamesForSearched.length; i+=n) {
+                    slicedAddedUserNickNamesForSearched.push(addedUserNickNamesForSearched.slice(i, i + n));
+                  }
+                  resolve();
                 }
               });
             });
           }else{
-            resolve(value);
+            resolve();
           }
         });
         return promise;
-      }).then((value) => {
-        var searchedBookmarks = value;
+      }).then(() => {
+        var searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
+        var searchPageLength = allSearchedBookmarkData.length;
+        var addedUserNickNamesForSearched = slicedAddedUserNickNamesForSearched[searchIndex - 1];
         res.render('organizationPage.ejs', {
           bookmarkData,
           orgName,
           orgIntroduction,
           orgThumbnail,
           isAdmin,
-          searchedBookmarks,
+          searchedBookmarkData,
           addedUserNickNames,
           addedUserNickNamesForSearched,
+          pageLength,
+          searchPageLength,
+          index,
+          searchIndex,
         });
       });
     }else if(searchFromTitle === undefined && searchFromDescription === 'on' && searchFromTextsOnSites === undefined){
@@ -485,45 +557,64 @@ router.post('/searchBookmark', (req, res) => {
         var promise = new Promise((resolve) => {
           var selectSearchedBookmarks = 'SELECT * FROM `bookamrks` WHERE `org_id` = ? AND ( `description` LIKE "' + keyWordsForQuery + '%" )';
           connection.query(selectSearchedBookmarks, [orgId]).then((result) => {
-            var searchedBookmarks = result[0];
-            resolve(searchedBookmarks);
+            var searchedBookmarkData = result[0];
+            resolve(searchedBookmarkData);
           });
         });
         return promise;
-      }).then((value) => {
-        var searchedBookmarks = value;
+      }).then((searchedBookmarkData) => {
         var promise = new Promise((resolve) => {
           var selectNickName = 'SELECT `nick_name` FROM `users` WHERE `user_id` = ?';
-          if(searchedBookmarks.length > 0){
-            searchedBookmarks.forEach((currentValue) => {
+          if(searchedBookmarkData.length > 0){
+            searchedBookmarkData.forEach((currentValue) => {
               connection.query(selectNickName, [currentValue.user_id]).then((result) => {
                 addedUserNickNamesForSearched.push(result[0][0].nick_name);
-                if(searchedBookmarks.length === addedUserNickNamesForSearched.length){
-                  resolve(value);
+                if(searchedBookmarkData.length === addedUserNickNamesForSearched.length){
+                  var n = 12;
+                  allSearchedBookmarkData = [];
+                  if(searchedBookmarkData.length === 0){
+                    allSearchedBookmarkData.push([]);
+                  }else{
+                    for (var i = 0; i < searchedBookmarkData.length; i+=n) {
+                      allSearchedBookmarkData.push(searchedBookmarkData.slice(i, i + n));
+                    }
+                  }
+                  var n = 12;
+                  slicedAddedUserNickNamesForSearched = [];
+                  for (var i = 0; i < addedUserNickNamesForSearched.length; i+=n) {
+                    slicedAddedUserNickNamesForSearched.push(addedUserNickNamesForSearched.slice(i, i + n));
+                  }
+                  resolve();
                 }
               });
             });
           }else{
-            resolve(value);
+            resolve();
           }
         });
         return promise;
-      }).then((value) => {
-        var searchedBookmarks = value;
+      }).then(() => {
+        var searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
+        var searchPageLength = allSearchedBookmarkData.length;
+        var addedUserNickNamesForSearched = slicedAddedUserNickNamesForSearched[searchIndex - 1];
         res.render('organizationPage.ejs', {
           bookmarkData,
           orgName,
           orgIntroduction,
           orgThumbnail,
           isAdmin,
-          searchedBookmarks,
+          searchedBookmarkData,
           addedUserNickNames,
           addedUserNickNamesForSearched,
+          pageLength,
+          searchPageLength,
+          index,
+          searchIndex,
         });
       });
     }else if(searchFromTitle === undefined && searchFromDescription === undefined && searchFromTextsOnSites === 'on'){
       keyWordsForQuery = '%';
-      (() => { // create table for inserting text of the site and select searchedBookmarks.
+      (() => { // create table for inserting text of the site and select searchedBookmarkData.
         var promise = new Promise((resolve) => {
           keyWords.forEach((currentValue, index, array) => {
             if(index + 1 === array.length){
@@ -540,40 +631,59 @@ router.post('/searchBookmark', (req, res) => {
         var promise = new Promise((resolve) => {
           var selectSearchedBookmarks = 'SELECT * FROM `bookmarks` WHERE `org_id` = ? AND ( `text` LIKE "' + keyWordsForQuery + '%")';
           connection.query(selectSearchedBookmarks, [orgId]).then((result) => {
-            var searchedBookmarks = result[0];
-            resolve(searchedBookmarks);
+            var searchedBookmarkData = result[0];
+            resolve(searchedBookmarkData);
           });
         });
         return promise;
-      }).then((value) => {
-        var searchedBookmarks = value;
+      }).then((searchedBookmarkData) => {
         var promise = new Promise((resolve) => {
-          if(searchedBookmarks.length > 0){
+          if(searchedBookmarkData.length > 0){
             var selectNickName = 'SELECT `nick_name` FROM `users` WHERE `user_id` = ?';
-            searchedBookmarks.forEach((currentValue) => {
+            searchedBookmarkData.forEach((currentValue) => {
               connection.query(selectNickName, [currentValue.user_id]).then((result) => {
                 addedUserNickNamesForSearched.push(result[0][0].nick_name);
-                if(searchedBookmarks.length === addedUserNickNamesForSearched.length){
-                  resolve(value);
+                if(searchedBookmarkData.length === addedUserNickNamesForSearched.length){
+                  var n = 12;
+                  allSearchedBookmarkData = [];
+                  if(searchedBookmarkData.length === 0){
+                    allSearchedBookmarkData.push([]);
+                  }else{
+                    for (var i = 0; i < searchedBookmarkData.length; i+=n) {
+                      allSearchedBookmarkData.push(searchedBookmarkData.slice(i, i + n));
+                    }
+                  }
+                  var n = 12;
+                  slicedAddedUserNickNamesForSearched = [];
+                  for (var i = 0; i < addedUserNickNamesForSearched.length; i+=n) {
+                    slicedAddedUserNickNamesForSearched.push(addedUserNickNamesForSearched.slice(i, i + n));
+                  }
+                  resolve();
                 }
               });
             });
           }else{
-            resolve(value);
+            resolve();
           }
         });
         return promise;
-      }).then((value) => {
-        var searchedBookmarks = value;
+      }).then(() => {
+        var searchPageLength = allSearchedBookmarkData.length;
+        var searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
+        var addedUserNickNamesForSearched = slicedAddedUserNickNamesForSearched[searchIndex - 1];
         res.render('organizationPage.ejs', {
           bookmarkData,
           orgName,
           orgIntroduction,
           orgThumbnail,
           isAdmin,
-          searchedBookmarks,
+          searchedBookmarkData,
           addedUserNickNames,
           addedUserNickNamesForSearched,
+          pageLength,
+          searchPageLength,
+          index,
+          searchIndex,
         });
       });
     }else if(searchFromTitle === 'on' && searchFromDescription === 'on' && searchFromTextsOnSites === undefined){
@@ -614,39 +724,59 @@ router.post('/searchBookmark', (req, res) => {
         var selectSearchedBookmarks = 'SELECT * FROM `bookmarks` WHERE `org_id` = ? AND (( `title` LIKE "' + keyWordsForQueryByTitle + '%" ) OR ( `description` LIKE "' + keyWordsForQueryByDescription + '%"))';
         var promise = new Promise((resolve) => {
           connection.query(selectSearchedBookmarks, [orgId]).then((result) => {
-            var searchedBookmarks = result[0];
-            resolve(searchedBookmarks);
+            var searchedBookmarkData = result[0];
+            resolve(searchedBookmarkData);
           });
         });
         return promise;
-      }).then((value) => {
-        var searchedBookmarks = value;
+      }).then((searchedBookmarkData) => {
         var promise = new Promise((resolve) => {
           var selectNickName = 'SELECT `nick_name` FROM `users` WHERE `user_id` = ?';
-          if(searchedBookmarks.length > 0){
-            searchedBookmarks.forEach((currentValue) => {
+          if(searchedBookmarkData.length > 0){
+            searchedBookmarkData.forEach((currentValue) => {
               connection.query(selectNickName, [currentValue.user_id]).then((result) => {
                 addedUserNickNamesForSearched.push(result[0][0].nick_name);
-                if(searchedBookmarks.length === addedUserNickNamesForSearched.length){
-                  resolve(value);
+                if(searchedBookmarkData.length === addedUserNickNamesForSearched.length){
+                  var n = 12;
+                  allSearchedBookmarkData = [];
+                  if(searchedBookmarkData.length === 0){
+                    allSearchedBookmarkData.push([]);
+                  }else{
+                    for (var i = 0; i < searchedBookmarkData.length; i+=n) {
+                      allSearchedBookmarkData.push(searchedBookmarkData.slice(i, i + n));
+                    }
+                  }
+                  var n = 12;
+                  slicedAddedUserNickNamesForSearched = [];
+                  for (var i = 0; i < addedUserNickNamesForSearched.length; i+=n) {
+                    slicedAddedUserNickNamesForSearched.push(addedUserNickNamesForSearched.slice(i, i + n));
+                  }
+                  resolve();
                 }
               });
             });
           }else{
-            resolve(value);
+            resolve();
           }
         });
         return promise;
-      }).then((searchedBookmarks) => {
+      }).then(() => {
+        var searchPageLength = allSearchedBookmarkData.length;
+        var searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
+        var addedUserNickNamesForSearched = slicedAddedUserNickNamesForSearched[searchIndex - 1];
         res.render('organizationPage.ejs', {
           bookmarkData,
           orgName,
           orgIntroduction,
           orgThumbnail,
           isAdmin,
-          searchedBookmarks,
+          searchedBookmarkData,
           addedUserNickNames,
           addedUserNickNamesForSearched,
+          pageLength,
+          searchPageLength,
+          index,
+          searchIndex,
         });
       });
     }else if(searchFromTitle === 'on' && searchFromDescription === undefined && searchFromTextsOnSites === 'on'){
@@ -687,40 +817,59 @@ router.post('/searchBookmark', (req, res) => {
         var promise = new Promise((resolve) => {
           var selectSearchedBookmarks = 'SELECT * FROM `bookmarks` WHERE `org_id` = ? AND (( `title` LIKE "' + keyWordsForQueryWithTitle + '%" ) OR ( `text` LIKE "' + keyWordsForQueryWithText + '%" ))';
           connection.query(selectSearchedBookmarks, [orgId]).then((result) => {
-            var searchedBookmarks = result[0];
-            resolve(searchedBookmarks);
+            var searchedBookmarkData = result[0];
+            resolve(searchedBookmarkData);
           });
         });
         return promise;
-      }).then((value) => {
-        var searchedBookmarks = value;
+      }).then((searchedBookmarkData) => {
         var promise = new Promise((resolve) => {
           var selectNickName = 'SELECT `nick_name` FROM `users` WHERE `user_id` = ?';
-          if(searchedBookmarks.length > 0){
-            searchedBookmarks.forEach((currentValue) => {
+          if(searchedBookmarkData.length > 0){
+            searchedBookmarkData.forEach((currentValue) => {
               connection.query(selectNickName, [currentValue.user_id]).then((result) => {
                 addedUserNickNamesForSearched.push(result[0][0].nick_name);
-                if(searchedBookmarks.length === addedUserNickNamesForSearched.length){
-                  resolve(value);
+                if(searchedBookmarkData.length === addedUserNickNamesForSearched.length){
+                  var n = 12;
+                  allSearchedBookmarkData = [];
+                  if(searchedBookmarkData.length === 0){
+                    allSearchedBookmarkData.push([]);
+                  }else{
+                    for (var i = 0; i < searchedBookmarkData.length; i+=n) {
+                      allSearchedBookmarkData.push(searchedBookmarkData.slice(i, i + n));
+                    }
+                  }
+                  var n = 12;
+                  slicedAddedUserNickNamesForSearched = [];
+                  for (var i = 0; i < addedUserNickNamesForSearched.length; i+=n) {
+                    slicedAddedUserNickNamesForSearched.push(addedUserNickNamesForSearched.slice(i, i + n));
+                  }
+                  resolve();
                 }
               });
             });
           }else{
-            resolve(value);
+            resolve();
           }
         });
         return promise;
-      }).then((value) => {
-        var searchedBookmarks = value;
+      }).then(() => {
+        var searchPageLength = allSearchedBookmarkData.length;
+        var searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
+        var addedUserNickNamesForSearched = slicedAddedUserNickNamesForSearched[searchIndex - 1];
         res.render('organizationPage.ejs', {
           bookmarkData,
           orgName,
           orgIntroduction,
           orgThumbnail,
           isAdmin,
-          searchedBookmarks,
+          searchedBookmarkData,
           addedUserNickNames,
           addedUserNickNamesForSearched,
+          pageLength,
+          searchPageLength,
+          index,
+          searchIndex,
         });
       });
     }else if(searchFromTitle === undefined && searchFromDescription === 'on' && searchFromTextsOnSites === 'on'){
@@ -761,40 +910,59 @@ router.post('/searchBookmark', (req, res) => {
         var promise = new Promise((resolve) => {
           var selectSearchedBookmarks = 'SELECT * FROM `bookmarks` WHERE `org_id` = ? AND (( `description` LIKE "' + keyWordsForQueryWithDescription + '%" ) OR ( "' + keyWordsForQueryWithText + '%" ))';
           connection.query(selectSearchedBookmarks, [orgId]).then((result) => {
-            var searchedBookmarks = result[0];
-            resolve(searchedBookmarks);
+            var searchedBookmarkData = result[0];
+            resolve();
           });
         });
         return promise;
-      }).then((value) => {
-        var searchedBookmarks = value;
+      }).then(() => {
         var promise = new Promise((resolve) => {
           var selectNickName = 'SELECT `nick_name` FROM `users` WHERE `user_id` = ?';
-          if(searchedBookmarks.length > 0){
-            searchedBookmarks.forEach((currentValue) => {
+          if(searchedBookmarkData.length > 0){
+            searchedBookmarkData.forEach((currentValue) => {
               connection.query(selectNickName, [currentValue.user_id]).then((result) => {
                 addedUserNickNamesForSearched.push(result[0][0].nick_name);
-                if(searchedBookmarks.length === addedUserNickNamesForSearched.length){
-                  resolve(value);
+                if(searchedBookmarkData.length === addedUserNickNamesForSearched.length){
+                  var n = 12;
+                  allSearchedBookmarkData = [];
+                  if(searchedBookmarkData.length === 0){
+                    allSearchedBookmarkData.push([]);
+                  }else{
+                    for (var i = 0; i < searchedBookmarkData.length; i+=n) {
+                      allSearchedBookmarkData.push(searchedBookmarkData.slice(i, i + n));
+                    }
+                  }
+                  var n = 12;
+                  slicedAddedUserNickNamesForSearched = [];
+                  for (var i = 0; i < addedUserNickNamesForSearched.length; i+=n) {
+                    slicedAddedUserNickNamesForSearched.push(addedUserNickNamesForSearched.slice(i, i + n));
+                  }
+                  resolve();
                 }
               });
             });
           }else{
-            resolve(value);
+            resolve();
           }
         });
         return promise;
-      }).then((value) => {
-        var searchedBookmarks = value;
+      }).then(() => {
+        var searchPageLength = allSearchedBookmarkData.length;
+        var searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
+        var addedUserNickNamesForSearched = slicedAddedUserNickNamesForSearched[searchIndex - 1];
         res.render('organizationPage.ejs', {
           bookmarkData,
           orgName,
           orgIntroduction,
           orgThumbnail,
           isAdmin,
-          searchedBookmarks,
+          searchedBookmarkData,
           addedUserNickNames,
           addedUserNickNamesForSearched,
+          pageLength,
+          searchPageLength,
+          index,
+          searchIndex,
         });
       });
     }else if(searchFromTitle === 'on' && searchFromDescription === 'on' && searchFromTextsOnSites === 'on'){
@@ -856,40 +1024,59 @@ router.post('/searchBookmark', (req, res) => {
         var promise = new Promise((resolve) => {
           var selectSearchedBookmarks = 'SELECT * FROM `bookmarks` WHERE `org_id` = ? AND (( `title` LIKE "' + keyWordsForQueryWithTitle + '%" ) OR ( `description` LIKE "' + keyWordsForQueryWithDescription + '%" ) OR ( `text` LIKE "' + keyWordsForQueryWithText + '%" ))';
           connection.query(selectSearchedBookmarks, [orgId]).then((result) => {
-            var searchedBookmarks = result[0];
-            resolve(searchedBookmarks);
+            var searchedBookmarkData = result[0];
+            resolve();
           });
         });
         return promise;
-      }).then((value) => {
-        var searchedBookmarks = value;
+      }).then(() => {
         var promise = new Promise((resolve) => {
           var selectNickName = 'SELECT `nick_name` FROM `users` WHERE `user_id` = ?';
-          if(searchedBookmarks.length > 0){
-            searchedBookmarks.forEach((currentValue) => {
+          if(searchedBookmarkData.length > 0){
+            searchedBookmarkData.forEach((currentValue) => {
               connection.query(selectNickName, [currentValue.user_id]).then((result) => {
                 addedUserNickNamesForSearched.push(result[0][0].nick_name);
-                if(searchedBookmarks.length === addedUserNickNamesForSearched.length){
-                  resolve(value);
+                if(searchedBookmarkData.length === addedUserNickNamesForSearched.length){
+                  var n = 12;
+                  allSearchedBookmarkData = [];
+                  if(searchedBookmarkData.length === 0){
+                    allSearchedBookmarkData.push([]);
+                  }else{
+                    for (var i = 0; i < searchedBookmarkData.length; i+=n) {
+                      allSearchedBookmarkData.push(searchedBookmarkData.slice(i, i + n));
+                    }
+                  }
+                  var n = 12;
+                  slicedAddedUserNickNamesForSearched = [];
+                  for (var i = 0; i < addedUserNickNamesForSearched.length; i+=n) {
+                    slicedAddedUserNickNamesForSearched.push(addedUserNickNamesForSearched.slice(i, i + n));
+                  }
+                  resolve();
                 }
               });
             });
           }else{
-            resolve(value);
+            resolve();
           }
         });
         return promise;
-      }).then((value) => {
-        var searchedBookmarks = value;
+      }).then(() => {
+        var searchPageLength = allSearchedBookmarkData.length;
+        var searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
+        var addedUserNickNamesForSearched = slicedAddedUserNickNamesForSearched[searchIndex - 1];
         res.render('organizationPage.ejs', {
           bookmarkData,
           orgName,
           orgIntroduction,
           orgThumbnail,
           isAdmin,
-          searchedBookmarks,
+          searchedBookmarkData,
           addedUserNickNames,
           addedUserNickNamesForSearched,
+          pageLength,
+          searchPageLength,
+          index,
+          searchIndex,
         });
       });
     }
