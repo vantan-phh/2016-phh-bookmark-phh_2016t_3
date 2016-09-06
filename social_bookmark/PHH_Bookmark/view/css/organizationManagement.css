@@ -21,7 +21,7 @@ main{
   left: 50px;
   top: 50px;
 }
-#img img{
+.thumbnail img{
   width:auto;
   height:auto;
   max-width:350px;

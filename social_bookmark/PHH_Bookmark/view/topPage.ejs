@@ -17,9 +17,15 @@
           <h3>links to organization</h3>
           <% if(typeof orgData !== 'undefined'){ %>
             <% for(var i = 0; i < orgData.length; i++){ %>
-              <img src="<%= orgData[i].image_path %>">
-              <a class="orgId" name="<%= orgData[i].id %>"><%= orgData[i].name %></a>
-              <div><%= orgData[i].introduction %></div>
+              <% if(i % 2 === 1){ %>
+                <div class='orgList orglist1'>
+              <% }else{ %>
+                <div class='orgList orglist2'>
+              <% } %>
+                  <img class='thumbnail' src="<%= orgData[i].image_path %>">
+                  <a class="orgId" name="<%= orgData[i].id %>"><%= orgData[i].name %></a>
+                  <%= orgData[i].introduction %>
+                </div>
             <% } %>
           <% } %>
         </div>
