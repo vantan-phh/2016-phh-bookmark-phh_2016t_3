@@ -234,6 +234,7 @@ router.post('/bookmarkList/:index/submitUrl', (req, res) => {
   var checkUrl = /^(https?)(:\/\/[-_.!~*\'()a-zA-Z0-9;\/?:\@&=+\$,%#]+)$/;
   var pageLength = allBookmarkData.length;
   index = parseInt(index, 10);
+  searchIndex = 0;
   var bookmarkData = allBookmarkData[index - 1];
   (() => {
     var promise = new Promise((resolve) => {
@@ -254,6 +255,7 @@ router.post('/bookmarkList/:index/submitUrl', (req, res) => {
           orgData,
           pageLength,
           index,
+          searchIndex,
         });
       }, () => {
         res.render('myPage.ejs', {
@@ -262,6 +264,7 @@ router.post('/bookmarkList/:index/submitUrl', (req, res) => {
           orgData,
           pageLength,
           index,
+          searchIndex,
         });
       });
     }else{
@@ -272,6 +275,7 @@ router.post('/bookmarkList/:index/submitUrl', (req, res) => {
         orgData,
         pageLength,
         index,
+        searchIndex,
       });
     }
   });
