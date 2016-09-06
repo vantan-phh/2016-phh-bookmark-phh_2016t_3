@@ -7,7 +7,7 @@ router.get('/', (req, res) => {
   var userId = req.session.user_id;
   (() => {
     var promise = new Promise((resolve) => {
-      var query = 'SELECT `name`,`nick_name`,`image_path`,`introduction` FROM `users` WHERE `user_id` = ?';
+      var query = 'SELECT `name`, `nick_name`, `image_path`, `introduction` FROM `users` WHERE `user_id` = ?';
       connection.query(query, [userId]).then((result) => {
         var nickName = result[0][0].nick_name;
         var thumbnailPath = result[0][0].image_path;
@@ -55,11 +55,16 @@ router.get('/', (req, res) => {
     return promise;
   }).then((values) => {
     var promise = new Promise((resolve) => {
-      var selectOrgData = 'SELECT * FROM `organizations` WHERE `id` = ' + values.belongOrgIdsForQuery;
-      connection.query(selectOrgData).then((result) => {
-        values.orgData = result[0];
+      if(values.belongOrgIdsForQuery){
+        var selectOrgData = 'SELECT * FROM `organizations` WHERE `id` = ' + values.belongOrgIdsForQuery;
+        connection.query(selectOrgData).then((result) => {
+          values.orgData = result[0];
+          resolve(values);
+        });
+      }else{
+        values.orgData = [];
         resolve(values);
-      });
+      }
     });
     return promise;
   }).then((values) => {

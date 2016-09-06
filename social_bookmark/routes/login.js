@@ -42,7 +42,7 @@ router.post('/', (req, res) => {
       (() => {
         var promise = new Promise((resolve) => {
           connection.query('SELECT `user_id` FROM `users` WHERE `mail` = ?', [eMail]).then((result) => {
-            if(result.length === 1){
+            if(result[0].length === 1){
               var idFromMail = result[0][0].user_id;
               resolve(idFromMail);
             }else{

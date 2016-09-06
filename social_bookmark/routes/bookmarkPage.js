@@ -35,26 +35,26 @@ router.get('/', (req, res) => {
   }).then((value) => {
     var queryResult = value;
     var promise = new Promise((resolve) => {
-      var nickNames = [];
+      var userData = [];
       queryResult.forEach((currentValue, index, array) => {
-        var pullNickName = 'SELECT `nick_name` FROM `users` WHERE `user_id` = ?';
-        connection.query(pullNickName, [currentValue.user_id]).then((result) => {
+        var pullUserData = 'SELECT * FROM `users` WHERE `user_id` = ?';
+        connection.query(pullUserData, [currentValue.user_id]).then((result) => {
           if(index + 1 === array.length){
-            nickNames.push(result[0][0].nick_name);
+            userData.push(result[0][0]);
             var values = {
               queryResult,
-              nickNames,
+              userData,
             };
             resolve(values);
           }else{
-            nickNames.push(result[0][0].nick_name);
+            userData.push(result[0][0]);
           }
         });
       });
     });
     return promise;
   }).then((values) => {
-    var nickNames = values.nickNames;
+    var userData = values.userData;
     var queryResult = values.queryResult;
     var pullBookmark = 'SELECT * FROM `bookmarks` WHERE `bookmark_id` = ?';
     connection.query(pullBookmark, [bookmarkId]).then((result) => {
@@ -62,7 +62,7 @@ router.get('/', (req, res) => {
         comments : queryResult,
         bookmark : result[0],
         browsingUserId : userId,
-        commentNickName : nickNames,
+        commentUserData : userData,
       });
     });
   });

@@ -26,7 +26,7 @@
               <div id="comment">
                 <div id="commentList">
                   <img id="avatar" src="http://res.cloudinary.com/dy4f7hul5/image/upload/v1469676799/iucwtxf12o9ztvb3tm14.png" width="40px" height="40px">
-                  <div class="commentName"><%= commentNickName[i] %></div>
+                  <a class="commentName" name="<%= commentUserData[i].user_id %>"><%= commentUserData[i].nick_name %></a>
                   <div class="commentBody"><%= comments[i].body %></div>
                   <% if(browsingUserId === comments[i].user_id){ %>
                     <a value="削除" name="<%= comments[i].comment_id %>" class="delete">削除</a>
@@ -39,6 +39,9 @@
       <form action="/PHH_Bookmark/bookmarkPage/delete" method="post" name="deleteComment">
         <input type="hidden" name="result">
       </form>
+      <form name="toOtherProfile" action="/PHH_Bookmark/otherProfile" method="post">
+        <input type="hidden" name="result">
+      </form>
       </div>
     </main>
   </body>
@@ -47,6 +50,7 @@
   $(function(){
     var $deleteComment = $(".delete");
     var $button = $(".button");
+    var $commentName = $(".commentName");
     $button.click(function(){
       this.disabled = true;
       this.form.submit();
@@ -55,6 +59,10 @@
       document.deleteComment.result.value = this.name;
       document.deleteComment.submit();
     });
+    $commentName.click(function(){
+      document.toOtherProfile.result.value = this.name;
+      document.toOtherProfile.submit();
+    })
   });
   </script>
 </html>

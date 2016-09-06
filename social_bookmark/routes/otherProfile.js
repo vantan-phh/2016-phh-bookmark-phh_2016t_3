@@ -64,11 +64,16 @@ router.get('/', (req, res) => {
     return promise;
   }).then((values) => {
     var promise = new Promise((resolve) => {
-      var selectOrgData = 'SELECT * FROM `organizations` WHERE `id` = ' + values.belongOrgIdsForQuery;
-      connection.query(selectOrgData).then((result) => {
-        values.orgData = result[0];
+      if(values.belongOrgIdsForQuery){
+        var selectOrgData = 'SELECT * FROM `organizations` WHERE `id` = ' + values.belongOrgIdsForQuery;
+        connection.query(selectOrgData).then((result) => {
+          values.orgData = result[0];
+          resolve(values);
+        });
+      }else{
+        values.orgData = [];
         resolve(values);
-      });
+      }
     });
     return promise;
   }).then((values) => {

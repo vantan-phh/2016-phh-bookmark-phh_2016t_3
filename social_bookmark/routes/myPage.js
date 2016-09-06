@@ -1,3 +1,4 @@
+'use strict';
 var express = require('express');
 
 var router = express.Router();
@@ -34,29 +35,38 @@ router.get('/', (req, res) => {
   })().then((value) => {
     var selectedBelongOrgIds = value;
     var promise = new Promise((resolve) => {
-      var belongOrgIdsForQuery = '';
-      selectedBelongOrgIds.forEach((currentValue, _index, array) => {
-        if(_index + 1 === array.length){
-          belongOrgIdsForQuery += currentValue.org_id;
-          resolve(belongOrgIdsForQuery);
-        }else{
-          belongOrgIdsForQuery += currentValue.org_id + ' OR `id` = ';
-        }
-      });
+      if(selectedBelongOrgIds.length){
+        let belongOrgIdsForQuery = '';
+        selectedBelongOrgIds.forEach((currentValue, _index, array) => {
+          if(_index + 1 === array.length){
+            belongOrgIdsForQuery += currentValue.org_id;
+            resolve(belongOrgIdsForQuery);
+          }else{
+            belongOrgIdsForQuery += currentValue.org_id + ' OR `id` = ';
+          }
+        });
+      }else{
+        var belongOrgIdsForQuery = false;
+        resolve(belongOrgIdsForQuery);
+      }
     });
     return promise;
   }).then((value) => {
     var belongOrgIdsForQuery = value;
     var promise = new Promise((resolve) => {
-      var selectOrgData = 'SELECT * FROM `organizations` WHERE `id` = ' + belongOrgIdsForQuery;
-      connection.query(selectOrgData).then((result) => {
-        orgData = result[0];
-        resolve(orgData);
-      });
+      if(belongOrgIdsForQuery){
+        var selectOrgData = 'SELECT * FROM `organizations` WHERE `id` = ' + belongOrgIdsForQuery;
+        connection.query(selectOrgData).then((result) => {
+          orgData = result[0];
+          resolve();
+        });
+      }else{
+        orgData = {};
+        resolve();
+      }
     });
     return promise;
-  }).then((value) => {
-    orgData = value;
+  }).then(() => {
     var query = 'SELECT * FROM `bookmarks` WHERE `user_id` = ?';
     connection.query(query, [userId]).then((result) => {
       var n = 12;
@@ -71,11 +81,16 @@ router.get('/', (req, res) => {
 
 router.get('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) => {
   var pageLength = allBookmarkData.length;
+  var bookmarkData;
   index = parseInt(index, 10);
   searchIndex = parseInt(searchIndex, 10);
-  var bookmarkData = allBookmarkData[index - 1];
+  if(allBookmarkData.length){
+    bookmarkData = allBookmarkData[index - 1];
+  }else{
+    bookmarkData = [];
+  }
   if(searchIndex === 0){
-    if(pageLength >= index && index > 0){
+    if(pageLength <= index && index > 0){
       res.render('myPage.ejs', {
         bookmarkData,
         orgData,
@@ -84,7 +99,7 @@ router.get('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =>
         searchIndex,
       });
     }else{
-      res.redirect('/PHH_Bookmark/myPage/bookmarkList/1');
+      res.redirect('/PHH_Bookmark/myPage/bookmarkList/1/searchBookmarkList/0');
     }
   }else{
     var searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
@@ -230,12 +245,17 @@ router.post('/bookmarkList/:index/submitUrl', (req, res) => {
   var url = req.body.result;
   var checkUrl = /^(https?)(:\/\/[-_.!~*\'()a-zA-Z0-9;\/?:\@&=+\$,%#]+)$/;
   var pageLength = allBookmarkData.length;
+  var bookmarkData;
   index = parseInt(index, 10);
   searchIndex = 0;
-  var bookmarkData = allBookmarkData[index - 1];
+  if(allBookmarkData.length){
+    bookmarkData = allBookmarkData[index - 1];
+  }else{
+    bookmarkData = [];
+  }
   (() => {
     var promise = new Promise((resolve) => {
-      if(pageLength >= index && index > 0){
+      if(pageLength <= index && index > 0){
         resolve();
       }else{
         res.redirect('/PHH_Bookmark/myPage/bookmarkList/1');
@@ -302,7 +322,12 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
   var pageLength = allBookmarkData.length;
   index = parseInt(index, 10);
   searchIndex = parseInt(searchIndex, 10);
-  var bookmarkData = allBookmarkData[index - 1];
+  var bookmarkData;
+  if(allBookmarkData.length){
+    bookmarkData = allBookmarkData[index - 1];
+  }else{
+    bookmarkData = [];
+  }
   var checkInjection = /[%;+-]+/g;
   var checkSpace = /[\S]+/g;
   var splitKeyWord = /[\S]+/g;
@@ -591,7 +616,7 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
         var promise = new Promise((resolve) => {
           var keyWordsForQueryWithDescription = '%';
           keyWords.forEach((currentValue, _index, array) => {
-            if(index + 1 === array.length){
+            if(_index + 1 === array.length){
               keyWordsForQueryWithDescription += currentValue;
               resolve(keyWordsForQueryWithDescription);
             }else{

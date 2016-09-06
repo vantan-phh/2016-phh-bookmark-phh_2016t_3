@@ -290,7 +290,7 @@ router.post('/searchUser', (req, res) => {
         orgIntroduction = _values.orgIntroduction;
         orgThumbnail = _values.orgThumbnail;
         var excludeUsers = _values.excludeUsers;
-        var searchUser = 'SELECT * FROM `users` WHERE `name` NOT IN (?)';
+        var searchUser = 'SELECT `name`, `nick_name` FROM (SELECT * FROM `users` WHERE `name` NOT IN (?)) AS `a` WHERE `name` LIKE "%' + searchedUser + '%"';
         connection.query(searchUser, [excludeUsers]).then((result) => {
           if(result[0].length){
             res.render('membersManagement.ejs', {

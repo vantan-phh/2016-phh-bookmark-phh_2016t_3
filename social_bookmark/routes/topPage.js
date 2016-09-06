@@ -85,7 +85,7 @@ router.get('/', (req, res) => {
     return promise;
   }).then((values) => {
     var promise = new Promise((resolve) => {
-      if(values.orgIds){
+      if(values.orgIds.length){
         var orgIdsForQuery = '';
         values.orgIds.forEach((currentValue, index, array) => {
           if(index + 1 === array.length){
@@ -111,6 +111,7 @@ router.get('/', (req, res) => {
           resolve(values);
         });
       }else{
+        values.selectedBookmarkIds = [];
         resolve(values);
       }
     });
@@ -142,12 +143,17 @@ router.get('/', (req, res) => {
     return promise;
   }).then((values) => {
     var promise = new Promise((resolve) => {
-      values.orgIdsForQuery = values.orgIdsForQuery.replace(/`org_id`/g, '`id`');
-      var selectOrgDataForOrgBookmarks = 'SELECT * FROM `organizations` WHERE `id` = ' + values.orgIdsForQuery;
-      connection.query(selectOrgDataForOrgBookmarks).then((result) => {
-        values.selectedOrgDataForOrgBookmarks = result[0];
+      if(values.orgIdsForQuery){
+        values.orgIdsForQuery = values.orgIdsForQuery.replace(/`org_id`/g, '`id`');
+        var selectOrgDataForOrgBookmarks = 'SELECT * FROM `organizations` WHERE `id` = ' + values.orgIdsForQuery;
+        connection.query(selectOrgDataForOrgBookmarks).then((result) => {
+          values.selectedOrgDataForOrgBookmarks = result[0];
+          resolve(values);
+        });
+      }else{
+        values.selectedOrgDataForOrgBookmarks = [];
         resolve(values);
-      });
+      }
     });
     return promise;
   }).then((values) => {
@@ -171,6 +177,8 @@ router.get('/', (req, res) => {
             }
           });
         });
+      }else{
+        resolve(values);
       }
     });
     return promise;

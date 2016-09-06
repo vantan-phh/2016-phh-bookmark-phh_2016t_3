@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <title>My Page - PHHB</title>
-    <link rel="stylesheet" type="text/css" href="/css/myPage.css">
+    <!--link rel="stylesheet" type="text/css" href="/css/myPage.css"-->
   </head>
   <body>
     <% include layout %>
@@ -50,6 +50,8 @@
             <% var searchEndUrl = "/PHH_Bookmark/myPage/bookmarkList/" + index + "/searchBookmarkList/" + searchPageLength; %>
             <a href="<%= searchEndUrl %>">末尾へ</a>
           <% } %>
+        <% }else{ %>
+          <p>一致する項目が見つかりませんでした。</p>
         <% } %>
       <% } %>
       </div>
@@ -65,6 +67,9 @@
           <% } %>
           <% if(typeof urlNotice !== 'undefined'){ %>
             <p><%= urlNotice %></p>
+          <% } %>
+          <% if(typeof networkNotice !== 'undefined'){ %>
+            <p><%= networkNotice %></p>
           <% } %>
           <% if(typeof title !== 'undefined'){ %>
             <input type="text" placeholder="タイトル" name="title" value="<%= title %>">
@@ -92,24 +97,26 @@
           <% } %>
           <button type="submit" class="button">削除</button>
         </form>
-        <% if(index !== 1){ %>
-          <% var headUrl = "/PHH_Bookmark/myPage/bookmarkList/1/searchBookmarkList/" + searchIndex; %>
-          <a href="<%= headUrl %>">先頭へ</a>
-        <% } %>
-        <% if(index !== 1){ %>
-          <% var backIndex = index - 1; %>
-          <% var backUrl = "/PHH_Bookmark/myPage/bookmarkList/" + backIndex + "/searchBookmarkList/" + searchIndex; %>
-          <a href="<%= backUrl %>">前へ</a>
-        <% } %>
-        <p><%= index %>ページ / <%= pageLength %>ページ中</p>
-        <% if(index !== pageLength){ %>
-          <% var nextIndex = index + 1; %>
-          <% var nextUrl = "/PHH_Bookmark/myPage/bookmarkList/" + nextIndex + "/searchBookmarkList/" + searchIndex; %>
-          <a href="<%= nextUrl %>">次へ</a>
-        <% } %>
-        <% if(index !== pageLength){ %>
-          <% var endUrl = "/PHH_Bookmark/myPage/bookmarkList/" + pageLength + "/searchBookmarkList/" + searchIndex; %>
-          <a href="<%= endUrl %>">末尾へ</a>
+        <% if(bookmarkData.length > 0){ %>
+          <% if(index !== 1){ %>
+            <% var headUrl = "/PHH_Bookmark/myPage/bookmarkList/1/searchBookmarkList/" + searchIndex; %>
+            <a href="<%= headUrl %>">先頭へ</a>
+          <% } %>
+          <% if(index !== 1){ %>
+            <% var backIndex = index - 1; %>
+            <% var backUrl = "/PHH_Bookmark/myPage/bookmarkList/" + backIndex + "/searchBookmarkList/" + searchIndex; %>
+            <a href="<%= backUrl %>">前へ</a>
+          <% } %>
+          <p><%= index %>ページ / <%= pageLength %>ページ中</p>
+          <% if(index !== pageLength){ %>
+            <% var nextIndex = index + 1; %>
+            <% var nextUrl = "/PHH_Bookmark/myPage/bookmarkList/" + nextIndex + "/searchBookmarkList/" + searchIndex; %>
+            <a href="<%= nextUrl %>">次へ</a>
+          <% } %>
+          <% if(index !== pageLength){ %>
+            <% var endUrl = "/PHH_Bookmark/myPage/bookmarkList/" + pageLength + "/searchBookmarkList/" + searchIndex; %>
+            <a href="<%= endUrl %>">末尾へ</a>
+          <% } %>
         <% } %>
         <% if(typeof orgData !== 'undefined'){ %>
           <% for(var i = 0; i < orgData.length; i++){ %>

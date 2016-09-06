@@ -1,3 +1,4 @@
+'use strict';
 var express = require('express');
 
 var router = express.Router();
@@ -45,8 +46,12 @@ router.get('/', (req, res) => {
   (() => {
     var promise = new Promise((resolve) => {
       connection.query(checkMembership, [myId, orgId]).then((result) => {
-        isAdmin = result[0][0].is_admin === 1;
-        resolve();
+        if(result[0].length > 0){
+          isAdmin = result[0][0].is_admin === 1;
+          resolve();
+        }else{
+          res.redirect('/PHH_Bookmark/topPage');
+        }
       });
     });
     return promise;
@@ -91,6 +96,7 @@ router.get('/', (req, res) => {
           });
         });
       }else{
+        allBookmarkData = [[]];
         resolve();
       }
     });
@@ -110,10 +116,16 @@ router.get('/', (req, res) => {
 
 router.get('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) => {
   var pageLength = allBookmarkData.length;
+  var bookmarkData;
+  var addedUserNickNames;
   index = parseInt(index, 10);
   searchIndex = parseInt(searchIndex, 10);
-  var bookmarkData = allBookmarkData[index - 1];
-  var addedUserNickNames = slicedAddedUserNickNames[index - 1];
+  if(allBookmarkData[0].length === 0){
+    bookmarkData = [];
+  }else{
+    bookmarkData = allBookmarkData[index - 1];
+    addedUserNickNames = slicedAddedUserNickNames[index - 1];
+  }
   if(searchIndex === 0){
     if(pageLength >= index && index > 0){
       res.render('organizationPage.ejs', {
@@ -157,10 +169,16 @@ router.post('/bookmarkList/:index/submitUrl', (req, res) => {
   var url = req.body.result;
   var checkUrl = /^(https?)(:\/\/[-_.!~*\'()a-zA-Z0-9;\/?:\@&=+\$,%#]+)$/;
   var pageLength = allBookmarkData.length;
+  var bookmarkData;
+  var addedUserNickNames;
   index = parseInt(index, 10);
   searchIndex = 0;
-  var bookmarkData = allBookmarkData[index - 1];
-  var addedUserNickNames = slicedAddedUserNickNames[index - 1];
+  if(allBookmarkData[0].length === 0){
+    bookmarkData = [];
+  }else{
+    bookmarkData = allBookmarkData[index - 1];
+    addedUserNickNames = slicedAddedUserNickNames[index - 1];
+  }
   (() => {
     var promise = new Promise((resolve) => {
       if(pageLength >= index && index > 0){
@@ -232,9 +250,15 @@ router.post('/bookmarkList/:index', (req, res) => {
   var orgId = req.session.org_id;
   var userId = req.session.user_id;
   var pageLength = allBookmarkData.length;
+  var bookmarkData;
+  var addedUserNickNames;
   index = parseInt(index, 10);
-  var bookmarkData = allBookmarkData[index - 1];
-  var addedUserNickNames = slicedAddedUserNickNames[index - 1];
+  if(allBookmarkData[0].length === 0){
+    bookmarkData = [];
+  }else{
+    bookmarkData = allBookmarkData[index - 1];
+    addedUserNickNames = slicedAddedUserNickNames[index - 1];
+  }
   var checkUrl = /^(https?)(:\/\/[-_.!~*\'()a-zA-Z0-9;\/?:\@&=+\$,%#]+)$/;
   var checkInjection = /[%;+-]+/g;
   var checkSpace = /[\S]+/g;
@@ -422,10 +446,16 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
   var searchFromDescription = req.body.searchFromDescription;
   var searchFromTextsOnSites = req.body.searchFromTextsOnSites;
   var pageLength = allBookmarkData.length;
+  var bookmarkData;
+  var addedUserNickNames;
   index = parseInt(index, 10);
   searchIndex = parseInt(searchIndex, 10);
-  var bookmarkData = allBookmarkData[index - 1];
-  var addedUserNickNames = slicedAddedUserNickNames[index - 1];
+  if(allBookmarkData[0].length === 0){
+    bookmarkData = [];
+  }else{
+    bookmarkData = allBookmarkData[index - 1];
+    addedUserNickNames = slicedAddedUserNickNames[index - 1];
+  }
   var checkInjection = /[%;+-]+/g;
   var splitKeyWord = /[\S]+/g;
   var checkSpace = /[\S]+/g;
@@ -495,12 +525,8 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
                 if(searchedBookmarkData.length === addedUserNickNamesForSearched.length){
                   var n = 12;
                   allSearchedBookmarkData = [];
-                  if(searchedBookmarkData.length === 0){
-                    allSearchedBookmarkData.push([]);
-                  }else{
-                    for (let i = 0; i < searchedBookmarkData.length; i += n) {
-                      allSearchedBookmarkData.push(searchedBookmarkData.slice(i, i + n));
-                    }
+                  for (let i = 0; i < searchedBookmarkData.length; i += n) {
+                    allSearchedBookmarkData.push(searchedBookmarkData.slice(i, i + n));
                   }
                   slicedAddedUserNickNamesForSearched = [];
                   for (let i = 0; i < addedUserNickNamesForSearched.length; i += n) {
@@ -511,6 +537,8 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
               });
             });
           }else{
+            allSearchedBookmarkData = [[]];
+            slicedAddedUserNickNamesForSearched = [[]];
             resolve();
           }
         });
@@ -551,7 +579,7 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
       })().then((value) => {
         keyWordsForQuery = value;
         var promise = new Promise((resolve) => {
-          var selectSearchedBookmarks = 'SELECT * FROM `bookamrks` WHERE `org_id` = ? AND ( `description` LIKE "' + keyWordsForQuery + '%" )';
+          var selectSearchedBookmarks = 'SELECT * FROM `bookmarks` WHERE `org_id` = ? AND ( `description` LIKE "' + keyWordsForQuery + '%" )';
           connection.query(selectSearchedBookmarks, [orgId]).then((result) => {
             var searchedBookmarkData = result[0];
             resolve(searchedBookmarkData);
@@ -568,12 +596,8 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
                 if(searchedBookmarkData.length === addedUserNickNamesForSearched.length){
                   var n = 12;
                   allSearchedBookmarkData = [];
-                  if(searchedBookmarkData.length === 0){
-                    allSearchedBookmarkData.push([]);
-                  }else{
-                    for (let i = 0; i < searchedBookmarkData.length; i += n) {
-                      allSearchedBookmarkData.push(searchedBookmarkData.slice(i, i + n));
-                    }
+                  for (let i = 0; i < searchedBookmarkData.length; i += n) {
+                    allSearchedBookmarkData.push(searchedBookmarkData.slice(i, i + n));
                   }
                   slicedAddedUserNickNamesForSearched = [];
                   for (let i = 0; i < addedUserNickNamesForSearched.length; i += n) {
@@ -584,6 +608,8 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
               });
             });
           }else{
+            allSearchedBookmarkData = [[]];
+            slicedAddedUserNickNamesForSearched = [[]];
             resolve();
           }
         });
@@ -641,12 +667,8 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
                 if(searchedBookmarkData.length === addedUserNickNamesForSearched.length){
                   var n = 12;
                   allSearchedBookmarkData = [];
-                  if(searchedBookmarkData.length === 0){
-                    allSearchedBookmarkData.push([]);
-                  }else{
-                    for (let i = 0; i < searchedBookmarkData.length; i += n) {
-                      allSearchedBookmarkData.push(searchedBookmarkData.slice(i, i + n));
-                    }
+                  for (let i = 0; i < searchedBookmarkData.length; i += n) {
+                    allSearchedBookmarkData.push(searchedBookmarkData.slice(i, i + n));
                   }
                   slicedAddedUserNickNamesForSearched = [];
                   for (let i = 0; i < addedUserNickNamesForSearched.length; i += n) {
@@ -657,6 +679,8 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
               });
             });
           }else{
+            allSearchedBookmarkData = [[]];
+            slicedAddedUserNickNamesForSearched = [[]];
             resolve();
           }
         });
@@ -733,12 +757,8 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
                 if(searchedBookmarkData.length === addedUserNickNamesForSearched.length){
                   var n = 12;
                   allSearchedBookmarkData = [];
-                  if(searchedBookmarkData.length === 0){
-                    allSearchedBookmarkData.push([]);
-                  }else{
-                    for (let i = 0; i < searchedBookmarkData.length; i += n) {
-                      allSearchedBookmarkData.push(searchedBookmarkData.slice(i, i + n));
-                    }
+                  for (let i = 0; i < searchedBookmarkData.length; i += n) {
+                    allSearchedBookmarkData.push(searchedBookmarkData.slice(i, i + n));
                   }
                   slicedAddedUserNickNamesForSearched = [];
                   for (let i = 0; i < addedUserNickNamesForSearched.length; i += n) {
@@ -749,6 +769,8 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
               });
             });
           }else{
+            allSearchedBookmarkData = [[]];
+            slicedAddedUserNickNamesForSearched = [[]];
             resolve();
           }
         });
@@ -825,12 +847,8 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
                 if(searchedBookmarkData.length === addedUserNickNamesForSearched.length){
                   var n = 12;
                   allSearchedBookmarkData = [];
-                  if(searchedBookmarkData.length === 0){
-                    allSearchedBookmarkData.push([]);
-                  }else{
-                    for (let i = 0; i < searchedBookmarkData.length; i += n) {
-                      allSearchedBookmarkData.push(searchedBookmarkData.slice(i, i + n));
-                    }
+                  for (let i = 0; i < searchedBookmarkData.length; i += n) {
+                    allSearchedBookmarkData.push(searchedBookmarkData.slice(i, i + n));
                   }
                   slicedAddedUserNickNamesForSearched = [];
                   for (let i = 0; i < addedUserNickNamesForSearched.length; i += n) {
@@ -841,6 +859,8 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
               });
             });
           }else{
+            allSearchedBookmarkData = [[]];
+            slicedAddedUserNickNamesForSearched = [[]];
             resolve();
           }
         });
@@ -917,12 +937,8 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
                 if(searchedBookmarkData.length === addedUserNickNamesForSearched.length){
                   var n = 12;
                   allSearchedBookmarkData = [];
-                  if(searchedBookmarkData.length === 0){
-                    allSearchedBookmarkData.push([]);
-                  }else{
-                    for (let i = 0; i < searchedBookmarkData.length; i += n) {
-                      allSearchedBookmarkData.push(searchedBookmarkData.slice(i, i + n));
-                    }
+                  for (let i = 0; i < searchedBookmarkData.length; i += n) {
+                    allSearchedBookmarkData.push(searchedBookmarkData.slice(i, i + n));
                   }
                   slicedAddedUserNickNamesForSearched = [];
                   for (let i = 0; i < addedUserNickNamesForSearched.length; i += n) {
@@ -933,6 +949,8 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
               });
             });
           }else{
+            allSearchedBookmarkData = [[]];
+            slicedAddedUserNickNamesForSearched = [[]];
             resolve();
           }
         });
@@ -1030,12 +1048,8 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
                 if(searchedBookmarkData.length === addedUserNickNamesForSearched.length){
                   var n = 12;
                   allSearchedBookmarkData = [];
-                  if(searchedBookmarkData.length === 0){
-                    allSearchedBookmarkData.push([]);
-                  }else{
-                    for (let i = 0; i < searchedBookmarkData.length; i += n) {
-                      allSearchedBookmarkData.push(searchedBookmarkData.slice(i, i + n));
-                    }
+                  for (let i = 0; i < searchedBookmarkData.length; i += n) {
+                    allSearchedBookmarkData.push(searchedBookmarkData.slice(i, i + n));
                   }
                   slicedAddedUserNickNamesForSearched = [];
                   for (let i = 0; i < addedUserNickNamesForSearched.length; i += n) {
@@ -1046,6 +1060,8 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
               });
             });
           }else{
+            allSearchedBookmarkData = [[]];
+            slicedAddedUserNickNamesForSearched = [[]];
             resolve();
           }
         });
