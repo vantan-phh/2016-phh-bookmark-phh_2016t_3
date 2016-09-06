@@ -35,8 +35,8 @@ router.get('/', (req, res) => {
     var selectedBelongOrgIds = value;
     var promise = new Promise((resolve) => {
       var belongOrgIdsForQuery = '';
-      selectedBelongOrgIds.forEach((currentValue, index, array) => {
-        if(index + 1 === array.length){
+      selectedBelongOrgIds.forEach((currentValue, _index, array) => {
+        if(_index + 1 === array.length){
           belongOrgIdsForQuery += currentValue.org_id;
           resolve(belongOrgIdsForQuery);
         }else{
@@ -61,7 +61,7 @@ router.get('/', (req, res) => {
     connection.query(query, [userId]).then((result) => {
       var n = 12;
       allBookmarkData = [];
-      for (var i = 0; i < result[0].length; i+=n) {
+      for (var i = 0; i < result[0].length; i += n) {
         allBookmarkData.push(result[0].slice(i, i + n));
       }
       res.redirect('/PHH_Bookmark/myPage/bookmarkList/1/searchBookmarkList/0');
@@ -73,9 +73,9 @@ router.get('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =>
   var pageLength = allBookmarkData.length;
   index = parseInt(index, 10);
   searchIndex = parseInt(searchIndex, 10);
+  var bookmarkData = allBookmarkData[index - 1];
   if(searchIndex === 0){
     if(pageLength >= index && index > 0){
-      var bookmarkData = allBookmarkData[index - 1];
       res.render('myPage.ejs', {
         bookmarkData,
         orgData,
@@ -87,7 +87,6 @@ router.get('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =>
       res.redirect('/PHH_Bookmark/myPage/bookmarkList/1');
     }
   }else{
-    var bookmarkData = allBookmarkData[index - 1];
     var searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
     var searchPageLength = allSearchedBookmarkData.length;
     res.render('myPage.ejs', {
@@ -112,7 +111,6 @@ router.post('/bookmarkList/:index', (req, res) => {
   var bookmarkData = allBookmarkData[index - 1];
   var checkUrl = /^(https?)(:\/\/[-_.!~*\'()a-zA-Z0-9;\/?:\@&=+\$,%#]+)$/;
   var checkInjection = /[%;+-]+/g;
-  var query = 'SELECT * FROM `bookmarks` WHERE `user_id` = ?';
   (() => {
     var promise = new Promise((resolve) => {
       if(checkUrl.test(url)){
@@ -230,7 +228,6 @@ router.post('/bookmarkList/:index', (req, res) => {
 
 router.post('/bookmarkList/:index/submitUrl', (req, res) => {
   var url = req.body.result;
-  var userId = req.session.user_id;
   var checkUrl = /^(https?)(:\/\/[-_.!~*\'()a-zA-Z0-9;\/?:\@&=+\$,%#]+)$/;
   var pageLength = allBookmarkData.length;
   index = parseInt(index, 10);
@@ -268,7 +265,6 @@ router.post('/bookmarkList/:index/submitUrl', (req, res) => {
         });
       });
     }else{
-      var query = 'SELECT * FROM `bookmarks` WHERE `user_id` = ?';
       res.render('myPage.ejs', {
         bookmarkData,
         urlNotice : 'http://もしくはhttp://から始まる正しいURLを入力してください',
@@ -341,8 +337,8 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
       (() => {
         var promise = new Promise((resolve) => {
           keyWordsForQuery = '%';
-          keyWords.forEach((currentValue, index, array) => {
-            if(index + 1 === array.length){
+          keyWords.forEach((currentValue, _index, array) => {
+            if(_index + 1 === array.length){
               keyWordsForQuery += currentValue;
               resolve(keyWordsForQuery);
             }else{
@@ -361,7 +357,7 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
             if(result[0].length === 0){
               allSearchedBookmarkData.push([]);
             }else{
-              for (var i = 0; i < result[0].length; i+=n) {
+              for (var i = 0; i < result[0].length; i += n) {
                 allSearchedBookmarkData.push(result[0].slice(i, i + n));
               }
             }
@@ -386,8 +382,8 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
       (() => {
         var promise = new Promise((resolve) => {
           keyWordsForQuery = '%';
-          keyWords.forEach((currentValue, index, array) => {
-            if(index + 1 === array.length){
+          keyWords.forEach((currentValue, _index, array) => {
+            if(_index + 1 === array.length){
               keyWordsForQuery += currentValue;
               resolve(keyWordsForQuery);
             }else{
@@ -406,7 +402,7 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
             if(result[0].length === 0){
               allSearchedBookmarkData.push([]);
             }else{
-              for (var i = 0; i < result[0].length; i+=n) {
+              for (var i = 0; i < result[0].length; i += n) {
                 allSearchedBookmarkData.push(result[0].slice(i, i + n));
               }
             }
@@ -431,8 +427,8 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
       keyWordsForQuery = '%';
       (() => { // create table for inserting text of the site and select searchedBookmarks.
         var promise = new Promise((resolve) => {
-          keyWords.forEach((currentValue, index, array) => {
-            if(index + 1 === array.length){
+          keyWords.forEach((currentValue, _index, array) => {
+            if(_index + 1 === array.length){
               keyWordsForQuery += currentValue;
               resolve(keyWordsForQuery);
             }else{
@@ -450,7 +446,7 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
           if(result[0].length === 0){
             allSearchedBookmarkData.push([]);
           }else{
-            for (var i = 0; i < result[0].length; i+=n) {
+            for (var i = 0; i < result[0].length; i += n) {
               allSearchedBookmarkData.push(result[0].slice(i, i + n));
             }
           }
@@ -471,8 +467,8 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
       (() => {
         var promise = new Promise((resolve) => {
           var keyWordsForQueryByTitle = '%';
-          keyWords.forEach((currentValue, index, array) => {
-            if(index + 1 === array.length){
+          keyWords.forEach((currentValue, _index, array) => {
+            if(_index + 1 === array.length){
               keyWordsForQueryByTitle += currentValue;
               resolve(keyWordsForQueryByTitle);
             }else{
@@ -485,8 +481,8 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
         var keyWordsForQueryByTitle = value;
         var promise = new Promise((resolve) => {
           var keyWordsForQueryByDescription = '%';
-          keyWords.forEach((currentValue, index, array) => {
-            if(index + 1 === array.length){
+          keyWords.forEach((currentValue, _index, array) => {
+            if(_index + 1 === array.length){
               keyWordsForQueryByDescription += currentValue;
               var values = {
                 keyWordsForQueryByDescription,
@@ -510,7 +506,7 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
             if(result[0].length === 0){
               allSearchedBookmarkData.push([]);
             }else{
-              for (var i = 0; i < result[0].length; i+=n) {
+              for (var i = 0; i < result[0].length; i += n) {
                 allSearchedBookmarkData.push(result[0].slice(i, i + n));
               }
             }
@@ -535,8 +531,8 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
       (() => {
         var promise = new Promise((resolve) => {
           var keyWordsForQueryWithTitle = '%';
-          keyWords.forEach((currentValue, index, array) => {
-            if(index + 1 === array.length){
+          keyWords.forEach((currentValue, _index, array) => {
+            if(_index + 1 === array.length){
               keyWordsForQueryWithTitle += currentValue;
               resolve(keyWordsForQueryWithTitle);
             }else{
@@ -549,8 +545,8 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
         var keyWordsForQueryWithTitle = value;
         var promise = new Promise((resolve) => {
           var keyWordsForQueryWithText = '%';
-          keyWords.forEach((currentValue, index, array) => {
-            if(index + 1 === array.length){
+          keyWords.forEach((currentValue, _index, array) => {
+            if(_index + 1 === array.length){
               keyWordsForQueryWithText += currentValue;
               var values = {
                 keyWordsForQueryWithText,
@@ -573,7 +569,7 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
           if(result[0].length === 0){
             allSearchedBookmarkData.push([]);
           }else{
-            for (var i = 0; i < result[0].length; i+=n) {
+            for (var i = 0; i < result[0].length; i += n) {
               allSearchedBookmarkData.push(result[0].slice(i, i + n));
             }
           }
@@ -594,7 +590,7 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
       (() => {
         var promise = new Promise((resolve) => {
           var keyWordsForQueryWithDescription = '%';
-          keyWords.forEach((currentValue, index, array) => {
+          keyWords.forEach((currentValue, _index, array) => {
             if(index + 1 === array.length){
               keyWordsForQueryWithDescription += currentValue;
               resolve(keyWordsForQueryWithDescription);
@@ -608,8 +604,8 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
         var keyWordsForQueryWithDescription = value;
         var promise = new Promise((resolve) => {
           var keyWordsForQueryWithText = '%';
-          keyWords.forEach((currentValue, index, array) => {
-            if(index + 1 === array.length){
+          keyWords.forEach((currentValue, _index, array) => {
+            if(_index + 1 === array.length){
               keyWordsForQueryWithText += currentValue;
               var values = {
                 keyWordsForQueryWithText,
@@ -633,7 +629,7 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
             if(result[0].length === 0){
               allSearchedBookmarkData.push([]);
             }else{
-              for (var i = 0; i < result[0].length; i+=n) {
+              for (var i = 0; i < result[0].length; i += n) {
                 allSearchedBookmarkData.push(result[0].slice(i, i + n));
               }
             }
@@ -658,8 +654,8 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
       (() => {
         var promise = new Promise((resolve) => {
           var keyWordsForQueryWithTitle = '%';
-          keyWords.forEach((currentValue, index, array) => {
-            if(index + 1 === array.length){
+          keyWords.forEach((currentValue, _index, array) => {
+            if(_index + 1 === array.length){
               keyWordsForQueryWithTitle += currentValue;
               resolve(keyWordsForQueryWithTitle);
             }else{
@@ -672,8 +668,8 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
         var keyWordsForQueryWithTitle = value;
         var promise = new Promise((resolve) => {
           var keyWordsForQueryWithDescription = '%';
-          keyWords.forEach((currentValue, index, array) => {
-            if(index + 1 === array.length){
+          keyWords.forEach((currentValue, _index, array) => {
+            if(_index + 1 === array.length){
               keyWordsForQueryWithDescription += currentValue;
               var values = {
                 keyWordsForQueryWithTitle,
@@ -691,8 +687,8 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
         var keyWordsForQueryWithTitle = values.keyWordsForQueryWithTitle;
         var promise = new Promise((resolve) => {
           var keyWordsForQueryWithText = '%';
-          keyWords.forEach((currentValue, index, array) => {
-            if(index + 1 === array.length){
+          keyWords.forEach((currentValue, _index, array) => {
+            if(_index + 1 === array.length){
               keyWordsForQueryWithText += currentValue;
               values = {
                 keyWordsForQueryWithText,
@@ -718,7 +714,7 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
             if(result[0].length === 0){
               allSearchedBookmarkData.push([]);
             }else{
-              for (var i = 0; i < result[0].length; i+=n) {
+              for (var i = 0; i < result[0].length; i += n) {
                 allSearchedBookmarkData.push(result[0].slice(i, i + n));
               }
             }

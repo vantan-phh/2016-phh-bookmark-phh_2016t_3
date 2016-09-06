@@ -73,18 +73,17 @@ router.get('/', (req, res) => {
       var selectNickName = 'SELECT `nick_name` FROM `users` WHERE `user_id` = ?';
       if(bookmarkData.length > 0){
         var addedUserNickNames = [];
-        bookmarkData.forEach((currentValue, index, array) => {
+        bookmarkData.forEach((currentValue, _index, array) => {
           connection.query(selectNickName, [currentValue.user_id]).then((result) => {
             addedUserNickNames.push(result[0][0].nick_name);
             if(array.length === addedUserNickNames.length){
               var n = 12;
               allBookmarkData = [];
-              for (var i = 0; i < bookmarkData.length; i+=n) {
+              for (let i = 0; i < bookmarkData.length; i += n) {
                 allBookmarkData.push(bookmarkData.slice(i, i + n));
               }
-              var n = 12;
               slicedAddedUserNickNames = [];
-              for (var i = 0; i < addedUserNickNames.length; i+=n) {
+              for (var i = 0; i < addedUserNickNames.length; i += n) {
                 slicedAddedUserNickNames.push(addedUserNickNames.slice(i, i + n));
               }
               resolve();
@@ -113,10 +112,10 @@ router.get('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =>
   var pageLength = allBookmarkData.length;
   index = parseInt(index, 10);
   searchIndex = parseInt(searchIndex, 10);
+  var bookmarkData = allBookmarkData[index - 1];
+  var addedUserNickNames = slicedAddedUserNickNames[index - 1];
   if(searchIndex === 0){
     if(pageLength >= index && index > 0){
-      var bookmarkData = allBookmarkData[index - 1];
-      var addedUserNickNames = slicedAddedUserNickNames[index - 1];
       res.render('organizationPage.ejs', {
         bookmarkData,
         orgName,
@@ -133,8 +132,6 @@ router.get('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =>
       res.redirect('/PHH_Bookmark/myPage/bookmarkList/1/searchBookmarkList/0');
     }
   }else{
-    var bookmarkData = allBookmarkData[index - 1];
-    var addedUserNickNames = slicedAddedUserNickNames[index - 1];
     var addedUserNickNamesForSearched = slicedAddedUserNickNamesForSearched[searchIndex - 1];
     var searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
     var searchPageLength = allSearchedBookmarkData.length;
@@ -468,8 +465,8 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
       (() => {
         var promise = new Promise((resolve) => {
           keyWordsForQuery = '%';
-          keyWords.forEach((currentValue, index, array) => {
-            if(index + 1 === array.length){
+          keyWords.forEach((currentValue, _index, array) => {
+            if(_index + 1 === array.length){
               keyWordsForQuery += currentValue;
               resolve(keyWordsForQuery);
             }else{
@@ -501,13 +498,12 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
                   if(searchedBookmarkData.length === 0){
                     allSearchedBookmarkData.push([]);
                   }else{
-                    for (var i = 0; i < searchedBookmarkData.length; i+=n) {
+                    for (let i = 0; i < searchedBookmarkData.length; i += n) {
                       allSearchedBookmarkData.push(searchedBookmarkData.slice(i, i + n));
                     }
                   }
-                  var n = 12;
                   slicedAddedUserNickNamesForSearched = [];
-                  for (var i = 0; i < addedUserNickNamesForSearched.length; i+=n) {
+                  for (let i = 0; i < addedUserNickNamesForSearched.length; i += n) {
                     slicedAddedUserNickNamesForSearched.push(addedUserNickNamesForSearched.slice(i, i + n));
                   }
                   resolve();
@@ -522,7 +518,7 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
       }).then(() => {
         var searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
         var searchPageLength = allSearchedBookmarkData.length;
-        var addedUserNickNamesForSearched = slicedAddedUserNickNamesForSearched[searchIndex - 1];
+        addedUserNickNamesForSearched = slicedAddedUserNickNamesForSearched[searchIndex - 1];
         res.render('organizationPage.ejs', {
           bookmarkData,
           orgName,
@@ -542,8 +538,8 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
       (() => {
         var promise = new Promise((resolve) => {
           keyWordsForQuery = '%';
-          keyWords.forEach((currentValue, index, array) => {
-            if(index + 1 === array.length){
+          keyWords.forEach((currentValue, _index, array) => {
+            if(_index + 1 === array.length){
               keyWordsForQuery += currentValue;
               resolve(keyWordsForQuery);
             }else{
@@ -575,13 +571,12 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
                   if(searchedBookmarkData.length === 0){
                     allSearchedBookmarkData.push([]);
                   }else{
-                    for (var i = 0; i < searchedBookmarkData.length; i+=n) {
+                    for (let i = 0; i < searchedBookmarkData.length; i += n) {
                       allSearchedBookmarkData.push(searchedBookmarkData.slice(i, i + n));
                     }
                   }
-                  var n = 12;
                   slicedAddedUserNickNamesForSearched = [];
-                  for (var i = 0; i < addedUserNickNamesForSearched.length; i+=n) {
+                  for (let i = 0; i < addedUserNickNamesForSearched.length; i += n) {
                     slicedAddedUserNickNamesForSearched.push(addedUserNickNamesForSearched.slice(i, i + n));
                   }
                   resolve();
@@ -596,7 +591,7 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
       }).then(() => {
         var searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
         var searchPageLength = allSearchedBookmarkData.length;
-        var addedUserNickNamesForSearched = slicedAddedUserNickNamesForSearched[searchIndex - 1];
+        addedUserNickNamesForSearched = slicedAddedUserNickNamesForSearched[searchIndex - 1];
         res.render('organizationPage.ejs', {
           bookmarkData,
           orgName,
@@ -616,8 +611,8 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
       keyWordsForQuery = '%';
       (() => { // create table for inserting text of the site and select searchedBookmarkData.
         var promise = new Promise((resolve) => {
-          keyWords.forEach((currentValue, index, array) => {
-            if(index + 1 === array.length){
+          keyWords.forEach((currentValue, _index, array) => {
+            if(_index + 1 === array.length){
               keyWordsForQuery += currentValue;
               resolve(keyWordsForQuery);
             }else{
@@ -649,13 +644,12 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
                   if(searchedBookmarkData.length === 0){
                     allSearchedBookmarkData.push([]);
                   }else{
-                    for (var i = 0; i < searchedBookmarkData.length; i+=n) {
+                    for (let i = 0; i < searchedBookmarkData.length; i += n) {
                       allSearchedBookmarkData.push(searchedBookmarkData.slice(i, i + n));
                     }
                   }
-                  var n = 12;
                   slicedAddedUserNickNamesForSearched = [];
-                  for (var i = 0; i < addedUserNickNamesForSearched.length; i+=n) {
+                  for (let i = 0; i < addedUserNickNamesForSearched.length; i += n) {
                     slicedAddedUserNickNamesForSearched.push(addedUserNickNamesForSearched.slice(i, i + n));
                   }
                   resolve();
@@ -670,7 +664,7 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
       }).then(() => {
         var searchPageLength = allSearchedBookmarkData.length;
         var searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
-        var addedUserNickNamesForSearched = slicedAddedUserNickNamesForSearched[searchIndex - 1];
+        addedUserNickNamesForSearched = slicedAddedUserNickNamesForSearched[searchIndex - 1];
         res.render('organizationPage.ejs', {
           bookmarkData,
           orgName,
@@ -690,8 +684,8 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
       (() => {
         var promise = new Promise((resolve) => {
           var keyWordsForQueryByTitle = '%';
-          keyWords.forEach((currentValue, index, array) => {
-            if(index + 1 === array.length){
+          keyWords.forEach((currentValue, _index, array) => {
+            if(_index + 1 === array.length){
               keyWordsForQueryByTitle += currentValue;
               resolve(keyWordsForQueryByTitle);
             }else{
@@ -704,8 +698,8 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
         var keyWordsForQueryByTitle = value;
         var promise = new Promise((resolve) => {
           var keyWordsForQueryByDescription = '%';
-          keyWords.forEach((currentValue, index, array) => {
-            if(index + 1 === array.length){
+          keyWords.forEach((currentValue, _index, array) => {
+            if(_index + 1 === array.length){
               keyWordsForQueryByDescription += currentValue;
               var values = {
                 keyWordsForQueryByDescription,
@@ -742,13 +736,12 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
                   if(searchedBookmarkData.length === 0){
                     allSearchedBookmarkData.push([]);
                   }else{
-                    for (var i = 0; i < searchedBookmarkData.length; i+=n) {
+                    for (let i = 0; i < searchedBookmarkData.length; i += n) {
                       allSearchedBookmarkData.push(searchedBookmarkData.slice(i, i + n));
                     }
                   }
-                  var n = 12;
                   slicedAddedUserNickNamesForSearched = [];
-                  for (var i = 0; i < addedUserNickNamesForSearched.length; i+=n) {
+                  for (let i = 0; i < addedUserNickNamesForSearched.length; i += n) {
                     slicedAddedUserNickNamesForSearched.push(addedUserNickNamesForSearched.slice(i, i + n));
                   }
                   resolve();
@@ -763,7 +756,7 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
       }).then(() => {
         var searchPageLength = allSearchedBookmarkData.length;
         var searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
-        var addedUserNickNamesForSearched = slicedAddedUserNickNamesForSearched[searchIndex - 1];
+        addedUserNickNamesForSearched = slicedAddedUserNickNamesForSearched[searchIndex - 1];
         res.render('organizationPage.ejs', {
           bookmarkData,
           orgName,
@@ -783,8 +776,8 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
       (() => {
         var promise = new Promise((resolve) => {
           var keyWordsForQueryWithTitle = '%';
-          keyWords.forEach((currentValue, index, array) => {
-            if(index + 1 === array.length){
+          keyWords.forEach((currentValue, _index, array) => {
+            if(_index + 1 === array.length){
               keyWordsForQueryWithTitle += currentValue;
               resolve(keyWordsForQueryWithTitle);
             }else{
@@ -797,8 +790,8 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
         var keyWordsForQueryWithTitle = value;
         var promise = new Promise((resolve) => {
           var keyWordsForQueryWithText = '%';
-          keyWords.forEach((currentValue, index, array) => {
-            if(index + 1 === array.length){
+          keyWords.forEach((currentValue, _index, array) => {
+            if(_index + 1 === array.length){
               keyWordsForQueryWithText += currentValue;
               var values = {
                 keyWordsForQueryWithText,
@@ -835,13 +828,12 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
                   if(searchedBookmarkData.length === 0){
                     allSearchedBookmarkData.push([]);
                   }else{
-                    for (var i = 0; i < searchedBookmarkData.length; i+=n) {
+                    for (let i = 0; i < searchedBookmarkData.length; i += n) {
                       allSearchedBookmarkData.push(searchedBookmarkData.slice(i, i + n));
                     }
                   }
-                  var n = 12;
                   slicedAddedUserNickNamesForSearched = [];
-                  for (var i = 0; i < addedUserNickNamesForSearched.length; i+=n) {
+                  for (let i = 0; i < addedUserNickNamesForSearched.length; i += n) {
                     slicedAddedUserNickNamesForSearched.push(addedUserNickNamesForSearched.slice(i, i + n));
                   }
                   resolve();
@@ -856,7 +848,7 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
       }).then(() => {
         var searchPageLength = allSearchedBookmarkData.length;
         var searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
-        var addedUserNickNamesForSearched = slicedAddedUserNickNamesForSearched[searchIndex - 1];
+        addedUserNickNamesForSearched = slicedAddedUserNickNamesForSearched[searchIndex - 1];
         res.render('organizationPage.ejs', {
           bookmarkData,
           orgName,
@@ -876,8 +868,8 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
       (() => {
         var promise = new Promise((resolve) => {
           var keyWordsForQueryWithDescription = '%';
-          keyWords.forEach((currentValue, index, array) => {
-            if(index + 1 === array.length){
+          keyWords.forEach((currentValue, _index, array) => {
+            if(_index + 1 === array.length){
               keyWordsForQueryWithDescription += currentValue;
               resolve(keyWordsForQueryWithDescription);
             }else{
@@ -890,8 +882,8 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
         var keyWordsForQueryWithDescription = value;
         var promise = new Promise((resolve) => {
           var keyWordsForQueryWithText = '%';
-          keyWords.forEach((currentValue, index, array) => {
-            if(index + 1 === array.length){
+          keyWords.forEach((currentValue, _index, array) => {
+            if(_index + 1 === array.length){
               keyWordsForQueryWithText += currentValue;
               var values = {
                 keyWordsForQueryWithText,
@@ -911,11 +903,11 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
           var selectSearchedBookmarks = 'SELECT * FROM `bookmarks` WHERE `org_id` = ? AND (( `description` LIKE "' + keyWordsForQueryWithDescription + '%" ) OR ( "' + keyWordsForQueryWithText + '%" ))';
           connection.query(selectSearchedBookmarks, [orgId]).then((result) => {
             var searchedBookmarkData = result[0];
-            resolve();
+            resolve(searchedBookmarkData);
           });
         });
         return promise;
-      }).then(() => {
+      }).then((searchedBookmarkData) => {
         var promise = new Promise((resolve) => {
           var selectNickName = 'SELECT `nick_name` FROM `users` WHERE `user_id` = ?';
           if(searchedBookmarkData.length > 0){
@@ -928,13 +920,12 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
                   if(searchedBookmarkData.length === 0){
                     allSearchedBookmarkData.push([]);
                   }else{
-                    for (var i = 0; i < searchedBookmarkData.length; i+=n) {
+                    for (let i = 0; i < searchedBookmarkData.length; i += n) {
                       allSearchedBookmarkData.push(searchedBookmarkData.slice(i, i + n));
                     }
                   }
-                  var n = 12;
                   slicedAddedUserNickNamesForSearched = [];
-                  for (var i = 0; i < addedUserNickNamesForSearched.length; i+=n) {
+                  for (let i = 0; i < addedUserNickNamesForSearched.length; i += n) {
                     slicedAddedUserNickNamesForSearched.push(addedUserNickNamesForSearched.slice(i, i + n));
                   }
                   resolve();
@@ -949,7 +940,7 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
       }).then(() => {
         var searchPageLength = allSearchedBookmarkData.length;
         var searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
-        var addedUserNickNamesForSearched = slicedAddedUserNickNamesForSearched[searchIndex - 1];
+        addedUserNickNamesForSearched = slicedAddedUserNickNamesForSearched[searchIndex - 1];
         res.render('organizationPage.ejs', {
           bookmarkData,
           orgName,
@@ -969,8 +960,8 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
       (() => {
         var promise = new Promise((resolve) => {
           var keyWordsForQueryWithTitle = '%';
-          keyWords.forEach((currentValue, index, array) => {
-            if(index + 1 === array.length){
+          keyWords.forEach((currentValue, _index, array) => {
+            if(_index + 1 === array.length){
               keyWordsForQueryWithTitle += currentValue;
               resolve(keyWordsForQueryWithTitle);
             }else{
@@ -983,8 +974,8 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
         var keyWordsForQueryWithTitle = value;
         var promise = new Promise((resolve) => {
           var keyWordsForQueryWithDescription = '%';
-          keyWords.forEach((currentValue, index, array) => {
-            if(index + 1 === array.length){
+          keyWords.forEach((currentValue, _index, array) => {
+            if(_index + 1 === array.length){
               keyWordsForQueryWithDescription += currentValue;
               var values = {
                 keyWordsForQueryWithTitle,
@@ -1002,8 +993,8 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
         var keyWordsForQueryWithTitle = values.keyWordsForQueryWithTitle;
         var promise = new Promise((resolve) => {
           var keyWordsForQueryWithText = '%';
-          keyWords.forEach((currentValue, index, array) => {
-            if(index + 1 === array.length){
+          keyWords.forEach((currentValue, _index, array) => {
+            if(_index + 1 === array.length){
               keyWordsForQueryWithText += currentValue;
               values = {
                 keyWordsForQueryWithText,
@@ -1025,11 +1016,11 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
           var selectSearchedBookmarks = 'SELECT * FROM `bookmarks` WHERE `org_id` = ? AND (( `title` LIKE "' + keyWordsForQueryWithTitle + '%" ) OR ( `description` LIKE "' + keyWordsForQueryWithDescription + '%" ) OR ( `text` LIKE "' + keyWordsForQueryWithText + '%" ))';
           connection.query(selectSearchedBookmarks, [orgId]).then((result) => {
             var searchedBookmarkData = result[0];
-            resolve();
+            resolve(searchedBookmarkData);
           });
         });
         return promise;
-      }).then(() => {
+      }).then((searchedBookmarkData) => {
         var promise = new Promise((resolve) => {
           var selectNickName = 'SELECT `nick_name` FROM `users` WHERE `user_id` = ?';
           if(searchedBookmarkData.length > 0){
@@ -1042,13 +1033,12 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
                   if(searchedBookmarkData.length === 0){
                     allSearchedBookmarkData.push([]);
                   }else{
-                    for (var i = 0; i < searchedBookmarkData.length; i+=n) {
+                    for (let i = 0; i < searchedBookmarkData.length; i += n) {
                       allSearchedBookmarkData.push(searchedBookmarkData.slice(i, i + n));
                     }
                   }
-                  var n = 12;
                   slicedAddedUserNickNamesForSearched = [];
-                  for (var i = 0; i < addedUserNickNamesForSearched.length; i+=n) {
+                  for (let i = 0; i < addedUserNickNamesForSearched.length; i += n) {
                     slicedAddedUserNickNamesForSearched.push(addedUserNickNamesForSearched.slice(i, i + n));
                   }
                   resolve();
@@ -1063,7 +1053,7 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
       }).then(() => {
         var searchPageLength = allSearchedBookmarkData.length;
         var searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
-        var addedUserNickNamesForSearched = slicedAddedUserNickNamesForSearched[searchIndex - 1];
+        addedUserNickNamesForSearched = slicedAddedUserNickNamesForSearched[searchIndex - 1];
         res.render('organizationPage.ejs', {
           bookmarkData,
           orgName,
