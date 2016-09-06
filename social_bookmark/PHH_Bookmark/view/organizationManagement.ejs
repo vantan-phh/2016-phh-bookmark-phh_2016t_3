@@ -15,7 +15,7 @@
           <p id="errorName"><%= orgNameNotice %></p>
         <% } %>
         <div id="introduction">紹介文</div>
-        <textarea id="setIntro" value="<%= orgIntroduction %>" name="orgIntroduction" placeholder="紹介文"></textarea>
+        <textarea id="setIntro" name="orgIntroduction" placeholder="紹介文"><%= orgIntroduction %></textarea>
         <% if(typeof orgIntroductionNotice !== 'undefined'){ %>
           <p id="errorIntro"><%= orgIntroductionNotice %></p>
         <% } %>
@@ -31,14 +31,30 @@
         <input id="submit" type="submit" value="変更">
       </form>
     </main>
+    <form action="/PHH_Bookmark/organizationManagement/dissolve" method="post" id="dissolve">
+      <input type="button" value="組織を解散" id="dissolveButton">
+    </form>
   </body>
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
   <script>
     $(function(){
       var $button = $(".button");
+      var $dissolve = $("#dissolve");
+      var $dissolveButton = $("#dissolveButton");
       $button.click(function(){
         this.disabled = true;
         this.form.submit();
+      });
+      $dissolveButton.click(function(){
+        $dissolveButton.detach();
+        $dissolve.append('<input type="button" value="キャンセル" id="cancel" class="beforeDissolve">');
+        $dissolve.append('<p class="beforeDissolve">下の解散ボタンをクリックするとこの組織は解散され、元には戻せません。メンバーともよく相談してから押してください。</p>');
+        $dissolve.append('<p class="beforeDissolve">＊上のキャンセルボタンを押すとこのメッセージと解散ボタンを非表示にすることができます。');
+        $dissolve.append('<input type="submit" value="解散" class="beforeDissolve">');
+        $("#cancel").click(function(){
+          $dissolve.append($dissolveButton);
+          $('.beforeDissolve').detach();
+        });
       });
     });
   </script>
