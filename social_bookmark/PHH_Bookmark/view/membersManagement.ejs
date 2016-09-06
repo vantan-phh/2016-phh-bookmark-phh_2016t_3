@@ -42,11 +42,11 @@
       <% } %>
 
       <div id="searchHit">
-        <% if(typeof searchedUserNames !== 'undefined'){ %>
+        <% if(typeof searchedUsers !== 'undefined'){ %>
           <div>検索にヒットしたユーザー</div>
-          <% for(var i = 0; i < searchedUserNames.length; i++){ %>
-            <div><%= searchedUserNickNames[i] %><%= searchedUserNames[i] %>
-            <input type="button" value="決定" class="select" name="<%= searchedUserNames[i] %>,<%= searchedUserNickNames[i] %>">
+          <% for(var i = 0; i < searchedUsers.length; i++){ %>
+            <div><%= searchedUsers[i].nick_name %><%= searchedUsers[i].name %>
+            <input type="button" value="決定" class="select" name="<%= searchedUsers[i].name %>,<%= searchedUsers[i].nick_name %>">
             </div>
           <% } %>
         <% } %>
@@ -56,9 +56,9 @@
         <% if(typeof selectedUserNames !== 'undefined' && selectedUserNames.length > 0){ %>
           <div> 選択したユーザー</div>
           <% for(var i = 0; i < selectedUserNames.length; i++){ %>
-            <div><%= selectedUserNickNames[i] %><%= selectedUserNames[i] %>
+            <div><%= selectedNickNames[i] %><%= selectedUserNames[i] %>
               <input type="button" value="招待" id="makeJoin">
-              <input type="button" value="削除" class="exclude" name="<%= selectedUserNames[i] %>,<%= selectedUserNickNames[i] %>">
+              <input type="button" value="削除" class="exclude" name="<%= selectedUserNames[i] %>,<%= selectedNickNames[i] %>">
             </div>
           <% } %>
         <% }%>

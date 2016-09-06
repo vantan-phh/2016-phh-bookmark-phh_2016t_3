@@ -303,7 +303,7 @@ router.post('/create', upload.single('image_file'), (req, res) => {
         return promise;
       }).then((values) => {
         var orgId = values.orgId;
-        var userNamesForQuery = values.orgId;
+        var userNamesForQuery = values.userNamesForQuery;
         var promise = new Promise((resolve) => {
           var selectUserId = 'SELECT `user_id` FROM `users` WHERE `name` = ' + userNamesForQuery;
           connection.query(selectUserId).then((result) => {
