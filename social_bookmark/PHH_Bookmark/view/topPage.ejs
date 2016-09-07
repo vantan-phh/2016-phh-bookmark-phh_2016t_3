@@ -17,12 +17,12 @@
         <% if(typeof orgData !== 'undefined'){ %>
           <% for(var i = 0; i < orgData.length; i++){ %>
             <% if(i % 2 === 1){ %>
-              <div class='orglist1'>
+              <div class='orglist1' id="<%= orgData[i].id %>">
             <% }else{ %>
-              <div class='orglist2'>
+              <div class='orglist2' id="<%= orgData[i].id %>">
             <% } %>
                 <img class='thumbnail' src="<%= orgData[i].image_path %>">
-                <a class="orgId" name="<%= orgData[i].id %>"><%= orgData[i].name %></a>
+                <%= orgData[i].name %>
                 <%= orgData[i].introduction %>
               </div>
           <% } %>
@@ -85,13 +85,13 @@
     <script>
     $(function(){
       var $bookmarkId = $('.bookmarkId');
-      var $orgId = $('.orgId');
+      var $orgList = $('.orglist1, .orglist2');
       $bookmarkId.click(function(){
         document.toSubmitBookmarkData.result.value = this.name;
         document.toSubmitBookmarkData.submit();
       });
-      $orgId.click(function(){
-        document.submitOrgId.result.value = this.name;
+      $orgList.click(function(){
+        document.submitOrgId.result.value = this.id;
         document.submitOrgId.submit();
       });
       document.body.addEventListener('click',function(e){
