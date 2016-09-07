@@ -90,7 +90,7 @@ router.get('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =>
     bookmarkData = [];
   }
   if(searchIndex === 0){
-    if(pageLength <= index && index > 0){
+    if(pageLength >= index && index > 0){
       res.render('myPage.ejs', {
         bookmarkData,
         orgData,
@@ -255,7 +255,7 @@ router.post('/bookmarkList/:index/submitUrl', (req, res) => {
   }
   (() => {
     var promise = new Promise((resolve) => {
-      if(pageLength <= index && index > 0){
+      if(pageLength >= index && index > 0){
         resolve();
       }else{
         res.redirect('/PHH_Bookmark/myPage/bookmarkList/1');
