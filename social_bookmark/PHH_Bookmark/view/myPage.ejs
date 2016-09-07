@@ -13,9 +13,9 @@
       <div id="search">
         <form action="/PHH_Bookmark/myPage/bookmarkList/<%= index %>/searchBookmarkList/1" method="post">
           <div id="searchCheck">
-          <input type="checkbox" checked="checked" name="searchFromTitle">タイトル
-          <input type="checkbox" name="searchFromDescription">説明文
-          <input type="checkbox" name="searchFromTextsOnSites">URL先のテキスト
+          <input type="checkbox" checked="checked" name="searchFromTitle"><div id="titleCheck">タイトル</div>
+          <input type="checkbox" name="searchFromDescription"><div id="descriptionCheck">説明文</div>
+          <input type="checkbox" name="searchFromTextsOnSites"><div id="textCheck">URL先のテキスト</div>
           <input type="text" placeholder="検索ワードを入力" name="keyWord">
           <input type="submit" value="検索" class="button">
         </form>
@@ -151,6 +151,12 @@
         var $url = $('#url');
         var $orgName = $(".orgName");
         var $button = $(".button");
+        var $titleCheck = $('#titleCheck');
+        var $descriptionCheck = $('#descriptionCheck');
+        var $textCheck = $('#textCheck');
+        var $titleCheckBox = $('[name="searchFromTitle"]');
+        var $descriptionCheckBox = $('[name="searchFromDescription"]');
+        var $textCheckBox = $('[name="searchFromTextsOnSites"]');
 
         $edit.click(function(){
           document.toEdit.result.value = this.name;
@@ -172,19 +178,15 @@
           this.disabled = true;
           this.form.submit();
         });
-        //console.log($list);
-        //var length = $list.length;
-        //var lengthLimit = Math.floor(length / 10);
-        /*console.time('a');
-        var count = 0;
-        for (var i = 0; i < 10; i++) {
-          var $list = $('[id^=bookmark]:eq(' + count + ')');
-          $list.css("display", "inline");
-          count++;
-          console.log($list);
-          console.log(count);
-        }
-        console.timeEnd('a');*/
+        $titleCheck.click(function(){
+          $titleCheckBox.click();
+        });
+        $descriptionCheck.click(function(){
+          $descriptionCheckBox.click();
+        });
+        $textCheck.click(function(){
+          $textCheckBox.click();
+        })
       });
     </script>
   </body>
