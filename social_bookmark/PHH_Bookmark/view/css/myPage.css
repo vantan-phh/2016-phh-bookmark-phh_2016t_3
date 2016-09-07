@@ -45,11 +45,6 @@ main{
 #inputBookmark input{
   padding: 5px;
 }
-#inputBookmark p{
-  color: red;
-  margin: 10px 0 0 0;
-}
-
 #inputBookmark #url{
   font-size: 15px;
   width: 600px;

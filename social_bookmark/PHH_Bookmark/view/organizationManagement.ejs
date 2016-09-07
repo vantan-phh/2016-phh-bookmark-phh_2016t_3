@@ -9,25 +9,25 @@
     <% include layout %>
     <main>
       <form action="/PHH_Bookmark/organizationManagement" method="post" enctype="multipart/form-data">
-        <div id="name">組織名</div>
-        <input id="setName" type="text" value="<%= orgName %>" name="orgName" placeholder="組織名">
+        <div id="name" class="inputForm">組織名</div>
+        <input id="setName" class="inputForm" type="text" value="<%= orgName %>" name="orgName" placeholder="組織名">
         <% if(typeof orgNameNotice !== 'undefined'){ %>
           <p id="errorName"><%= orgNameNotice %></p>
         <% } %>
-        <div id="introduction">紹介文</div>
-        <textarea id="setIntro" name="orgIntroduction" placeholder="紹介文"><%= orgIntroduction %></textarea>
+        <div id="introduction" class="inputForm">紹介文</div>
+        <textarea id="setIntro" class="inputForm" name="orgIntroduction" placeholder="紹介文"><%= orgIntroduction%></textarea>
         <% if(typeof orgIntroductionNotice !== 'undefined'){ %>
           <p id="errorIntro"><%= orgIntroductionNotice %></p>
         <% } %>
-        <% if(typeof orgThumbnail !== 'undefined'){%>
+        <!-- <% if(typeof orgThumbnail !== 'undefined'){%>
           <div id="img">
             <img src="<%= orgThumbnail %>">
           </div>
+        <% } %> -->
+        <% if(typeof thumbnailNotice !== 'undefined'){%>
+          <p><%= thumbnailNotice %></p>
         <% } %>
-        <% if(typeof thumbailNotice !== 'undefined'){%>
-          <p><%= thumbailNotice %></p>
-        <% } %>
-        <input id="file" type="file" accept="image/*" name="image_file">
+        <input id="file" class="input" type="file" accept="image/*" name="image_file">
         <input id="submit" type="submit" value="変更">
       </form>
     </main>

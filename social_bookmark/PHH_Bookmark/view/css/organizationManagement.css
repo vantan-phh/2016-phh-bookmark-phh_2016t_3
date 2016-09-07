@@ -7,7 +7,7 @@ main{
   margin-top: 50px;
   width: 700px;
   height: 400px;
-  position: absolute;
+  position: relative;
   left: 300px;
 }
 
@@ -21,7 +21,15 @@ main{
   left: 50px;
   top: 50px;
 }
-#img img{
+.inputForm{
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: flex-end;
+  position: relative;
+  right: 0px;
+  margin-top: 20px;
+}
+.thumbnail img{
   width:auto;
   height:auto;
   max-width:350px;
@@ -30,45 +38,16 @@ main{
   min-width: 150px;
   vertical-align: middle;
 }
-#file{
-  position: relative;
-  left: 50px;
-  top: 70px;
-}
-
-#name{
-  position: absolute;
-  left: 300px;
-  top: 70px;
-}
-#setName{
-  position: absolute;
-  left: 300px;
-  top: 100px;
-}
 #errorName{
-  color: red;
-  position: absolute;
+  color: #EE2323;
+  position: relative;
   left: 435px;
   top: 97px;
 }
 
-#introduction{
-  position: absolute;
-  left: 300px;
-  top: 130px;
-}
-#setIntro{
-  width: 300px;
-  height: 50px;
-  resize: none;
-  position: absolute;
-  left: 300px;
-  top: 160px;
-}
 #errorIntro{
-  color: red;
-  position: absolute;
+  color: #EE2323;
+  position: relative;
   left: 400px;
   top: 235px;
 }

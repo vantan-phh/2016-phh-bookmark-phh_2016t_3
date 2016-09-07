@@ -13,57 +13,65 @@
         <a id="goMyPage" href="/PHH_Bookmark/myPage">Go myPage</a>
       </div>
       <div id="organization_list">
-        <div>
-          <h3>links to organization</h3>
-          <% if(typeof orgData !== 'undefined'){ %>
-            <% for(var i = 0; i < orgData.length; i++){ %>
-              <img src="<%= orgData[i].image_path %>">
-              <a class="orgId" name="<%= orgData[i].id %>"><%= orgData[i].name %></a>
-              <div><%= orgData[i].introduction %></div>
+        <h3>links to organization</h3>
+        <% if(typeof orgData !== 'undefined'){ %>
+          <% for(var i = 0; i < orgData.length; i++){ %>
+            <% if(i % 2 === 1){ %>
+              <div class='orglist1'>
+            <% }else{ %>
+              <div class='orglist2'>
             <% } %>
+                <img class='thumbnail' src="<%= orgData[i].image_path %>">
+                <a class="orgId" name="<%= orgData[i].id %>"><%= orgData[i].name %></a>
+                <%= orgData[i].introduction %>
+              </div>
           <% } %>
-        </div>
+        <% } %>
       </div>
-      <div id="organization_some_new_bookmarks">
-        <div>
-          <h3>organization some new bookmarks</h3>
-          <% if(typeof orgBookmarks !== 'undefined'){ %>
-            <% for(var i = 0; i < selectedOrgDataForOrgBookmarks.length; i++){ %>
-              <% for(var key in orgBookmarks){ %>
-                <% if(selectedOrgDataForOrgBookmarks[i].id == key){ %>
-                  <% if(orgBookmarks[key].length > 0){ %>
-                    <div>
-                      <img src="<%= selectedOrgDataForOrgBookmarks[i].image_path %>">
-                      <a name="<%= selectedOrgDataForOrgBookmarks[i].id %>" class="orgId"><%= selectedOrgDataForOrgBookmarks[i].name %></a>
-                      <% for(var j = 0; j < orgBookmarks[key].length; j++){ %>
-                        <div>
-                          <a name="bookmarkId<%= orgBookmarks[key][j].bookmark_id %>" class="bookmarkId"><%= orgBookmarks[key][j].title %></a>
-                          <a href="<%= orgBookmarks[key][j].url %>"><%= orgBookmarks[key][j].url %></a>
-                          <%= orgBookmarks[key][j].description %>
-                          コメント<%= orgBookmarks[key][j].numberOfComments %>件
+      <div id="bookmarks">
+        <div id="organization_some_new_bookmarks">
+          <div id="organization">
+            <h3>organization some new bookmarks</h3>
+            <% if(typeof orgBookmarks !== 'undefined'){ %>
+              <% for(var i = 0; i < selectedOrgDataForOrgBookmarks.length; i++){ %>
+                <% for(var key in orgBookmarks){ %>
+                  <% if(selectedOrgDataForOrgBookmarks[i].id == key){ %>
+                    <% if(orgBookmarks[key].length > 0){ %>
+                      <div>
+                        <div class="thumbname">
+                          <img class="thumbnail" src="<%= selectedOrgDataForOrgBookmarks[i].image_path %>">
+                          <a name="<%= selectedOrgDataForOrgBookmarks[i].id %>" class="orgId"><%= selectedOrgDataForOrgBookmarks[i].name %></a>
                         </div>
-                      <% } %>
-                  </div>
+                        <% for(var j = 0; j < orgBookmarks[key].length; j++){ %>
+                          <div>
+                            <a name="bookmarkId<%= orgBookmarks[key][j].bookmark_id %>" class="bookmarkId"><%= orgBookmarks[key][j].title %></a>
+                            <a href="<%= orgBookmarks[key][j].url %>"><%= orgBookmarks[key][j].url %></a>
+                            <%= orgBookmarks[key][j].description %>
+                            コメント<%= orgBookmarks[key][j].numberOfComments %>件
+                          </div>
+                        <% } %>
+                    </div>
+                    <% } %>
                   <% } %>
                 <% } %>
               <% } %>
             <% } %>
-          <% } %>
+          </div>
         </div>
-      </div>
-      <div id="my_some_new_bookmarks">
-        <div>
-          <h3>my some new bookmarks</h3>
-          <% if(typeof myBookmarks !== 'undefined'){ %>
-            <% for(var i = 0; i < myBookmarks.length; i++){ %>
-              <div>
-                <a name="bookmarkId<%= myBookmarks[i].bookmark_id %>" class="bookmarkId"><%= myBookmarks[i].title%></a>
-                <a href="<%= myBookmarks[i].url%>"><%= myBookmarks[i].url %></a>
-                <%= myBookmarks[i].description %>
-                コメント<%= myBookmarks[i].numberOfComments %>件
-              </div>
+        <div id="my_some_new_bookmarks">
+          <div>
+            <h3>my some new bookmarks</h3>
+            <% if(typeof myBookmarks !== 'undefined'){ %>
+              <% for(var i = 0; i < myBookmarks.length; i++){ %>
+                <div>
+                  <a name="bookmarkId<%= myBookmarks[i].bookmark_id %>" class="bookmarkId"><%= myBookmarks[i].title%></a>
+                  <a href="<%= myBookmarks[i].url%>"><%= myBookmarks[i].url %></a>
+                  <%= myBookmarks[i].description %>
+                  コメント<%= myBookmarks[i].numberOfComments %>件
+                </div>
+              <% } %>
             <% } %>
-          <% } %>
+          </div>
         </div>
       </div>
       <form name="submitOrgId" action="/PHH_Bookmark/organizationPage/submitOrgId" method="post">
