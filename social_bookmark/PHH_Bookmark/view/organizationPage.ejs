@@ -16,9 +16,9 @@
         <div><%= orgIntroduction %></div>
 
     <form action="/PHH_Bookmark/organizationPage/bookmarkList/<%= index %>/searchBookmarkList/1" method="post">
-      <input type="checkbox" checked="checked" name="searchFromTitle">タイトル
-      <input type="checkbox" name="searchFromDescription">説明文
-      <input type="checkbox" name="searchFromTextsOnSites">URL先のテキスト
+      <input type="checkbox" checked="checked" name="searchFromTitle"><div id="titleCheck">タイトル</div>
+      <input type="checkbox" name="searchFromDescription"><div id="descriptionCheck">説明文</div>
+      <input type="checkbox" name="searchFromTextsOnSites"><div id="textCheck">URL先のテキスト</div>
       <input type="text" placeholder="検索ワードを入力" name="keyWord">
       <input type="submit" value="検索" class="button">
     </form>
@@ -180,6 +180,13 @@
     var $bookmarkId = $("[name^='bookmarkId']");
     var $userId = $('.userId');
     var $button = $(".button");
+    var $titleCheck = $('#titleCheck');
+    var $descriptionCheck = $('#descriptionCheck');
+    var $textCheck = $('#textCheck');
+    var $titleCheckBox = $('[name="searchFromTitle"]');
+    var $descriptionCheckBox = $('[name="searchFromDescription"]');
+    var $textCheckBox = $('[name="searchFromTextsOnSites"]');
+
     $button.click(function(){
       this.disabled = true;
       this.form.submit();
@@ -200,6 +207,15 @@
     $userId.click(function(){
       document.toOtherProfile.result.value = this.name;
       document.toOtherProfile.submit();
+    });
+    $titleCheck.click(function(){
+      $titleCheckBox.click();
+    });
+    $descriptionCheck.click(function(){
+      $descriptionCheckBox.click();
+    });
+    $textCheck.click(function(){
+      $textCheckBox.click();
     });
   });
   </script>
