@@ -182,4 +182,35 @@ router.post('/password', (req, res) => {
   });
 });
 
+router.post('/leave', (req, res) => {
+  var myId = req.session.user_id;
+  (() => {
+    var promise = new Promise((resolve) => {
+      var deleteMembership = 'DELETE FROM `organization_memberships` WHERE `user_id` = ?';
+      connection.query(deleteMembership, [myId]).then(() => {
+        resolve();
+      }, () => {
+        resolve();
+      });
+    });
+    return promise;
+  })().then(() => {
+    var promise = new Promise((resolve) => {
+      var deleteBookmarks = 'DELETE FROM `bookmarks` WHERE `user_id` = ? AND `org_id` = NULL';
+      connection.query(deleteBookmarks, [myId]).then(() => {
+        resolve();
+      }, () => {
+        resolve();
+      });
+    });
+    return promise;
+  }).then(() => {
+    var deleteFromUsers = 'DELETE FROM `users` WHERE `user_id` = ?';
+    connection.query(deleteFromUsers, [myId]).then(() => {
+      delete req.session.user_id;
+      res.redirect('/PHH_Bookmark/left');
+    });
+  });
+});
+
 module.exports = router;
