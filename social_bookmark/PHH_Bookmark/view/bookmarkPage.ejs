@@ -25,7 +25,7 @@
             <% for(var i = 0; i < comments.length; i++){ %>
               <div id="comment">
                 <div id="commentList">
-                  <img id="avatar" src="http://res.cloudinary.com/dy4f7hul5/image/upload/v1469676799/iucwtxf12o9ztvb3tm14.png" width="40px" height="40px">
+                  <img id="avatar" src="<%= commentUserData[i].image_path %>" width="40px" height="40px">
                   <a class="commentName" name="<%= commentUserData[i].user_id %>"><%= commentUserData[i].nick_name %></a>
                   <div class="commentBody"><%= comments[i].body %></div>
                   <% if(browsingUserId === comments[i].user_id){ %>
