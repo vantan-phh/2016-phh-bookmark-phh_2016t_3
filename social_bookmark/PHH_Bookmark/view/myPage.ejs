@@ -108,6 +108,11 @@
               <input type="checkbox" class="checkbox" name="<%= bookmarkData[i].bookmark_id %>">
               <a name="bookmarkId<%= bookmarkData[i].bookmark_id%>"><%= bookmarkData[i].title %></a>
               <a href="<%= bookmarkData[i].url %>"><%= bookmarkData[i].url %></a><span id="description"><%= bookmarkData[i].description %></span>
+              <% if(typeof bookmarkData[i].numberOfComments !== 'undefined'){ %>
+                コメント<%= bookmarkData[i].numberOfComments %>件
+              <% }else{ %>
+                コメント0件
+              <% } %>
               <input type="button" value="編集" name="<%= bookmarkData[i].bookmark_id %>" class="edit">
           <% } %>
           <button type="submit" class="button">削除</button>
