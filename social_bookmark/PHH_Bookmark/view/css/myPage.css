@@ -2,33 +2,22 @@
           コンテンツ
 -----------------------------*/
 main{
-  margin-top: 40px;
-  position: absolute;
-  left: 150px;
+  margin: 40px 150px;
+}
+
+#leftList{
+  float: left;
+  width: 800px;
+  min-height: 100%;
+  padding: 10px 10px;
+  overflow: auto;
+  overflow-x: hidden;
 }
 
 #read{
   display: inline-block;
   position: relative;
   margin: 0 0 10px 0;
-}
-
-#search{
-  position: relative;
-  left: 700px;
-  top: 100px;
-}
-#searchResult{
-  position: relative;
-  left: 700px;
-  top: 200px;
-}
-
-#list{
-  width: 800px;
-  min-height: 100%;
-  overflow: auto;
-  padding: 10px 10px;
 }
 
 #inputBookmark{
@@ -80,7 +69,7 @@ main{
   float: right;
   margin: 5px 5px 0 0;
 }
-li{
+#bookmark li{
   margin-left: 20px;
 }
 .title{
@@ -119,4 +108,84 @@ li{
   padding: 5px;
   border: solid black 1px;
   border-radius: 2px;
+}
+
+#rightList{
+  overflow: auto;
+  overflow-x: hidden;
+  padding: 10px 10px;
+  margin-left: 680px;
+  width: 400px;
+  min-height: 0;
+  position: absolute;
+  left: 150px;
+}
+#searchResult{
+  margin: 40px 0 0 0;
+}
+.searchResultList{
+  background-color: #e1e1e1;
+  overflow: auto;
+  overflow-y: hidden;
+  width: 400px;
+  min-height: 0;
+  padding: 20px 20px 20px 20px;
+}
+.searchTitle{
+
+}
+.searchUrl{
+  display: inline-block;
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-text-overflow: ellipsis;
+  -o-text-overflow: ellipsis;
+  margin-left: 20px;
+  position: relative;
+  top: 4px;
+}
+
+#orgWrapper{
+  background-color: #e1e1e1;
+  text-align: center;
+  overflow: auto;
+  width: 400px;
+  min-height: 0;
+  padding: 20px 20px 20px 20px;
+  position: absolute;
+  left: 830px;
+  top: 200px;
+}
+.orgList{
+  float: left;
+  margin: 0 0 20px 0;
+  position: relative;
+  width: 360px;
+}
+.img{
+  background-color: white;
+  float: left;
+  width:auto;
+  height:auto;
+  max-width:150px;
+  max-height:50px;
+  vertical-align: middle;
+}
+.orgName{
+  float: left;
+  display: inline-block;
+  margin: 0 0 0 10px;
+}
+.orgName:hover{
+  color: white;
+  cursor: pointer;
+}
+.orgIntro{
+  font-size: 12px;
+  display: inline-block;
+  position: relative;
+  left: -90px;
+  top: 90px;
 }

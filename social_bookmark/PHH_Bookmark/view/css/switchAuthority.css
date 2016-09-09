@@ -17,8 +17,9 @@ main{
   left: 50px;
   top: 50px;
 }
+
 #img{
-  border: solid 4px gray;
+  border: solid 1px gray;
   border-radius: 2px;
   display: table-cell;
   min-width: 150px;

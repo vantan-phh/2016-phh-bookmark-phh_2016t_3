@@ -17,17 +17,18 @@ main{
 
 #title{
   position: relative;
-  left: 200px;
+  left: 100px;
   top: 50px;
 }
 #url{
   position: relative;
-  left: 200px;
+  left: 100px;
   top: 60px;
 }
 #desc{
+  width: 400px;
   position: relative;
-  left: 200px;
+  left: 100px;
   top: 80px;
 }
 

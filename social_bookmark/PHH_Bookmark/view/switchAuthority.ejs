@@ -18,7 +18,7 @@
         <% if(typeof adminUserNames !== 'undefined'){ %>
           <% for(var i = 0; i < adminUserNames.length; i++){ %>
             <div class="admin">
-              <p id="adminName"><%= adminNickNames[i] %><%= adminUserNames[i] %></p>
+              <p id="adminName"><%= adminUserNames[i] %></p>
               <% if(myUserName === adminUserNames[i]){ %>
                 <input type="button" value="管理者権限を放棄" id="renounce">
               <% } %>

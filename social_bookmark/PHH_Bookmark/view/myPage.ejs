@@ -8,33 +8,8 @@
   <body>
     <% include layout %>
     <main>
-      <h2 id="read">URLを入力してブックマークを登録</h2>
-      <div id="organization"></div>
-      <div id="search">
-        <form action="/PHH_Bookmark/myPage/searchBookmark" method="post">
-          <div id="searchCheck">
-            <input type="checkbox" checked="checked" name="searchFromTitle">タイトル
-            <input type="checkbox" name="searchFromDescription">説明文
-            <input type="checkbox" name="searchFromTextsOnSites">URL先のテキスト
-          </div>
-          <input type="text" placeholder="検索ワードを入力" name="keyWord">
-          <input type="submit" value="検索">
-        </form>
-      </div>
-      <% if(typeof searchedBookmarks !== 'undefined'){ %>
-        <div id="searchResult">
-          <p>検索結果</p>
-          <% if(searchedBookmarks.length > 0){ %>
-            <% for(var i = 0; i < searchedBookmarks.length; i++){ %>
-              <a href="/PHH_Bookmark/bookmarkPage"><%= searchedBookmarks[i].title %></a><a href="<%= searchedBookmarks[i].url%>"><%= searchedBookmarks[i].url%></a>
-              <%= searchedBookmarks[i].description %>
-            <% } %>
-          <% }else{ %>
-            <p>一致する項目は見つかりませんでした。</p>
-          <% } %>
-        <% } %>
-      </div>
-      <div id="list">
+      <div id="leftList">
+        <h2 id="read">URLを入力してブックマークを登録</h2>
         <div id="inputBookmark">
           <form action="/PHH_Bookmark/myPage" method="post">
             <% if(typeof url !== 'undefined'){ %>
@@ -92,15 +67,6 @@
             <% } %>
             <button id="deleteBtn" type="submit">削除</button>
           </form>
-          <% if(typeof orgData !== 'undefined'){ %>
-            <% for(var i = 0; i < orgData.length; i++){ %>
-              <div id="img">
-                <img src="<%= orgData[i].image_path %>">
-              </div>
-              <a class="orgName" name="<%= orgData[i].id %>"><%= orgData[i].name %></a>
-              <div><%= orgData[i].introduction %></div>
-            <% } %>
-          <% } %>
         </div>
         <form name="toEdit" action="/PHH_Bookmark/myBookmarkEdit" method="get">
           <input type="hidden" name="result">
@@ -117,6 +83,44 @@
         <% if(typeof user !== 'undefined'){ %>
           <span class="login-user"><%= user.name %>さんとしてログインしています</span>
         <% } %>
+      </div>
+      <div id="rightList">
+        <div id="search">
+          <form action="/PHH_Bookmark/myPage/searchBookmark" method="post">
+            <div id="searchCheck">
+              <input type="checkbox" checked="checked" name="searchFromTitle">タイトル
+              <input type="checkbox" name="searchFromDescription">説明文
+              <input type="checkbox" name="searchFromTextsOnSites">URL先のテキスト
+            </div>
+            <input type="text" placeholder="検索ワードを入力" name="keyWord">
+            <input type="submit" value="検索">
+          </form>
+          <% if(typeof searchedBookmarks !== 'undefined'){ %>
+              <p id="searchResult">検索結果</p>
+              <% if(searchedBookmarks.length > 0){ %>
+                <% for(var i = 0; i < searchedBookmarks.length; i++){ %>
+                  <div class="searchResultList">
+                    <a class="searchTitle" href="/PHH_Bookmark/bookmarkPage"><%= searchedBookmarks[i].title %></a>
+                    <a class="searchUrl" href="<%= searchedBookmarks[i].url%>"><%= searchedBookmarks[i].url%></a>
+                    <p class="searchDesc"><%= searchedBookmarks[i].description %></p>
+                  </div>
+                <% } %>
+              <% }else{ %>
+                <p>一致する項目は見つかりませんでした。</p>
+              <% } %>
+            <% } %>
+        </div>
+        <div id="orgWrapper">
+            <% if(typeof orgData !== 'undefined'){ %>
+              <% for(var i = 0; i < orgData.length; i++){ %>
+                <div class="orgList">
+                  <img class="img" src="<%= orgData[i].image_path %>">
+                  <a class="orgName" name="<%= orgData[i].id %>"><%= orgData[i].name %></a>
+                  <p class="orgIntro"><%= orgData[i].introduction %></p>
+                </div>
+              <% } %>
+            <% } %>
+        </div>
       </div>
     </main>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
