@@ -91,25 +91,154 @@ router.get('/', (req, res) => {
               for (var i = 0; i < addedUserNickNames.length; i += n) {
                 slicedAddedUserNickNames.push(addedUserNickNames.slice(i, i + n));
               }
-              resolve();
+              resolve(allBookmarkData);
             }
           });
         });
       }else{
         allBookmarkData = [[]];
-        resolve();
+        resolve(allBookmarkData);
       }
     });
     return promise;
-  }).then(() => {
+  }).then((value) => {
+    var promise = new Promise((resolve) => {
+      if(value[0].length > 0){
+        var bookmarkIdsForQuery = '';
+        value.forEach((currentValue, _index, array) => {
+          currentValue.forEach((_currentValue, __index, _array) => {
+            if(__index + 1 === _array.length && _index + 1 === array.length){
+              bookmarkIdsForQuery += _currentValue.bookmark_id;
+              var values = {
+                allBookmarkData : value,
+                bookmarkIdsForQuery,
+              };
+              resolve(values);
+            }else{
+              bookmarkIdsForQuery += _currentValue.bookmark_id + ' OR `bookmark_id` = ';
+            }
+          });
+        });
+      }else{
+        var values = {
+          allBookmarkData : value,
+          bookmarkIdsForQuery : false,
+        };
+        resolve(values);
+      }
+    });
+    return promise;
+  }).then((values) => {
+    var promise = new Promise((resolve) => {
+      if(values.bookmarkIdsForQuery){
+        var selectComment = 'SELECT * FROM `comments` WHERE `bookmark_id` = ' + values.bookmarkIdsForQuery;
+        connection.query(selectComment).then((result) => {
+          values.selectedComments = result[0];
+          resolve(values);
+        });
+      }else{
+        values.selectedComments = false;
+        resolve(values);
+      }
+    });
+    return promise;
+  }).then((values) => {
+    var promise = new Promise((resolve) => {
+      if(values.selectedComments){
+        var commentedBookmarkIds = [];
+        values.selectedComments.forEach((currentValue, _index, array) => {
+          commentedBookmarkIds.push(currentValue.bookmark_id);
+          if(_index + 1 === array.length){
+            values.commentedBookmarkIds = commentedBookmarkIds;
+            resolve(values);
+          }
+        });
+      }else{
+        values.commentedBookmarkIds = false;
+        resolve(values);
+      }
+    });
+    return promise;
+  }).then((values) => {
+    var promise = new Promise((resolve) => {
+      if(values.commentedBookmarkIds){
+        values.commentedBookmarkIds = values.commentedBookmarkIds.filter((currentValue, _index, array) => array.indexOf(currentValue) === _index);
+        resolve(values);
+      }else{
+        values.commentedBookmarkIds = false;
+        resolve(values);
+      }
+    });
+    return promise;
+  }).then((values) => {
+    var promise = new Promise((resolve) => {
+      if(values.commentedBookmarkIds){
+        var comments = {};
+        values.commentedBookmarkIds.forEach((currentValue, _index, array) => {
+          comments[currentValue] = [];
+          if(_index + 1 === array.length){
+            values.comments = comments;
+            resolve(values);
+          }
+        });
+      }else{
+        values.comments = false;
+        resolve(values);
+      }
+    });
+    return promise;
+  }).then((values) => {
+    var promise = new Promise((resolve) => {
+      if(values.comments){
+        values.selectedComments.forEach((currentValue, _index, array) => {
+          for(var key in values.comments){
+            if(currentValue.bookmark_id.toString() === key){
+              values.comments[key].push(currentValue);
+            }
+            if(_index + 1 === array.length){
+              resolve(values);
+            }
+          }
+        });
+      }else{
+        resolve(values);
+      }
+    });
+    return promise;
+  }).then((values) => {
+    var promise = new Promise((resolve) => {
+      if(values.comments){
+        values.allBookmarkData.forEach((currentValue, _index, array) => {
+          currentValue.forEach((_currentValue, __index, _array) => {
+            for(var key in values.comments){
+              if(key === _currentValue.bookmark_id.toString()){
+                if(values.comments[key].length){
+                  _currentValue.numberOfComments = values.comments[key].length;
+                }else{
+                  _currentValue.numberOfComments = 0;
+                }
+              }
+              if(_index + 1 === array.length && __index + 1 === _array.length){
+                resolve(allBookmarkData);
+              }
+            }
+          });
+        });
+      }else{
+        resolve(allBookmarkData);
+      }
+    });
+    return promise;
+  }).then((value) => {
     var promise = new Promise((resolve) => {
       connection.query(selectOwnBookmarkIds, [myId, orgId]).then((result) => {
         ownBookmarkIds = result[0];
-        resolve();
+        resolve(value);
       });
     });
     return promise;
-  }).then(() => {
+  }).then((value) => {
+    allBookmarkData = value;
     res.redirect('/PHH_Bookmark/organizationPage/bookmarkList/1/searchBookmarkList/0');
   });
 });

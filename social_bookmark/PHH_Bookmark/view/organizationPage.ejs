@@ -114,6 +114,11 @@
             <% } %>
           </div>
             <a name="bookmarkId<%= bookmarkData[i].bookmark_id%>"><%= bookmarkData[i].title %></a><a href="<%= bookmarkData[i].url %>"><%= bookmarkData[i].url %></a><%= bookmarkData[i].description %>
+            <% if(bookmarkData[i].numberOfComments){%>
+              コメント<%= bookmarkData[i].numberOfComments %>件
+            <% }else{ %>
+              コメント0件
+            <% } %>
             <a name="<%= bookmarkData[i].user_id %>" class="userId"><%= addedUserNickNames[i] %></a>
             <% if(isAdmin){ %>
               <input type="button" value="編集" name="<%= bookmarkData[i].bookmark_id %>" class="edit">
