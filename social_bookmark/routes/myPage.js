@@ -11,6 +11,124 @@ var index;
 var allSearchedBookmarkData;
 var searchIndex;
 
+function createBookmarkIdsForQuery(value){
+  var promise = new Promise((resolve, reject) => {
+    if(value[0].length){
+      var bookmarkIdsForQuery = '';
+      value.forEach((currentValue, _index, array) => {
+        currentValue.forEach((_currentValue, __index, _array) => {
+          if(_index + 1 === array.length && __index + 1 === _array.length){
+            bookmarkIdsForQuery += _currentValue.bookmark_id;
+            var values = {
+              allBookmarkData : value,
+              bookmarkIdsForQuery,
+            };
+            resolve(values);
+          }else{
+            bookmarkIdsForQuery += _currentValue.bookmark_id + ' OR `bookmark_id` = ';
+          }
+        });
+      });
+    }else{
+      reject(value);
+    }
+  });
+  return promise;
+}
+
+function selectComment(values){
+  var promise = new Promise((resolve) => {
+    var selectCommentQuery = 'SELECT * FROM `comments` WHERE `bookmark_id` = ' + values.bookmarkIdsForQuery;
+    connection.query(selectCommentQuery).then((result) => {
+      values.selectedComments = result[0];
+      resolve(values);
+    });
+  });
+  return promise;
+}
+
+function createCommentedBookmarkIds(values){
+  var promise = new Promise((resolve, reject) => {
+    if(values.selectedComments.length){
+      var commentedBookmarkIds = [];
+      values.selectedComments.forEach((currentValue, _index, array) => {
+        commentedBookmarkIds.push(currentValue.bookmark_id);
+        if(_index + 1 === array.length){
+          values.commentedBookmarkIds = commentedBookmarkIds;
+          resolve(values);
+        }
+      });
+    }else{
+      reject(values.allBookmarkData);
+    }
+  });
+  return promise;
+}
+
+function FilterCommentedBookmarkIds(values){
+  var promise = new Promise((resolve, reject) => {
+    if(values.commentedBookmarkIds.length){
+      values.commentedBookmarkIds = values.commentedBookmarkIds.filter((currentValue, _index, array) => array.indexOf(currentValue) === _index);
+      resolve(values);
+    }else{
+      reject(values.allBookmarkData);
+    }
+  });
+  return promise;
+}
+
+function createComments(values){
+  var promise = new Promise((resolve) => {
+    var comments = {};
+    values.commentedBookmarkIds.forEach((currentValue, _index, array) => {
+      comments[currentValue] = [];
+      if(_index + 1 === array.length){
+        values.comments = comments;
+        resolve(values);
+      }
+    });
+  });
+  return promise;
+}
+
+function pushSelectedComments(values){
+  var promise = new Promise((resolve) => {
+    values.selectedComments.forEach((currentValue, _index, array) => {
+      for(var key in values.comments){
+        if(key === currentValue.bookmark_id.toString()){
+          values.comments[key].push(currentValue);
+        }
+        if(_index + 1 === array.length){
+          resolve(values);
+        }
+      }
+    });
+  });
+  return promise;
+}
+
+function addNumberOfComments(values){
+  var promise = new Promise((resolve) => {
+    values.allBookmarkData.forEach((currentValue, _index, array) => {
+      currentValue.forEach((_currentValue, __index, _array) => {
+        for(var key in values.comments){
+          if(key === _currentValue.bookmark_id.toString()){
+            if(values.comments[key].length){
+              _currentValue.numberOfComments = values.comments[key].length;
+            }else{
+              _currentValue.numberOfComments = 0;
+            }
+          }
+          if(_index + 1 === array.length && __index + 1 === _array.length){
+            resolve(values.allBookmarkData);
+          }
+        }
+      });
+    });
+  });
+  return promise;
+}
+
 router.param('index', (req, res, next, value) => {
   index = value;
   next();
@@ -86,134 +204,19 @@ router.get('/', (req, res) => {
       });
     });
     return promise;
-  }).then((value) => {
-    var promise = new Promise((resolve) => {
-      if(value[0].length){
-        var bookmarkIdsForQuery = '';
-        value.forEach((currentValue, _index, array) => {
-          currentValue.forEach((_currentValue, __index, _array) => {
-            if(_index + 1 === array.length && __index + 1 === _array.length){
-              bookmarkIdsForQuery += _currentValue.bookmark_id;
-              var values = {
-                allBookmarkData : value,
-                bookmarkIdsForQuery,
-              };
-              resolve(values);
-            }else{
-              bookmarkIdsForQuery += _currentValue.bookmark_id + ' OR `bookmark_id` = ';
-            }
-          });
-        });
-      }else{
-        var values = {
-          allBookmarkData : value,
-          bookmarkIdsForQuery : false,
-        };
-        resolve(values);
-      }
-    });
-    return promise;
-  }).then((values) => {
-    var promise = new Promise((resolve) => {
-      if(values.bookmarkIdsForQuery){
-        var selectComment = 'SELECT * FROM `comments` WHERE `bookmark_id` = ' + values.bookmarkIdsForQuery;
-        connection.query(selectComment).then((result) => {
-          values.selectedComments = result[0];
-          resolve(values);
-        });
-      }else{
-        values.selectedComments = false;
-        resolve(values);
-      }
-    });
-    return promise;
-  }).then((values) => {
-    var promise = new Promise((resolve) => {
-      if(values.selectedComments){
-        var commentedBookmarkIds = [];
-        values.selectedComments.forEach((currentValue, _index, array) => {
-          commentedBookmarkIds.push(currentValue.bookmark_id);
-          if(_index + 1 === array.length){
-            values.commentedBookmarkIds = commentedBookmarkIds;
-            resolve(values);
-          }
-        });
-      }else{
-        values.commentedBookmarkIds = false;
-        resolve(values);
-      }
-    });
-    return promise;
-  }).then((values) => {
-    var promise = new Promise((resolve) => {
-      if(values.commentedBookmarkIds){
-        values.commentedBookmarkIds = values.commentedBookmarkIds.filter((currentValue, _index, array) => array.indexOf(currentValue) === _index);
-        resolve(values);
-      }else{
-        values.commentedBookmarkIds = false;
-        resolve(values);
-      }
-    });
-    return promise;
-  }).then((values) => {
-    var promise = new Promise((resolve) => {
-      if(values.commentedBookmarkIds){
-        var comments = {};
-        values.commentedBookmarkIds.forEach((currentValue, _index, array) => {
-          comments[currentValue] = [];
-          if(_index + 1 === array.length){
-            values.comments = comments;
-            resolve(values);
-          }
-        });
-      }else{
-        values.comments = false;
-        resolve(values);
-      }
-    });
-    return promise;
-  }).then((values) => {
-    var promise = new Promise((resolve) => {
-      if(values.comments){
-        values.selectedComments.forEach((currentValue, _index, array) => {
-          for(var key in values.comments){
-            if(key === currentValue.bookmark_id.toString()){
-              values.comments[key].push(currentValue);
-            }
-            if(_index + 1 === array.length) resolve(values);
-          }
-        });
-      }else{
-        resolve(values);
-      }
-    });
-    return promise;
-  }).then((values) => {
-    var promise = new Promise((resolve) => {
-      if(values.comments){
-        values.allBookmarkData.forEach((currentValue, _index, array) => {
-          currentValue.forEach((_currentValue, __index, _array) => {
-            for(var key in values.comments){
-              if(key === _currentValue.bookmark_id.toString()){
-                if(values.comments[key].length){
-                  _currentValue.numberOfComments = values.comments[key].length;
-                }else{
-                  _currentValue.numberOfComments = 0;
-                }
-              }
-              if(_index + 1 === array.length && __index + 1 === _array.length){
-                resolve(values);
-              }
-            }
-          });
-        });
-      }else{
-        resolve(values);
-      }
-    });
-    return promise;
-  }).then((values) => {
-    allBookmarkData = values.allBookmarkData;
+  }).then(createBookmarkIdsForQuery)
+  .then(selectComment)
+  .then(createCommentedBookmarkIds)
+  .then(FilterCommentedBookmarkIds)
+  .then(createComments)
+  .then(pushSelectedComments)
+  .then(addNumberOfComments)
+  .then((value) => {
+    allBookmarkData = value;
+    res.redirect('/PHH_Bookmark/myPage/bookmarkList/1/searchBookmarkList/0');
+  })
+  .catch((value) => {
+    allBookmarkData = value;
     res.redirect('/PHH_Bookmark/myPage/bookmarkList/1/searchBookmarkList/0');
   });
 });
@@ -529,154 +532,29 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
           });
         });
         return promise;
-      }).then((value) => {
-        var promise = new Promise((resolve) => {
-          if(value[0].length){
-            var bookmarkIdsForQuery = '';
-            value.forEach((currentValue, _index, array) => {
-              currentValue.forEach((_currentValue, __index, _array) => {
-                if(_index + 1 === array.length && __index + 1 === _array.length){
-                  bookmarkIdsForQuery += _currentValue.bookmark_id;
-                  var values = {
-                    allSearchedBookmarkData : value,
-                    bookmarkIdsForQuery,
-                  };
-                  resolve(values);
-                }else{
-                  bookmarkIdsForQuery += _currentValue.bookmark_id + ' OR `bookmark_id` = ';
-                }
-              });
-            });
-          }else{
-            var values = {
-              allSearchedBookmarkData : value,
-              bookmarkIdsForQuery : false,
-            };
-            resolve(values);
-          }
+      })
+      .then(createBookmarkIdsForQuery)
+      .then(selectComment)
+      .then(createCommentedBookmarkIds)
+      .then(FilterCommentedBookmarkIds)
+      .then(createComments)
+      .then(pushSelectedComments)
+      .then(addNumberOfComments)
+      .catch((value) => {
+        var searchPageLength = value.length;
+        var searchedBookmarkData = value[searchIndex - 1];
+        res.render('myPage.ejs', {
+          bookmarkData,
+          searchedBookmarkData,
+          orgData,
+          pageLength,
+          searchPageLength,
+          index,
+          searchIndex,
         });
-        return promise;
-      }).then((values) => {
-        var promise = new Promise((resolve) => {
-          if(values.bookmarkIdsForQuery){
-            var selectComment = 'SELECT * FROM `comments` WHERE `bookmark_id` = ' + values.bookmarkIdsForQuery;
-            connection.query(selectComment).then((result) => {
-              values.selectedComments = result[0];
-              resolve(values);
-            });
-          }else{
-            values.selectedComments = false;
-            resolve(values);
-          }
-        });
-        return promise;
-      }).then((values) => {
-        var promise = new Promise((resolve) => {
-          if(values.selectedComments.length){
-            var commentedBookmarkIds = [];
-            values.selectedComments.forEach((currentValue, _index, array) => {
-              commentedBookmarkIds.push(currentValue.bookmark_id);
-              if(_index + 1 === array.length){
-                values.commentedBookmarkIds = commentedBookmarkIds;
-                resolve(values);
-              }
-            });
-          }else{
-            values.commentedBookmarkIds = false;
-            resolve(values);
-          }
-        });
-        return promise;
-      }).then((values) => {
-        var promise = new Promise((resolve) => {
-          if(values.commentedBookmarkIds.length){
-            values.commentedBookmarkIds = values.commentedBookmarkIds.filter((currentValue, _index, array) => array.indexOf(currentValue) === _index);
-            resolve(values);
-          }else{
-            values.commentedBookmarkIds = false;
-            resolve(values);
-          }
-        });
-        return promise;
-      }).then((values) => {
-        var promise = new Promise((resolve) => {
-          if(values.commentedBookmarkIds.length){
-            var comments = {};
-            values.commentedBookmarkIds.forEach((currentValue, _index, array) => {
-              comments[currentValue] = [];
-              if(_index + 1 === array.length){
-                values.comments = comments;
-                resolve(values);
-              }
-            });
-          }else{
-            values.comments = false;
-            resolve(values);
-          }
-        });
-        return promise;
-      }).then((values) => {
-        var promise = new Promise((resolve) => {
-          if(values.comments){
-            values.selectedComments.forEach((currentValue, _index, array) => {
-              for(var key in values.comments){
-                if(key === currentValue.bookmark_id.toString()){
-                  values.comments[key].push(currentValue);
-                }
-                if(_index + 1 === array.length){
-                  resolve(values);
-                }
-              }
-            });
-          }else{
-            resolve(values);
-          }
-        });
-        return promise;
-      }).then((values) => {
-        var promise = new Promise((resolve) => {
-          if(values.comments){
-            values.selectedComments.forEach((currentValue, _index, array) => {
-              for(var key in values.comments){
-                if(currentValue.bookmark_id.toString() === key){
-                  values.comments[key].push(currentValue);
-                }
-                if(_index + 1 === array.length){
-                  resolve(values);
-                }
-              }
-            });
-          }else{
-            resolve(values);
-          }
-        });
-        return promise;
-      }).then((values) => {
-        var promise = new Promise((resolve) => {
-          if(values.comments){
-            values.allSearchedBookmarkData.forEach((currentValue, _index, array) => {
-              currentValue.forEach((_currentValue, __index, _array) => {
-                for(var key in values.comments){
-                  if(key === _currentValue.bookmark_id.toString()){
-                    if(values.comments[key].length){
-                      _currentValue.numberOfComments = values.comments[key].length;
-                    }else{
-                      _currentValue.numberOfComments = 0;
-                    }
-                  }
-                  if(_index + 1 === array.length && __index + 1 === _array.length){
-                    resolve(values.allSearchedBookmarkData);
-                  }
-                }
-              });
-            });
-          }else{
-            resolve(values.allSearchedBookmarkData);
-          }
-        });
-        return promise;
-      }).then((value) => {
-        var searchPageLength = allSearchedBookmarkData.length;
+      })
+      .then((value) => {
+        var searchPageLength = value.length;
         var searchedBookmarkData = value[searchIndex - 1];
         res.render('myPage.ejs', {
           bookmarkData,
@@ -716,13 +594,34 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
                 allSearchedBookmarkData.push(result[0].slice(i, i + n));
               }
             }
-            resolve();
+            resolve(allSearchedBookmarkData);
           });
         });
         return promise;
-      }).then(() => {
-        var searchPageLength = allSearchedBookmarkData.length;
-        var searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
+      })
+      .then(createBookmarkIdsForQuery)
+      .then(selectComment)
+      .then(createCommentedBookmarkIds)
+      .then(FilterCommentedBookmarkIds)
+      .then(createComments)
+      .then(pushSelectedComments)
+      .then(addNumberOfComments)
+      .catch((value) => {
+        var searchPageLength = value.length;
+        var searchedBookmarkData = value[searchIndex - 1];
+        res.render('myPage.ejs', {
+          bookmarkData,
+          searchedBookmarkData,
+          orgData,
+          pageLength,
+          searchPageLength,
+          index,
+          searchIndex,
+        });
+      })
+      .then((value) => {
+        var searchPageLength = value.length;
+        var searchedBookmarkData = value[searchIndex - 1];
         res.render('myPage.ejs', {
           bookmarkData,
           searchedBookmarkData,
@@ -748,29 +647,54 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
         });
         return promise;
       })().then((value) => { // select this org bookmarks to insert `texts` table only bookmarks that is this orgs'
-        keyWordsForQuery = value;
-        var selectSearchedBookmarks = 'SELECT * FROM `bookmarks` WHERE `user_id` = ? AND ( `text` LIKE "' + keyWordsForQuery + '%")';
-        connection.query(selectSearchedBookmarks, [myId]).then((result) => {
-          var n = 12;
-          allSearchedBookmarkData = [];
-          if(result[0].length === 0){
-            allSearchedBookmarkData.push([]);
-          }else{
-            for (var i = 0; i < result[0].length; i += n) {
-              allSearchedBookmarkData.push(result[0].slice(i, i + n));
+        var promise = new Promise((resolve) => {
+          keyWordsForQuery = value;
+          var selectSearchedBookmarks = 'SELECT * FROM `bookmarks` WHERE `user_id` = ? AND ( `text` LIKE "' + keyWordsForQuery + '%")';
+          connection.query(selectSearchedBookmarks, [myId]).then((result) => {
+            var n = 12;
+            allSearchedBookmarkData = [];
+            if(result[0].length === 0){
+              allSearchedBookmarkData.push([]);
+            }else{
+              for (var i = 0; i < result[0].length; i += n) {
+                allSearchedBookmarkData.push(result[0].slice(i, i + n));
+              }
             }
-          }
-          var searchPageLength = allSearchedBookmarkData.length;
-          var searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
-          res.render('myPage.ejs', {
-            bookmarkData,
-            searchedBookmarkData,
-            orgData,
-            pageLength,
-            searchPageLength,
-            index,
-            searchIndex,
+            resolve(allSearchedBookmarkData);
           });
+        });
+        return promise;
+      })
+      .then(createBookmarkIdsForQuery)
+      .then(selectComment)
+      .then(createCommentedBookmarkIds)
+      .then(FilterCommentedBookmarkIds)
+      .then(createComments)
+      .then(pushSelectedComments)
+      .then(addNumberOfComments)
+      .catch((value) => {
+        var searchPageLength = value.length;
+        var searchedBookmarkData = value[searchIndex - 1];
+        res.render('myPage.ejs', {
+          bookmarkData,
+          searchedBookmarkData,
+          orgData,
+          pageLength,
+          searchPageLength,
+          index,
+          searchIndex,
+        });
+      }).then((value) => {
+        var searchPageLength = value.length;
+        var searchedBookmarkData = value[searchIndex - 1];
+        res.render('myPage.ejs', {
+          bookmarkData,
+          searchedBookmarkData,
+          orgData,
+          pageLength,
+          searchPageLength,
+          index,
+          searchIndex,
         });
       });
     }else if(searchFromTitle === 'on' && searchFromDescription === 'on' && searchFromTextsOnSites === undefined){
@@ -820,13 +744,33 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
                 allSearchedBookmarkData.push(result[0].slice(i, i + n));
               }
             }
-            resolve();
+            resolve(allSearchedBookmarkData);
           });
         });
         return promise;
-      }).then(() => {
-        var searchPageLength = allSearchedBookmarkData.length;
-        var searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
+      })
+      .then(createBookmarkIdsForQuery)
+      .then(selectComment)
+      .then(createCommentedBookmarkIds)
+      .then(FilterCommentedBookmarkIds)
+      .then(createComments)
+      .then(pushSelectedComments)
+      .then(addNumberOfComments)
+      .catch((value) => {
+        var searchPageLength = value.length;
+        var searchedBookmarkData = value[searchIndex - 1];
+        res.render('myPage.ejs', {
+          bookmarkData,
+          searchedBookmarkData,
+          orgData,
+          pageLength,
+          searchPageLength,
+          index,
+          searchIndex,
+        });
+      }).then((value) => {
+        var searchPageLength = value.length;
+        var searchedBookmarkData = value[searchIndex - 1];
         res.render('myPage.ejs', {
           bookmarkData,
           searchedBookmarkData,
@@ -870,30 +814,56 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
         });
         return promise;
       }).then((values) => {
-        var keyWordsForQueryWithText = values.keyWordsForQueryWithText;
-        var keyWordsForQueryWithTitle = values.keyWordsForQueryWithTitle;
-        var selectSearchedBookmarks = 'SELECT * FROM `bookmarks` WHERE `user_id` = ? AND (( `title` LIKE "' + keyWordsForQueryWithTitle + '%" ) OR ( `text` LIKE "' + keyWordsForQueryWithText + '%" ))';
-        connection.query(selectSearchedBookmarks, [myId]).then((result) => {
-          var n = 12;
-          allSearchedBookmarkData = [];
-          if(result[0].length === 0){
-            allSearchedBookmarkData.push([]);
-          }else{
-            for (var i = 0; i < result[0].length; i += n) {
-              allSearchedBookmarkData.push(result[0].slice(i, i + n));
+        var promise = new Promise((resolve) => {
+          var keyWordsForQueryWithText = values.keyWordsForQueryWithText;
+          var keyWordsForQueryWithTitle = values.keyWordsForQueryWithTitle;
+          var selectSearchedBookmarks = 'SELECT * FROM `bookmarks` WHERE `user_id` = ? AND (( `title` LIKE "' + keyWordsForQueryWithTitle + '%" ) OR ( `text` LIKE "' + keyWordsForQueryWithText + '%" ))';
+          connection.query(selectSearchedBookmarks, [myId]).then((result) => {
+            var n = 12;
+            allSearchedBookmarkData = [];
+            if(result[0].length === 0){
+              allSearchedBookmarkData.push([]);
+            }else{
+              for (var i = 0; i < result[0].length; i += n) {
+                allSearchedBookmarkData.push(result[0].slice(i, i + n));
+              }
             }
-          }
-          var searchPageLength = allSearchedBookmarkData.length;
-          var searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
-          res.render('myPage.ejs', {
-            bookmarkData,
-            searchedBookmarkData,
-            orgData,
-            pageLength,
-            searchPageLength,
-            index,
-            searchIndex,
+            resolve(allSearchedBookmarkData);
           });
+        });
+        return promise;
+      })
+      .then(createBookmarkIdsForQuery)
+      .then(selectComment)
+      .then(createCommentedBookmarkIds)
+      .then(FilterCommentedBookmarkIds)
+      .then(createComments)
+      .then(pushSelectedComments)
+      .then(addNumberOfComments)
+      .catch((value) => {
+        var searchPageLength = value.length;
+        var searchedBookmarkData = value[searchIndex - 1];
+        res.render('myPage.ejs', {
+          bookmarkData,
+          searchedBookmarkData,
+          orgData,
+          pageLength,
+          searchPageLength,
+          index,
+          searchIndex,
+        });
+      })
+      .then((value) => {
+        var searchPageLength = value.length;
+        var searchedBookmarkData = value[searchIndex - 1];
+        res.render('myPage.ejs', {
+          bookmarkData,
+          searchedBookmarkData,
+          orgData,
+          pageLength,
+          searchPageLength,
+          index,
+          searchIndex,
         });
       });
     }else if(searchFromTitle === undefined && searchFromDescription === 'on' && searchFromTextsOnSites === 'on'){
@@ -943,13 +913,34 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
                 allSearchedBookmarkData.push(result[0].slice(i, i + n));
               }
             }
-            resolve();
+            resolve(allSearchedBookmarkData);
           });
         });
         return promise;
-      }).then(() => {
-        var searchPageLength = allSearchedBookmarkData.length;
-        var searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
+      })
+      .then(createBookmarkIdsForQuery)
+      .then(selectComment)
+      .then(createCommentedBookmarkIds)
+      .then(FilterCommentedBookmarkIds)
+      .then(createComments)
+      .then(pushSelectedComments)
+      .then(addNumberOfComments)
+      .catch((value) => {
+        var searchPageLength = value.length;
+        var searchedBookmarkData = value[searchIndex - 1];
+        res.render('myPage.ejs', {
+          bookmarkData,
+          searchedBookmarkData,
+          orgData,
+          pageLength,
+          searchPageLength,
+          index,
+          searchIndex,
+        });
+      })
+      .then((value) => {
+        var searchPageLength = value.length;
+        var searchedBookmarkData = value[searchIndex - 1];
         res.render('myPage.ejs', {
           bookmarkData,
           searchedBookmarkData,
@@ -1028,13 +1019,34 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
                 allSearchedBookmarkData.push(result[0].slice(i, i + n));
               }
             }
-            resolve();
+            resolve(allSearchedBookmarkData);
           });
         });
         return promise;
-      }).then(() => {
-        var searchPageLength = allSearchedBookmarkData.length;
-        var searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
+      })
+      .then(createBookmarkIdsForQuery)
+      .then(selectComment)
+      .then(createCommentedBookmarkIds)
+      .then(FilterCommentedBookmarkIds)
+      .then(createComments)
+      .then(pushSelectedComments)
+      .then(addNumberOfComments)
+      .catch((value) => {
+        var searchPageLength = value.length;
+        var searchedBookmarkData = value[searchIndex - 1];
+        res.render('myPage.ejs', {
+          bookmarkData,
+          searchedBookmarkData,
+          orgData,
+          pageLength,
+          searchPageLength,
+          index,
+          searchIndex,
+        });
+      })
+      .then((value) => {
+        var searchPageLength = value.length;
+        var searchedBookmarkData = value[searchIndex - 1];
         res.render('myPage.ejs', {
           bookmarkData,
           searchedBookmarkData,
