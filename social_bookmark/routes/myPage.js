@@ -525,13 +525,159 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
                 allSearchedBookmarkData.push(result[0].slice(i, i + n));
               }
             }
-            resolve();
+            resolve(allSearchedBookmarkData);
           });
         });
         return promise;
-      }).then(() => {
+      }).then((value) => {
+        var promise = new Promise((resolve) => {
+          if(value[0].length){
+            var bookmarkIdsForQuery = '';
+            value.forEach((currentValue, _index, array) => {
+              currentValue.forEach((_currentValue, __index, _array) => {
+                if(_index + 1 === array.length && __index + 1 === _array.length){
+                  bookmarkIdsForQuery += _currentValue.bookmark_id;
+                  var values = {
+                    allSearchedBookmarkData : value,
+                    bookmarkIdsForQuery,
+                  };
+                  resolve(values);
+                }else{
+                  bookmarkIdsForQuery += _currentValue.bookmark_id + ' OR `bookmark_id` = ';
+                }
+              });
+            });
+          }else{
+            var values = {
+              allSearchedBookmarkData : value,
+              bookmarkIdsForQuery : false,
+            };
+            resolve(values);
+          }
+        });
+        return promise;
+      }).then((values) => {
+        var promise = new Promise((resolve) => {
+          if(values.bookmarkIdsForQuery){
+            var selectComment = 'SELECT * FROM `comments` WHERE `bookmark_id` = ' + values.bookmarkIdsForQuery;
+            connection.query(selectComment).then((result) => {
+              values.selectedComments = result[0];
+              resolve(values);
+            });
+          }else{
+            values.selectedComments = false;
+            resolve(values);
+          }
+        });
+        return promise;
+      }).then((values) => {
+        var promise = new Promise((resolve) => {
+          if(values.selectedComments.length){
+            var commentedBookmarkIds = [];
+            values.selectedComments.forEach((currentValue, _index, array) => {
+              commentedBookmarkIds.push(currentValue.bookmark_id);
+              if(_index + 1 === array.length){
+                values.commentedBookmarkIds = commentedBookmarkIds;
+                resolve(values);
+              }
+            });
+          }else{
+            values.commentedBookmarkIds = false;
+            resolve(values);
+          }
+        });
+        return promise;
+      }).then((values) => {
+        var promise = new Promise((resolve) => {
+          if(values.commentedBookmarkIds.length){
+            values.commentedBookmarkIds = values.commentedBookmarkIds.filter((currentValue, _index, array) => array.indexOf(currentValue) === _index);
+            resolve(values);
+          }else{
+            values.commentedBookmarkIds = false;
+            resolve(values);
+          }
+        });
+        return promise;
+      }).then((values) => {
+        var promise = new Promise((resolve) => {
+          if(values.commentedBookmarkIds.length){
+            var comments = {};
+            values.commentedBookmarkIds.forEach((currentValue, _index, array) => {
+              comments[currentValue] = [];
+              if(_index + 1 === array.length){
+                values.comments = comments;
+                resolve(values);
+              }
+            });
+          }else{
+            values.comments = false;
+            resolve(values);
+          }
+        });
+        return promise;
+      }).then((values) => {
+        var promise = new Promise((resolve) => {
+          if(values.comments){
+            values.selectedComments.forEach((currentValue, _index, array) => {
+              for(var key in values.comments){
+                if(key === currentValue.bookmark_id.toString()){
+                  values.comments[key].push(currentValue);
+                }
+                if(_index + 1 === array.length){
+                  resolve(values);
+                }
+              }
+            });
+          }else{
+            resolve(values);
+          }
+        });
+        return promise;
+      }).then((values) => {
+        var promise = new Promise((resolve) => {
+          if(values.comments){
+            values.selectedComments.forEach((currentValue, _index, array) => {
+              for(var key in values.comments){
+                if(currentValue.bookmark_id.toString() === key){
+                  values.comments[key].push(currentValue);
+                }
+                if(_index + 1 === array.length){
+                  resolve(values);
+                }
+              }
+            });
+          }else{
+            resolve(values);
+          }
+        });
+        return promise;
+      }).then((values) => {
+        var promise = new Promise((resolve) => {
+          if(values.comments){
+            values.allSearchedBookmarkData.forEach((currentValue, _index, array) => {
+              currentValue.forEach((_currentValue, __index, _array) => {
+                for(var key in values.comments){
+                  if(key === _currentValue.bookmark_id.toString()){
+                    if(values.comments[key].length){
+                      _currentValue.numberOfComments = values.comments[key].length;
+                    }else{
+                      _currentValue.numberOfComments = 0;
+                    }
+                  }
+                  if(_index + 1 === array.length && __index + 1 === _array.length){
+                    resolve(values.allSearchedBookmarkData);
+                  }
+                }
+              });
+            });
+          }else{
+            resolve(values.allSearchedBookmarkData);
+          }
+        });
+        return promise;
+      }).then((value) => {
         var searchPageLength = allSearchedBookmarkData.length;
-        var searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
+        var searchedBookmarkData = value[searchIndex - 1];
         res.render('myPage.ejs', {
           bookmarkData,
           searchedBookmarkData,

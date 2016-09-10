@@ -144,7 +144,7 @@ router.get('/', (req, res) => {
     return promise;
   }).then((values) => {
     var promise = new Promise((resolve) => {
-      if(values.selectedComments){
+      if(values.selectedComments.length){
         var commentedBookmarkIds = [];
         values.selectedComments.forEach((currentValue, _index, array) => {
           commentedBookmarkIds.push(currentValue.bookmark_id);
@@ -219,13 +219,13 @@ router.get('/', (req, res) => {
                 }
               }
               if(_index + 1 === array.length && __index + 1 === _array.length){
-                resolve(allBookmarkData);
+                resolve(values.allBookmarkData);
               }
             }
           });
         });
       }else{
-        resolve(allBookmarkData);
+        resolve(values.allBookmarkData);
       }
     });
     return promise;

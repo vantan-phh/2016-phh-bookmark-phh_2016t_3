@@ -30,6 +30,11 @@
           <% for(var i = 0; i < searchedBookmarkData.length; i++){ %>
             <a href="/PHH_Bookmark/bookmarkPage"><%= searchedBookmarkData[i].title %></a><a href="<%= searchedBookmarkData[i].url%>"><%= searchedBookmarkData[i].url%></a>
             <%= searchedBookmarkData[i].description %>
+            <% if(searchedBookmarkData[i].numberOfComments){ %>
+              コメント<%= searchedBookmarkData[i].numberOfComments %>件
+            <% }else{ %>
+              コメント0件
+            <% } %>
           <% } %>
           <% if(searchIndex !== 1){ %>
             <% var searchHeadUrl = "/PHH_Bookmark/myPage/bookmarkList/" + index + "/searchBookmarkList/1"; %>
