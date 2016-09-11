@@ -17,6 +17,11 @@
           <a name="bookmarkId<%= recentBookmarks[i].bookmark_id%>"><%= recentBookmarks[i].title %></a>
           <a href="<%= recentBookmarks[i].url %>"><%= recentBookmarks[i].url %></a>
           <%= recentBookmarks[i].description %>
+          <% if(recentBookmarks[i].numberOfComments){ %>
+            コメント<%= recentBookmarks[i].numberOfComments %>件
+          <% }else{ %>
+            コメント0件
+          <% } %>
         <% } %>
       <% } %>
       <% if(typeof orgData !== 'undefined'){ %>

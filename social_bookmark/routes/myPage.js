@@ -55,7 +55,6 @@ function createCommentedBookmarkIds(values){
         commentedBookmarkIds.push(currentValue.bookmark_id);
         if(_index + 1 === array.length){
           values.commentedBookmarkIds = commentedBookmarkIds;
-          console.log(values.commentedBookmarkIds);
           resolve(values);
         }
       });

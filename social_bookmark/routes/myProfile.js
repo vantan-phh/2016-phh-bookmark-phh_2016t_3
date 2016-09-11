@@ -68,16 +68,114 @@ router.get('/', (req, res) => {
     });
     return promise;
   }).then((values) => {
-    var selectRecentBookmarks = 'SELECT * FROM `bookmarks` WHERE `user_id` = ? ORDER BY `bookmark_id` DESC LIMIT 5';
-    connection.query(selectRecentBookmarks, [userId]).then((result) => {
-      res.render('userProfile.ejs', {
-        userName : values.userName,
-        nickName : values.nickName,
-        thumbnailPath : values.thumbnailPath,
-        introduction : values.introduction,
-        recentBookmarks : result[0],
-        orgData : values.orgData,
+    var promise = new Promise((resolve) => {
+      var selectRecentBookmarks = 'SELECT * FROM `bookmarks` WHERE `user_id` = ? ORDER BY `bookmark_id` DESC LIMIT 5';
+      connection.query(selectRecentBookmarks, [userId]).then((result) => {
+        values.recentBookmarks = result[0];
+        resolve(values);
       });
+    });
+    return promise;
+  }).then((values) => {
+    var promise = new Promise((resolve, reject) => {
+      if(values.recentBookmarks.length){
+        var selectComment = 'SELECT * FROM `comments` WHERE `user_id` = ?';
+        connection.query(selectComment, [userId]).then((result) => {
+          values.selectedComments = result[0];
+          resolve(values);
+        });
+      }else{
+        reject(values);
+      }
+    });
+    return promise;
+  }).then((values) => {
+    var promise = new Promise((resolve, reject) => {
+      if(values.selectedComments.length){
+        var commentedBookmarkIds = [];
+        values.selectedComments.forEach((currentValue, index, array) => {
+          commentedBookmarkIds.push(currentValue.bookmark_id);
+          if(index + 1 === array.length){
+            values.commentedBookmarkIds = commentedBookmarkIds;
+            resolve(values);
+          }
+        });
+      }else{
+        reject(values);
+      }
+    });
+    return promise;
+  }).then((values) => {
+    var promise = new Promise((resolve, reject) => {
+      if(values.commentedBookmarkIds.length){
+        values.commentedBookmarkIds = values.commentedBookmarkIds.filter((currentValue, _index, array) => array.indexOf(currentValue) === _index);
+        resolve(values);
+      }else{
+        reject(values);
+      }
+    });
+    return promise;
+  }).then((values) => {
+    var promise = new Promise((resolve) => {
+      var comments = {};
+      values.commentedBookmarkIds.forEach((currentValue, index, array) => {
+        comments[currentValue] = [];
+        if(index + 1 === array.length){
+          values.comments = comments;
+          resolve(values);
+        }
+      });
+    });
+    return promise;
+  }).then((values) => {
+    var promise = new Promise((resolve) => {
+      values.selectedComments.forEach((currentValue, index, array) => {
+        for(var key in values.comments){
+          if(key === currentValue.bookmark_id.toString()){
+            values.comments[key].push(currentValue);
+          }
+          if(index + 1 === array.length){
+            resolve(values);
+          }
+        }
+      });
+    });
+    return promise;
+  }).then((values) => {
+    var promise = new Promise((resolve) => {
+      values.recentBookmarks.forEach((currentValue, index, array) => {
+        for(var key in values.comments){
+          if(key === currentValue.bookmark_id.toString()){
+            if(values.comments[key].length){
+              currentValue.numberOfComments = values.comments[key].length;
+            }else{
+              currentValue.numberOfComments = 0;
+            }
+          }
+          if(index + 1 === array.length){
+            resolve(values);
+          }
+        }
+      });
+    });
+    return promise;
+  }).then((values) => {
+    res.render('userProfile.ejs', {
+      userName : values.userName,
+      nickName : values.nickName,
+      thumbnailPath : values.thumbnailPath,
+      introduction : values.introduction,
+      recentBookmarks : values.recentBookmarks,
+      orgData : values.orgData,
+    });
+  }).catch((values) => {
+    res.render('userProfile', {
+      userName : values.userName,
+      nickName : values.nickName,
+      thumbnailPath : values.thumbnailPath,
+      introduction : values.introduction,
+      recentBookmarks : values.recentBookmarks,
+      orgData : values.orgData,
     });
   });
 });
