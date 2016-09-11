@@ -55,6 +55,7 @@ function createCommentedBookmarkIds(values){
         commentedBookmarkIds.push(currentValue.bookmark_id);
         if(_index + 1 === array.length){
           values.commentedBookmarkIds = commentedBookmarkIds;
+          console.log(values.commentedBookmarkIds);
           resolve(values);
         }
       });
@@ -540,9 +541,9 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
       .then(createComments)
       .then(pushSelectedComments)
       .then(addNumberOfComments)
-      .catch((value) => {
-        var searchPageLength = value.length;
-        var searchedBookmarkData = value[searchIndex - 1];
+      .catch(() => {
+        var searchPageLength = allSearchedBookmarkData.length;
+        var searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
         res.render('myPage.ejs', {
           bookmarkData,
           searchedBookmarkData,
@@ -606,9 +607,9 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
       .then(createComments)
       .then(pushSelectedComments)
       .then(addNumberOfComments)
-      .catch((value) => {
-        var searchPageLength = value.length;
-        var searchedBookmarkData = value[searchIndex - 1];
+      .catch(() => {
+        var searchPageLength = allSearchedBookmarkData.length;
+        var searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
         res.render('myPage.ejs', {
           bookmarkData,
           searchedBookmarkData,
@@ -672,9 +673,9 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
       .then(createComments)
       .then(pushSelectedComments)
       .then(addNumberOfComments)
-      .catch((value) => {
-        var searchPageLength = value.length;
-        var searchedBookmarkData = value[searchIndex - 1];
+      .catch(() => {
+        var searchPageLength = allSearchedBookmarkData.length;
+        var searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
         res.render('myPage.ejs', {
           bookmarkData,
           searchedBookmarkData,
@@ -756,9 +757,9 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
       .then(createComments)
       .then(pushSelectedComments)
       .then(addNumberOfComments)
-      .catch((value) => {
-        var searchPageLength = value.length;
-        var searchedBookmarkData = value[searchIndex - 1];
+      .catch(() => {
+        var searchPageLength = allSearchedBookmarkData.length;
+        var searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
         res.render('myPage.ejs', {
           bookmarkData,
           searchedBookmarkData,
@@ -840,9 +841,9 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
       .then(createComments)
       .then(pushSelectedComments)
       .then(addNumberOfComments)
-      .catch((value) => {
-        var searchPageLength = value.length;
-        var searchedBookmarkData = value[searchIndex - 1];
+      .catch(() => {
+        var searchPageLength = allSearchedBookmarkData.length;
+        var searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
         res.render('myPage.ejs', {
           bookmarkData,
           searchedBookmarkData,
@@ -925,9 +926,9 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
       .then(createComments)
       .then(pushSelectedComments)
       .then(addNumberOfComments)
-      .catch((value) => {
-        var searchPageLength = value.length;
-        var searchedBookmarkData = value[searchIndex - 1];
+      .catch(() => {
+        var searchPageLength = allSearchedBookmarkData.length;
+        var searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
         res.render('myPage.ejs', {
           bookmarkData,
           searchedBookmarkData,
@@ -1031,9 +1032,9 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
       .then(createComments)
       .then(pushSelectedComments)
       .then(addNumberOfComments)
-      .catch((value) => {
-        var searchPageLength = value.length;
-        var searchedBookmarkData = value[searchIndex - 1];
+      .catch(() => {
+        var searchPageLength = allSearchedBookmarkData.length;
+        var searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
         res.render('myPage.ejs', {
           bookmarkData,
           searchedBookmarkData,
