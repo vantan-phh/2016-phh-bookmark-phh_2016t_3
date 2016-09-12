@@ -21,8 +21,8 @@
             <% }else{ %>
               <div class='orglist2' id="<%= orgData[i].id %>">
             <% } %>
-                <img class='thumbnail' src="<%= orgData[i].image_path %>">
-                <%= orgData[i].name %>
+                <img class='thumbnail1' src="<%= orgData[i].image_path %>">
+                <a class="orgId1" name="<%= orgData[i].id %>"><%= orgData[i].name %></a>
                 <%= orgData[i].introduction %>
               </div>
           <% } %>
@@ -37,20 +37,24 @@
                 <% for(var key in orgBookmarks){ %>
                   <% if(selectedOrgDataForOrgBookmarks[i].id == key){ %>
                     <% if(orgBookmarks[key].length > 0){ %>
+                      <div class="thumbname">
+                        <img class="thumbnail2" src="<%= selectedOrgDataForOrgBookmarks[i].image_path %>">
+                        <a name="<%= selectedOrgDataForOrgBookmarks[i].id %>" class="orgId2"><%= selectedOrgDataForOrgBookmarks[i].name %></a>
+                      </div>
                       <div>
-                        <div class="thumbname">
-                          <img class="thumbnail" src="<%= selectedOrgDataForOrgBookmarks[i].image_path %>">
-                          <a name="<%= selectedOrgDataForOrgBookmarks[i].id %>" class="orgId"><%= selectedOrgDataForOrgBookmarks[i].name %></a>
-                        </div>
                         <% for(var j = 0; j < orgBookmarks[key].length; j++){ %>
-                          <div>
-                            <a name="bookmarkId<%= orgBookmarks[key][j].bookmark_id %>" class="bookmarkId"><%= orgBookmarks[key][j].title %></a>
-                            <a href="<%= orgBookmarks[key][j].url %>"><%= orgBookmarks[key][j].url %></a>
-                            <%= orgBookmarks[key][j].description %>
-                            コメント<%= orgBookmarks[key][j].numberOfComments %>件
-                          </div>
-                        <% } %>
-                    </div>
+                          <% if(j % 2 === 0){ %>
+                            <div class="result1">
+                          <% }else{ %>
+                            <div class="result2">
+                          <% } %>
+                              <a name="bookmarkId<%= orgBookmarks[key][j].bookmark_id %>" class="bookmarkId"><%= orgBookmarks[key][j].title %></a>
+                              <a href="<%= orgBookmarks[key][j].url %>"><%= orgBookmarks[key][j].url %></a>
+                              <%= orgBookmarks[key][j].description %>
+                              コメント<%= orgBookmarks[key][j].numberOfComments %>件
+                            </div>
+                          <% } %>
+                      </div>
                     <% } %>
                   <% } %>
                 <% } %>
@@ -63,7 +67,11 @@
             <h3>my some new bookmarks</h3>
             <% if(typeof myBookmarks !== 'undefined'){ %>
               <% for(var i = 0; i < myBookmarks.length; i++){ %>
-                <div>
+                <% if(i % 2 === 0){ %>
+                <div class="result1">
+                  <% }else{ %>
+                <div class="result2">
+                  <% } %>
                   <a name="bookmarkId<%= myBookmarks[i].bookmark_id %>" class="bookmarkId"><%= myBookmarks[i].title%></a>
                   <a href="<%= myBookmarks[i].url%>"><%= myBookmarks[i].url %></a>
                   <%= myBookmarks[i].description %>
