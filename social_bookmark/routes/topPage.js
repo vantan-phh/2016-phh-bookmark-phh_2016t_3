@@ -26,7 +26,7 @@ router.get('/', (req, res) => {
             values.orgIdsForQuery = orgIdsForQuery;
             resolve(values);
           }else{
-            orgIdsForQuery += currentValue.org_id + ' OR `id` = ';
+            orgIdsForQuery += currentValue.org_id + ' OR `org_id` = ';
           }
         });
       }else{
@@ -37,7 +37,7 @@ router.get('/', (req, res) => {
   }).then((values) => {
     var promise = new Promise((resolve) => {
       if(values.orgIdsForQuery){
-        var selectOrgData = 'SELECT * FROM `organizations` WHERE `id` = ' + values.orgIdsForQuery;
+        var selectOrgData = 'SELECT * FROM `organizations` WHERE `org_id` = ' + values.orgIdsForQuery;
         connection.query(selectOrgData).then((result) => {
           values.orgData = result[0];
           resolve(values);
@@ -144,8 +144,8 @@ router.get('/', (req, res) => {
   }).then((values) => {
     var promise = new Promise((resolve) => {
       if(values.orgIdsForQuery){
-        values.orgIdsForQuery = values.orgIdsForQuery.replace(/`org_id`/g, '`id`');
-        var selectOrgDataForOrgBookmarks = 'SELECT * FROM `organizations` WHERE `id` = ' + values.orgIdsForQuery;
+        values.orgIdsForQuery = values.orgIdsForQuery.replace(/`org_id`/g, '`org_id`');
+        var selectOrgDataForOrgBookmarks = 'SELECT * FROM `organizations` WHERE `org_id` = ' + values.orgIdsForQuery;
         connection.query(selectOrgDataForOrgBookmarks).then((result) => {
           values.selectedOrgDataForOrgBookmarks = result[0];
           resolve(values);

@@ -151,7 +151,7 @@ router.get('/', (req, res) => {
     return promise;
   }).then((values) => {
     var promise = new Promise((resolve) => {
-      var selectOrgData = 'SELECT * FROM `organizations` WHERE `id` = ?';
+      var selectOrgData = 'SELECT * FROM `organizations` WHERE `org_id` = ?';
       connection.query(selectOrgData, [orgId]).then((result) => {
         values.orgName = result[0][0].name;
         values.orgIntroduction = result[0][0].introduction;

@@ -10,7 +10,7 @@ router.get('/', (req, res) => {
   var orgId = req.session.org_id;
   (() => {
     var promise = new Promise((resolve) => {
-      var specifyOrg = 'SELECT * FROM `organizations` WHERE `id` = ?';
+      var specifyOrg = 'SELECT * FROM `organizations` WHERE `org_id` = ?';
       connection.query(specifyOrg, [orgId]).then((result) => {
         resolve(result[0][0]);
       });

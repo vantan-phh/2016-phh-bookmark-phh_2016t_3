@@ -17,12 +17,12 @@
         <% if(typeof orgData !== 'undefined'){ %>
           <% for(var i = 0; i < orgData.length; i++){ %>
             <% if(i % 2 === 1){ %>
-              <div class='orglist1' id="<%= orgData[i].id %>">
+              <div class='orglist1' id="<%= orgData[i].org_id %>">
             <% }else{ %>
-              <div class='orglist2' id="<%= orgData[i].id %>">
+              <div class='orglist2' id="<%= orgData[i].org_id %>">
             <% } %>
                 <img class='thumbnail1' src="<%= orgData[i].image_path %>">
-                <a class="orgId1" name="<%= orgData[i].id %>"><%= orgData[i].name %></a>
+                <a class="orgId1" name="<%= orgData[i].org_id %>"><%= orgData[i].name %></a>
                 <%= orgData[i].introduction %>
               </div>
           <% } %>
@@ -35,11 +35,11 @@
             <% if(typeof orgBookmarks !== 'undefined'){ %>
               <% for(var i = 0; i < selectedOrgDataForOrgBookmarks.length; i++){ %>
                 <% for(var key in orgBookmarks){ %>
-                  <% if(selectedOrgDataForOrgBookmarks[i].id == key){ %>
+                  <% if(selectedOrgDataForOrgBookmarks[i].org_id == key){ %>
                     <% if(orgBookmarks[key].length > 0){ %>
                       <div class="thumbname">
                         <img class="thumbnail2" src="<%= selectedOrgDataForOrgBookmarks[i].image_path %>">
-                        <a name="<%= selectedOrgDataForOrgBookmarks[i].id %>" class="orgId2"><%= selectedOrgDataForOrgBookmarks[i].name %></a>
+                        <a name="<%= selectedOrgDataForOrgBookmarks[i].org_id %>" class="orgId2"><%= selectedOrgDataForOrgBookmarks[i].name %></a>
                       </div>
                       <div>
                         <% for(var j = 0; j < orgBookmarks[key].length; j++){ %>

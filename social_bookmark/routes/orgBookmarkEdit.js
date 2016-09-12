@@ -47,7 +47,7 @@ router.get('/', (req, res) => {
     var title = values.title;
     var description = values.description;
     var promise = new Promise((resolve) => {
-      var selectOrgData = 'SELECT * FROM `organizations` WHERE `id` = ?';
+      var selectOrgData = 'SELECT * FROM `organizations` WHERE `org_id` = ?';
       connection.query(selectOrgData, [orgId]).then((result) => {
         var orgName = result[0][0].name;
         var orgIntroduction = result[0][0].introduction;
@@ -90,7 +90,7 @@ router.post('/', (req, res) => {
   var checkInjection = /[%;+-]+/g;
   (() => {
     var promise = new Promise((resolve) => {
-      var specifyOrg = 'SELECT * FROM `organizations` WHERE `id` = ?';
+      var specifyOrg = 'SELECT * FROM `organizations` WHERE `org_id` = ?';
       connection.query(specifyOrg, [orgId]).then((result) => {
         var orgName = result[0][0].name;
         var orgIntroduction = result[0][0].introduction;

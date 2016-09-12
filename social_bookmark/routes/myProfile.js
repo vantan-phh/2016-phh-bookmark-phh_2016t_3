@@ -45,7 +45,7 @@ router.get('/', (req, res) => {
             values.belongOrgIdsForQuery = belongOrgIdsForQuery;
             resolve(values);
           }else{
-            belongOrgIdsForQuery += currentValue.org_id + ' OR `id` = ';
+            belongOrgIdsForQuery += currentValue.org_id + ' OR `org_id` = ';
           }
         });
       }else{
@@ -56,7 +56,7 @@ router.get('/', (req, res) => {
   }).then((values) => {
     var promise = new Promise((resolve) => {
       if(values.belongOrgIdsForQuery){
-        var selectOrgData = 'SELECT * FROM `organizations` WHERE `id` = ' + values.belongOrgIdsForQuery;
+        var selectOrgData = 'SELECT * FROM `organizations` WHERE `org_id` = ' + values.belongOrgIdsForQuery;
         connection.query(selectOrgData).then((result) => {
           values.orgData = result[0];
           resolve(values);

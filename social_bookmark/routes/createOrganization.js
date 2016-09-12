@@ -276,9 +276,9 @@ router.post('/create', upload.single('image_file'), (req, res) => {
         return promise;
       }).then(() => {
         var promise = new Promise((resolve) => {
-          var selectOrgId = 'SELECT `id` FROM `organizations` WHERE `name` = ?';
+          var selectOrgId = 'SELECT `org_id` FROM `organizations` WHERE `name` = ?';
           connection.query(selectOrgId, [orgName]).then((result) => {
-            var orgId = result[0][0].id;
+            var orgId = result[0][0].org_id;
             resolve(orgId);
           });
         });
@@ -352,9 +352,9 @@ router.post('/create', upload.single('image_file'), (req, res) => {
         return promise;
       })().then(() => {
         var promise = new Promise((resolve) => {
-          var selectOrgId = 'SELECT `id` FROM `organizations` WHERE `name` = ?';
+          var selectOrgId = 'SELECT `org_id` FROM `organizations` WHERE `name` = ?';
           connection.query(selectOrgId, [orgName]).then((result) => {
-            var orgId = result[0][0].id;
+            var orgId = result[0][0].org_id;
             resolve(orgId);
           });
         });

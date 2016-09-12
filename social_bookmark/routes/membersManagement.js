@@ -42,7 +42,7 @@ router.get('/', (req, res) => {
     return promise;
   }).then(() => {
     var promise = new Promise((resolve) => {
-      var specifyOrg = 'SELECT * FROM `organizations` WHERE `id` = ?';
+      var specifyOrg = 'SELECT * FROM `organizations` WHERE `org_id` = ?';
       memberUserNames = [];
       memberNickNames = [];
       connection.query(specifyOrg, [orgId]).then((result) => {
@@ -166,7 +166,7 @@ router.post('/searchUser', (req, res) => {
   var checkForm = /^[a-zA-Z0-9]+$/;
   (() => {
     var promise = new Promise((resolve) => {
-      var specifyOrg = 'SELECT * FROM `organizations` WHERE `id` = ?';
+      var specifyOrg = 'SELECT * FROM `organizations` WHERE `org_id` = ?';
       connection.query(specifyOrg, [orgId]).then((result) => {
         var orgName = result[0][0].name;
         var orgIntroduction = result[0][0].introduction;
@@ -336,7 +336,7 @@ router.post('/selectUser', (req, res) => {
     selectedUserNames.push(selectedUserName);
     selectedNickNames.push(selectedNickName);
     var orgId = req.session.org_id;
-    var specifyOrg = 'SELECT * FROM `organizations` WHERE `id` = ?';
+    var specifyOrg = 'SELECT * FROM `organizations` WHERE `org_id` = ?';
     connection.query(specifyOrg, [orgId]).then((result) => {
       var orgName = result[0][0].name;
       var orgIntroduction = result[0][0].introduction;
@@ -376,7 +376,7 @@ router.post('/excludeUser', (req, res) => {
     return promise;
   })().then(() => {
     var promise = new Promise((resolve) => {
-      var specifyOrg = 'SELECT * FROM `organizations` WHERE `id` = ?';
+      var specifyOrg = 'SELECT * FROM `organizations` WHERE `org_id` = ?';
       connection.query(specifyOrg, [orgId]).then((result) => {
         var orgName = result[0][0].name;
         var orgIntroduction = result[0][0].introduction;
@@ -499,7 +499,7 @@ router.post('/leave', (req, res) => {
   var myId = req.session.user_id;
   (() => {
     var promise = new Promise((resolve) => {
-      var specifyOrg = 'SELECT * FROM `organizations` WHERE `id` = ?';
+      var specifyOrg = 'SELECT * FROM `organizations` WHERE `org_id` = ?';
       connection.query(specifyOrg, [orgId]).then((result) => {
         var values = {
           orgName : result[0][0].name,

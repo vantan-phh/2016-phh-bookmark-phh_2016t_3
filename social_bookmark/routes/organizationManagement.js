@@ -31,7 +31,7 @@ router.get('/', (req, res) => {
   })().then((value) => {
     var promise = new Promise((resolve) => {
       if(value === 1){
-        var selectOrgData = 'SELECT * FROM `organizations` WHERE `id` = ?';
+        var selectOrgData = 'SELECT * FROM `organizations` WHERE `org_id` = ?';
         connection.query(selectOrgData, [orgId]).then((result) => {
           var orgName = result[0][0].name;
           var orgIntroduction = result[0][0].introduction;
@@ -71,7 +71,7 @@ router.post('/', upload.single('image_file'), (req, res) => {
       if(checkSpace.test(orgName)){
         resolve();
       }else{
-        var selectFormerThumbnail = 'SELECT `image_path` FROM `organizations` WHERE `id` = ?';
+        var selectFormerThumbnail = 'SELECT `image_path` FROM `organizations` WHERE `org_id` = ?';
         connection.query(selectFormerThumbnail, [orgId]).then((result) => {
           var orgThumbnail = result[0][0].image_path;
           res.render('organizationManagement.ejs', {
@@ -89,7 +89,7 @@ router.post('/', upload.single('image_file'), (req, res) => {
       if(!checkInjection.test(orgIntroduction)){
         resolve();
       }else{
-        var selectFormerThumbnail = 'SELECT `image_path` FROM `organizations` WHERE `id` = ?';
+        var selectFormerThumbnail = 'SELECT `image_path` FROM `organizations` WHERE `org_id` = ?';
         connection.query(selectFormerThumbnail, [orgId]).then((result) => {
           var orgThumbnail = result[0][0].image_path;
           res.render('organizationManagement.ejs', {
@@ -107,7 +107,7 @@ router.post('/', upload.single('image_file'), (req, res) => {
       if(!checkInjection.test(orgName)){
         resolve();
       }else{
-        var selectFormerThumbnail = 'SELECT `image_path` FROM `organizations` WHERE `id` = ?';
+        var selectFormerThumbnail = 'SELECT `image_path` FROM `organizations` WHERE `org_id` = ?';
         connection.query(selectFormerThumbnail, [orgId]).then((result) => {
           var orgThumbnail = result[0][0].image_path;
           res.render('organizationManagement.ejs', {
@@ -144,7 +144,7 @@ router.post('/', upload.single('image_file'), (req, res) => {
             return promise;
           })().then((value) => {
             var orgThumbnail = value;
-            var updateOrgData = 'UPDATE `organizations` SET `name` = ?, `introduction` = ?, `image_path` = ? WHERE `id` = ?';
+            var updateOrgData = 'UPDATE `organizations` SET `name` = ?, `introduction` = ?, `image_path` = ? WHERE `org_id` = ?';
             connection.query(updateOrgData, [orgName, orgIntroduction, orgThumbnail, orgId]).then(() => {
               res.redirect('/PHH_Bookmark/organizationPage');
             });
@@ -152,7 +152,7 @@ router.post('/', upload.single('image_file'), (req, res) => {
         }else{
           (() => {
             var promise = new Promise((resolve) => {
-              var selectFormerThumbnail = 'SELECT `image_path` FROM `organizations` WHERE `id` = ?';
+              var selectFormerThumbnail = 'SELECT `image_path` FROM `organizations` WHERE `org_id` = ?';
               connection.query(selectFormerThumbnail, [orgId]).then((result2) => {
                 var orgThumbnail = result2[0][0].image_path;
                 resolve(orgThumbnail);
@@ -161,14 +161,14 @@ router.post('/', upload.single('image_file'), (req, res) => {
             return promise;
           })().then((value) => {
             var orgThumbnail = value;
-            var updateOrgData = 'UPDATE `organizations` SET `name` = ?, `introduction` = ?, `image_path` = ? WHERE `id` = ?';
+            var updateOrgData = 'UPDATE `organizations` SET `name` = ?, `introduction` = ?, `image_path` = ? WHERE `org_id` = ?';
             connection.query(updateOrgData, [orgName, orgIntroduction, orgThumbnail, orgId]).then(() => {
               res.redirect('/PHH_Bookmark/organizationPage');
             });
           });
         }
       }else{
-        var selectFormerOrgName = 'SELECT `name` FROM `organizations` WHERE `id` = ?';
+        var selectFormerOrgName = 'SELECT `name` FROM `organizations` WHERE `org_id` = ?';
         connection.query(selectFormerOrgName, [orgId]).then((result2) => {
           if(result2[0][0].name === orgName){
             if(req.file){
@@ -191,7 +191,7 @@ router.post('/', upload.single('image_file'), (req, res) => {
                 return promise;
               })().then((value) => {
                 var orgThumbnail = value;
-                var updateOrgData = 'UPDATE `organizations` SET `name` = ?, `introduction` = ?, `image_path` = ? WHERE `id` = ?';
+                var updateOrgData = 'UPDATE `organizations` SET `name` = ?, `introduction` = ?, `image_path` = ? WHERE `org_id` = ?';
                 connection.query(updateOrgData, [orgName, orgIntroduction, orgThumbnail, orgId]).then(() => {
                   res.redirect('/PHH_Bookmark/organizationPage');
                 });
@@ -199,7 +199,7 @@ router.post('/', upload.single('image_file'), (req, res) => {
             }else{
               (() => {
                 var promise = new Promise((resolve) => {
-                  var selectFormerThumbnail = 'SELECT `image_path` FROM `organizations` WHERE `id` = ?';
+                  var selectFormerThumbnail = 'SELECT `image_path` FROM `organizations` WHERE `org_id` = ?';
                   connection.query(selectFormerThumbnail, [orgId]).then((result3) => {
                     var orgThumbnail = result3[0][0].image_path;
                     resolve(orgThumbnail);
@@ -208,14 +208,14 @@ router.post('/', upload.single('image_file'), (req, res) => {
                 return promise;
               })().then((value) => {
                 var orgThumbnail = value;
-                var updateOrgData = 'UPDATE `organizations` SET `name` = ?, `introduction` = ?, `image_path` = ? WHERE `id` = ?';
+                var updateOrgData = 'UPDATE `organizations` SET `name` = ?, `introduction` = ?, `image_path` = ? WHERE `org_id` = ?';
                 connection.query(updateOrgData, [orgName, orgIntroduction, orgThumbnail, orgId]).then(() => {
                   res.redirect('/PHH_Bookmark/organizationPage');
                 });
               });
             }
           }else{
-            var selectFormerThumbnail = 'SELECT `image_path` FROM `organizations` WHERE `id` = ?';
+            var selectFormerThumbnail = 'SELECT `image_path` FROM `organizations` WHERE `org_id` = ?';
             connection.query(selectFormerThumbnail, [orgId]).then((result3) => {
               var orgThumbnail = result3[0][0].image_path;
               res.render('organizationManagement.ejs', {
@@ -236,7 +236,7 @@ router.post('/dissolve', (req, res) => {
   var orgId = req.session.org_id;
   (() => {
     var promise = new Promise((resolve) => {
-      var deleteOrg = 'DELETE FROM `organizations` WHERE `id` = ?';
+      var deleteOrg = 'DELETE FROM `organizations` WHERE `org_id` = ?';
       connection.query(deleteOrg, [orgId]).then(() => {
         resolve();
       });

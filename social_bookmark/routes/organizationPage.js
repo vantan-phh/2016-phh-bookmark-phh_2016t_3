@@ -158,7 +158,7 @@ router.get('/', (req, res) => {
   var myId = req.session.user_id;
   var orgId = req.session.org_id;
   var checkMembership = 'SELECT `is_admin` FROM `organization_memberships` WHERE `user_id` = ? AND `org_id` = ?';
-  var specifyOrg = 'SELECT * FROM `organizations` WHERE `id` = ?';
+  var specifyOrg = 'SELECT * FROM `organizations` WHERE `org_id` = ?';
   var selectBookmarkData = 'SELECT * FROM `bookmarks` WHERE `org_id` = ?';
   var selectOwnBookmarkIds = 'SELECT * FROM `bookmarks` WHERE `user_id` = ? AND `org_id` = ?';
   (() => {
