@@ -79,14 +79,28 @@ router.get('/', (req, res) => {
   }).then((values) => {
     var promise = new Promise((resolve, reject) => {
       if(values.recentBookmarks.length){
-        var selectComment = 'SELECT * FROM `comments` WHERE `user_id` = ?';
-        connection.query(selectComment, [userId]).then((result) => {
-          values.selectedComments = result[0];
-          resolve(values);
+        var bookmarkIdsForQuery = '';
+        values.recentBookmarks.forEach((currentValue, index, array) => {
+          if(index + 1 === array.length){
+            bookmarkIdsForQuery += currentValue.bookmark_id;
+            values.bookmarkIdsForQuery = bookmarkIdsForQuery;
+            resolve(values);
+          }else{
+            bookmarkIdsForQuery += currentValue.bookmark_id + ' OR `bookmark_id` = ';
+          }
         });
       }else{
         reject(values);
       }
+    });
+    return promise;
+  }).then((values) => {
+    var promise = new Promise((resolve) => {
+      var selectComment = 'SELECT * FROM `comments` WHERE `bookmark_id` = ' + values.bookmarkIdsForQuery;
+      connection.query(selectComment).then((result) => {
+        values.selectedComments = result[0];
+        resolve(values);
+      });
     });
     return promise;
   }).then((values) => {
