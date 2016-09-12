@@ -113,6 +113,11 @@
     var $expelButton = $('.expel');
     var $leaveButton = $('#leave');
     var $button = $(".button");
+    var $helpimg = $('#helpimg');
+    var $inviteExplainBody = $('#inviteExplainBody');
+
+    $inviteExplainBody.css('display', 'none');
+
     $button.click(function(){
       this.disabled = true;
       this.form.submit();
@@ -134,6 +139,14 @@
     });
     $leaveButton.click(function(){
       document.leave.submit();
+    });
+    $helpimg.hover(function(){
+      $helpimg.after('<p id="displayHelp">ヘルプを表示</p>');
+    }, function(){
+      $('#displayHelp').detach();
+    });
+    $helpimg.click(function(){
+      $inviteExplainBody[0].style.display === 'none' ? $inviteExplainBody.css('display', 'inline') : $inviteExplainBody.css('display', 'none');
     });
     document.body.addEventListener('click',function(e){
       var mouseX = e.pageX;
