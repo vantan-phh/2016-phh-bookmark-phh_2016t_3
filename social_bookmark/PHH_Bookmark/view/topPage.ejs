@@ -94,6 +94,7 @@
     $(function(){
       var $bookmarkId = $('.bookmarkId');
       var $orgList = $('.orglist1, .orglist2');
+      var $orgId2 = $('.orgId2');
       $bookmarkId.click(function(){
         document.toSubmitBookmarkData.result.value = this.name;
         document.toSubmitBookmarkData.submit();
@@ -102,6 +103,10 @@
         document.submitOrgId.result.value = this.id;
         document.submitOrgId.submit();
       });
+      $orgId2.click(function(){
+        document.submitOrgId.result.value = this.name;
+        document.submitOrgId.submit();
+      })
       document.body.addEventListener('click',function(e){
         var mouseX = e.pageX;
         var mouseY = e.pageY;
