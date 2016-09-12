@@ -1,0 +1,104 @@
+#all{
+  position: relative;
+  top: 100px;
+  width: 700px;
+  margin: 0 auto;
+}
+#pagetitle{
+  font-size: 25px;
+}
+.subtitle{
+  font-size: 17px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+.form{
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+.form input{
+  font-size: 15px;
+}
+.form textarea{
+  font-size: 15px;
+  width: 300px;
+  height: 100px;
+}
+#create input{
+  margin-top: 30px;
+  margin-left: 100px;
+  margin-bottom: 30px;
+  background: linear-gradient(#07d34f, #05b142);
+  border: none;
+  border-radius: 2px;
+  color: white;
+  font-size: 15px;
+  text-shadow: 0.5px 0.5px 0.5px black;
+  width: 100px;
+  height: 30px;
+}
+#create input:hover{
+  background: linear-gradient(#049336, #036b27);
+}
+#searchForm{
+  overflow: hidden;
+  width: 250px;
+}
+#invitedUser{
+  float: left;
+}
+#searchUser{
+  margin-left: 5px;
+  background: linear-gradient(#07d34f, #05b142);
+  border: none;
+  border-radius: 2px;
+  color: white;
+  font-size: 15px;
+  text-shadow: 0.5px 0.5px 0.5px black;
+  width: 50px;
+  height: 26px;
+}
+#searchUser:hover{
+  background: linear-gradient(#049336, #036b27);
+}
+#hitUserList{
+  margin-left: 15px;
+  margin-bottom: 100px;
+}
+.hitUser{
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+.hitUser input{
+  margin-left: 5px;
+  background: linear-gradient(gray, black);
+  border: none;
+  border-radius: 2px;
+  color: white;
+  font-size: 10px;
+  text-shadow: 0.5px 0.5px 0.5px black;
+  width: 50px;
+  height: 20px;
+}
+#userLists{
+  overflow: hidden;
+  margin-top: 40px;
+}
+#inviteAndSearch{
+  float: left;
+}
+#memberList{
+  margin-left: 400px;
+  margin-bottom: 100px;
+}
+.selectedUser input{
+  margin-left: 5px;
+  background: linear-gradient(#F73A36, #C72F2C);
+  border: none;
+  border-radius: 2px;
+  color: white;
+  font-size: 10px;
+  text-shadow: 0.5px 0.5px 0.5px black;
+  width: 50px;
+  height: 20px;
+}
