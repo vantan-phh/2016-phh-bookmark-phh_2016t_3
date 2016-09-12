@@ -14,10 +14,10 @@
       <div id="desc"><%= bookmark[0].description %></div>
       <form action="/PHH_Bookmark/bookmarkPage" method="post">
         <textarea id="commentInput" type="text" placeholder="コメントを入力" name="comment_text"></textarea>
-        <% if(typeof commentNotice !== 'undefined'){ %>
-          <p id="errorComment"><%= commentNotice %></p>
-        <% } %>
         <button id="submit" type="submit">投稿</button>
+        <% if(typeof commentNotice !== 'undefined'){ %>
+          <p id="notice"><%= commentNotice %></p>
+        <% } %>
       </form>
       <div id="commentWrapper">
         <div id="commentHeader">コメント</div>

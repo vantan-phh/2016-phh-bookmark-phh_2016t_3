@@ -8,63 +8,82 @@
   <body>
     <% include layout %>
     <main>
-      <h2 id="orgName"><%= orgName %></h2>
-      <div id="img">
-        <img src="<%= orgThumbnail %>">
-      </div>
-      <div id="introduction">
-        <%= orgIntroduction %>
-      </div>
-      <div id="memberList">
-        <% if(typeof memberUserNames !== 'undefined'){%>
-          <% for(var i = 0; i < memberUserNames.length; i ++){ %>
-            <div class="members">
-              <p id="memberName"><%= memberUserNames[i] %></p><!-- <p><%= memberNickNames[i] %></p> -->
-              <% if(memberUserNames[i] === myUserName){ %>
-                <input type="button" value="脱退" id="leave">
-              <% } else { %>
-                <input type="button" value="除名" class="expel" name="<%= memberUserNames[i] %>">
-              <% } %>
+      <div id="all">
+        <div id="org">
+          <div id="img">
+            <img src="<%= orgThumbnail %>">
+          </div>
+          <div id="nameintro">
+            <h2 id="orgName"><%= orgName %></h2>
+            <div id="introduction">
+              <%= orgIntroduction %>
             </div>
-          <% } %>
-        <% } %>
-      </div>
-      <div id="search">
-        <form action="/PHH_Bookmark/membersManagement/searchUser" method="post">
-          <input type="text" placeholder="ユーザー名を入力" name="searchedUser">
-          <input type="submit" value="検索">
-        </form>
-      </div>
-
-      <% if(typeof notice !== 'undefined'){ %>
-        <div id="notFound"><%= notice %></div>
+            <button id="management" href="/PHH_Bookmark/switchAuthority">権限管理ページへ</button>
+          </div>
         </div>
-      <% } %>
 
-      <div id="searchHit">
-        <% if(typeof searchedUsers !== 'undefined'){ %>
-          <div>検索にヒットしたユーザー</div>
-          <% for(var i = 0; i < searchedUsers.length; i++){ %>
-            <div><%= searchedUsers[i].nick_name %><%= searchedUsers[i].name %>
-            <input type="button" value="決定" class="select" name="<%= searchedUsers[i].name %>,<%= searchedUsers[i].nick_name %>">
-            </div>
+
+
+
+        <p id="pagetitle">メンバー管理</p><img id="helpimg" src="/img/help.png">
+
+        <div id="search">
+          <p id="inviteExplain" class="headline">ユーザーを招待する</p>
+          <p id="inviteExplainBody">ユーザー名でユーザーを検索して、ユーザーを新たに組織に追加することができます</p>
+          <form action="/PHH_Bookmark/membersManagement/searchUser" method="post">
+            <input id="searchForm" type="text" placeholder="ユーザー名を入力" name="searchedUser">
+            <input type="submit" value="検索">
+          </form>
+
+          <div id="searchHit">
+            <% if(typeof searchedUsers !== 'undefined'){ %>
+              <div>検索結果</div>
+              <div id="searchList">
+              <% for(var i = 0; i < searchedUsers.length; i++){ %>
+                <div class="searchListUN"><%= searchedUsers[i].nick_name %><%= searchedUsers[i].name %>
+                <input type="button" value="招待" class="select" name="<%= searchedUsers[i].name %>,<%= searchedUsers[i].nick_name %>">
+                </div>
+              <% } %>
+              </div>
+            <% } %>
+          </div>
+
+        </div>
+
+        <div id="memberList">
+          <% if(typeof memberUserNames !== 'undefined'){%>
+            <p class="headline">メンバー一覧</p>
+            <% for(var i = 0; i < memberUserNames.length; i ++){ %>
+              <div class="members">
+                <p class="memberName"><%= memberUserNames[i] %></p><!-- <p><%= memberNickNames[i] %></p> -->
+                <% if(memberUserNames[i] === myUserName){ %>
+                  <input type="button" value="脱退" id="leave">
+                <% } else { %>
+                  <input type="button" value="除名" class="expel" name="<%= memberUserNames[i] %>">
+                <% } %>
+              </div>
+            <% } %>
           <% } %>
+        </div>
+
+
+        <% if(typeof notice !== 'undefined'){ %>
+          <div id="notice"><%= notice %></div>
         <% } %>
-      </div>
 
-      <div id="checkUser">
-        <% if(typeof selectedUserNames !== 'undefined' && selectedUserNames.length > 0){ %>
-          <div> 選択したユーザー</div>
-          <% for(var i = 0; i < selectedUserNames.length; i++){ %>
-            <div><%= selectedNickNames[i] %><%= selectedUserNames[i] %>
-              <input type="button" value="招待" id="makeJoin">
-              <input type="button" value="削除" class="exclude" name="<%= selectedUserNames[i] %>,<%= selectedNickNames[i] %>">
-            </div>
-          <% } %>
-        <% }%>
-      </div>
+        <div id="checkUser">
+          <% if(typeof selectedUserNames !== 'undefined' && selectedUserNames.length > 0){ %>
+            <div> 選択したユーザー</div>
+            <% for(var i = 0; i < selectedUserNames.length; i++){ %>
+              <div><%= selectedNickNames[i] %><%= selectedUserNames[i] %>
+                <input type="button" value="招待" id="makeJoin">
+                <input type="button" value="削除" class="exclude" name="<%= selectedUserNames[i] %>,<%= selectedNickNames[i] %>">
+              </div>
+            <% } %>
+          <% }%>
+        </div>
 
-      <a id="management" href="/PHH_Bookmark/switchAuthority">権限管理ページへ</a>
+      </div>
 
       <form action="/PHH_Bookmark/membersManagement/selectUser" method="post" name="selectUser">
         <input type="hidden" name="result">
@@ -94,6 +113,11 @@
     var $expelButton = $('.expel');
     var $leaveButton = $('#leave');
     var $button = $(".button");
+    var $helpimg = $('#helpimg');
+    var $inviteExplainBody = $('#inviteExplainBody');
+
+    $inviteExplainBody.css('display', 'none');
+
     $button.click(function(){
       this.disabled = true;
       this.form.submit();
@@ -115,6 +139,20 @@
     });
     $leaveButton.click(function(){
       document.leave.submit();
+    });
+    $helpimg.hover(function(){
+      $helpimg.after('<p id="displayHelp">ヘルプを表示</p>');
+    }, function(){
+      $('#displayHelp').detach();
+    });
+    $helpimg.click(function(){
+      $inviteExplainBody[0].style.display === 'none' ? $inviteExplainBody.css('display', 'inline') : $inviteExplainBody.css('display', 'none');
+    });
+    document.body.addEventListener('click',function(e){
+      var mouseX = e.pageX;
+      var mouseY = e.pageY;
+      console.log("x" + mouseX);
+      console.log("y" + mouseY);
     });
   });
   </script>
