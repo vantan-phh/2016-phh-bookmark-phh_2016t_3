@@ -53,7 +53,7 @@ router.get('/', (req, res) => {
       if(values.selectedOrgIds.length > 0){
         var orgBookmarks = {};
         values.selectedOrgIds.forEach((currentValue, index, array) => {
-          var selectOrgBookmarks = 'SELECT * FROM `bookmarks` WHERE `org_id` = ? ORDER BY `bookmark_id` DESC LIMIT 5';
+          var selectOrgBookmarks = 'SELECT * FROM `bookmarks` WHERE `org_id` = ? ORDER BY `bookmark_id` DESC LIMIT 3';
           connection.query(selectOrgBookmarks, [currentValue.org_id]).then((result) => {
             orgBookmarks[currentValue.org_id] = result[0];
             if(index + 1 === array.length){
@@ -158,7 +158,7 @@ router.get('/', (req, res) => {
     return promise;
   }).then((values) => {
     var promise = new Promise((resolve) => {
-      var selectRecentBookmarks = 'SELECT * FROM `bookmarks` WHERE `user_id` = ? ORDER BY `bookmark_id` DESC LIMIT 5';
+      var selectRecentBookmarks = 'SELECT * FROM `bookmarks` WHERE `user_id` = ? ORDER BY `bookmark_id` DESC LIMIT 6';
       connection.query(selectRecentBookmarks, [myId]).then((result) => {
         values.myBookmarks = result[0];
         resolve(values);
