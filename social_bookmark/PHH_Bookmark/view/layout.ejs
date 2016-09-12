@@ -31,7 +31,7 @@
 
   #headerFavicon img{
     position: absolute;
-    left: 140px;
+    left: 70px;
     top: 5px;
   }
 
@@ -42,16 +42,12 @@
   #headerMenu a:hover{
     color: #008000;
   }
-  #headerMenu1{
-    position: absolute;
-    left: 230px;
-    top: 20px;
-  }
 
-  #headerMenu2{
-    position: absolute;
-    left: 314px;
+  #headerTitle{
+    color: #36a029;
     top: 20px;
+    left: 170px;
+    position: absolute;
   }
 
   #headerSearch{
@@ -93,12 +89,12 @@
     background-color: white;
     border: solid black 1px;
     z-index: 100;
-    width: 150px;
+    width: 170px;
     min-height: 0;
     overflow: auto;
     position: absolute;
     left: 910px;
-    top: 50px;
+    top: 60px;
   }
   #headerMenuList a{
     text-decoration: none;
@@ -149,11 +145,9 @@
   <div id="header">
     <a id="headerFavicon" href="/PHH_Bookmark/topPage"><img src="/img/favicon.png"></a>
     <% if (typeof userName !== 'undefined' && typeof nickName !== 'undefined') { %>
-      <div id="headerMenu">
-        <a id="headerMenu1" href="/PHH_Bookmark/myPage">My Page</a>
-        <a id="headerMenu2" href="/PHH_Bookmark/createOrganization">createOrganization</a>
+      <div id="headerTitle">
+        <p>ここにろご</p>
       </div>
-      <input id="headerSearch" type="text" placeholder="Search Bookmarks">
       <span id="headerLoginUser"><%= nickName%><div id="headerUserName">(<%= userName %>)</div></span>
       <a id="headerMyImg" href="/PHH_Bookmark/myProfile"><img src="<%= thumbnail %>"></a>
       <div id="headerOpenMenu" onclick="obj=document.getElementById('headerMenuList').style; obj.display=(obj.display=='none')?'block':'none';">
@@ -161,6 +155,7 @@
       </div>
       <div id="headerMenuList" style="display:none;clear:both;">
         <a id="headerMyPage" href="/PHH_Bookmark/myPage"><li>My page</li></a>
+        <a id="headerMenu2" href="/PHH_Bookmark/createOrganization"><li>createOrganization</li></a>
         <a href="/PHH_Bookmark/myProfileEdit"><li>Profile Edit</li></a>
         <a id="headerSettings" href="/PHH_Bookmark/accountSetting"><li>Settings</li></a>
         <a id="headerLogout" href="/PHH_Bookmark/logout"><li>Logout</li></a>

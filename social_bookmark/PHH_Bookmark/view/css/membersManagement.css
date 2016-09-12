@@ -1,22 +1,30 @@
 /*----------------------------/
           コンテンツ
 -----------------------------*/
-#orgName{
-  display: inline-block;
+main{
+  top: 100px;
+  width: 750px;
+  margin: 0 auto;
   position: relative;
-  left: 100px;
-  top: 20px;
+}
+
+.headline{
+  font-size: 20px;
+}
+
+#org{
+  overflow: hidden;
 }
 
 #img{
+  float: left;
   border: solid 4px gray;
   border-radius: 2px;
   display: table-cell;
   min-width: 150px;
   min-height: 150px;
   position: relative;
-  left: 100px;
-  top: 50px;
+  margin-right: 70px;
 }
 #img img{
   width:auto;
@@ -28,49 +36,92 @@
   vertical-align: middle;
 }
 
+/*#nameintro{
+  clear: both;
+}*/
+
+#orgName{
+  margin-top: 10px;
+  position: relative;
+}
+
 #introduction{
-  width: 500px;
-  position: absolute;
-  left: 520px;
-  top: 160px;
+  margin-left: 250px;
+  position: relative;
+}
+
+#pagetitle{
+  float: left;
+  font-size: 25px;
+  margin-top: 40px;
+  width: 150px;
 }
 
 #search{
-  width: 172px;
-  position: absolute;
-  left: 200px;
-  top: 300px;
+  clear: both;
+  float: left;
+  width: 250px;
+  margin-top: 20px;
+  margin-left: 20px;
+  position: relative;
+  overflow: hidden;
+}
+#inviteExplain{
+
+}
+#helpimg{
+  display: inline;
+  margin-top: 50px;
+  margin-left: 5px;
+  position: relative;
+}
+#inviteExplainBody{
+  margin-left: 15px;
+  color: gray;
+  font-size: 14px;
+}
+#searchForm{
+  margin-top: 15px;
+  margin-left: 15px;
 }
 #searchHit{
-  position: absolute;
-  left: 200px;
-  top: 340px;
+  position: relative;
+  margin-left: 15px;
+  margin-top: 25px;
 }
-#notFound{
-  position: absolute;
-  left: 200px;
-  top: 340px;
+#searchList{
+  position: relative;
+  margin-left: 15px;
+  margin-top: 15px;
+}
+.searchListUN{
+  margin-top: 5px;
+  position: relative;
+}
+#notice{
+  position: relative;
+  margin-left: 35px;
+  color: red;
 }
 #checkUser{
   width: 300px;
-  position: absolute;
-  left: 200px;
-  top: 340px;
+  position: relative;
 }
 
 #memberList{
-  background-color: lightgreen;
   opacity: 0.8;
   width: 300px;
-  height: 200px;
-  position: absolute;
-  left: 500px;
-  top: 310px;
+  height: auto;
+  position: relative;
+  margin-left: 440px;
+  margin-right: 50px;
+  margin-top: 20px;
 }
 .members{
-  margin: 5px 0 5px 10px;
+  margin-top: 5px;
+  margin-left: 20px;
 }
-#memberName{
+.memberName{
   display: inline-block;
   width: 200px;
   white-space: nowrap;
@@ -85,8 +136,12 @@
 }
 
 #management{
+  clear: both;
+  margin-top: 10px;
+  margin-left: 260px;
   width: 128px;
-  position: absolute;
-  left: 670px;
-  top: 289px;
+  font-size: 13px;
+  border-radius: 5px;
+  background-color: #91f2a0;
+  position: relative;
 }
