@@ -90,7 +90,7 @@ router.get('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =>
     bookmarkData = [];
   }
   if(searchIndex === 0){
-    if(pageLength <= index && index > 0){
+    if(pageLength >= index && index > 0){
       res.render('myPage.ejs', {
         bookmarkData,
         orgData,
