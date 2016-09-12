@@ -3,8 +3,7 @@
   font-family: sans-serif;
 }
 body{
-  background-color: #fafafa;
-  margin: 0px;
+  background-color: #fefefe;
 }
 /*----------------------------/
             ヘッダー
@@ -92,11 +91,13 @@ header{
           コンテンツ
 -----------------------------*/
 main{
-  margin-top: 50px;
-  position: absolute;
+  top: 50px;
+  margin: 0 auto;
+  width: 970px;
+  position: relative;
   overflow: hidden;
-  /*left: 300px;*/
-  background-color: red;
+  background-color: rgba(170, 170, 160, 0.3);
+  border-radius: 10px;
 }
 #organization_list{
   text-overflow: hidden;
@@ -108,20 +109,21 @@ main{
   background-color: #e1e1e1;
   border-radius: 2px;
   color: #36a029;
-  font-family: monospace;
+  font-family: monospace;;
   font-size: 15px;
   padding: 5px;
   text-decoration: none;
 }
 #bookmarks{
-  word-break: break-all;
-  display: inline;
+  overflow: hidden;
+}
+#my_some_new_bookmarks{
+  clear: both;
 }
 .thumbname{
   text-overflow: hidden;
   width: 250px;
-  margin-right: auto;
-  background-color: blue;
+  margin-left: 0px;
 }
 .orglist1, .orglist2{
   width: 234px;
@@ -135,9 +137,51 @@ main{
 .orglist2{
   background-color: #129475
 }
-.thumbnail{
+.thumbnail1{
   height: 15px;
   margin-top: 6px;
   margin-left: 3px;
   border-radius: 5px;
+}
+.thumbnail2{
+  height: 20px;
+
+}
+.orgId1{
+  text-decoration: none;
+}
+.orgId2{
+  font-size: 25px;
+  text-decoration: none;
+}
+.orgId1, .orgId2:hover {
+text-decoration: underline;
+}
+
+
+.result1{
+  background-color: #129475;
+  border-radius: 10px;
+  float: left;
+  padding: 0 5px 0 0;
+  margin: 0 10px 10px 0;
+  width: 200px;
+  height: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-text-overflow: ellipsis;
+  -o-text-overflow: ellipsis;
+}
+.result2{
+  background-color: #acf432;
+  border-radius: 10px;
+  float: left;
+  padding: 0 5px 0 0;
+  margin: 0 10px 10px 0;
+  width: 200px;
+  height: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-text-overflow: ellipsis;
+  -o-text-overflow: ellipsis;
 }
