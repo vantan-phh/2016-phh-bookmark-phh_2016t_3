@@ -3,37 +3,49 @@
   <head>
     <meta charset="utf-8">
     <title></title>
+    <link rel="stylesheet" type="text/css" href="/css/accountSetting.css">
   </head>
   <body>
-    <div><%= myData.name %></div>
-    <div>現在登録されているメールアドレス</div>
-    <div><%= myData.mail %></div>
-    <form action="/PHH_Bookmark/accountSetting/mail" method="post">
-      <input type="text" value="<%= myData.mail %>" placeholder="メールアドレスを入力" name="mail">
-      <input type="submit" value="メールアドレスを変更" class="button">
-    </form>
-    <% if(typeof mailNotice !== 'undefined'){ %>
-      <p><%= mailNotice %></p>
-    <% } %>
-    <form action="/PHH_Bookmark/accountSetting/password" method="post">
-      <div>パスワードの変更</div>
-      <input type="text" placeholder="現在のパスワード" name="currentPassword">
-      <input type="text" placeholder="新しいパスワード" name="newPassword">
-      <input type="text" placeholder="新しいパスワードの確認" name="newPasswordConfirm">
-      <% if(typeof confirmNotice !== 'undefined'){ %>
-        <p><%= confirmNotice %></p>
-      <% } %>
-      <input type="submit" value="パスワードを変更" class="button">
-      <% if(typeof finishChangingPassword !== 'undefined'){ %>
-        <p><%= finishChangingPassword %></p>
-      <% } %>
-    </form>
-    <% if(typeof passwordNotice !== 'undefined'){ %>
-      <p><%= passwordNotice %></p>
-    <% } %>
-    <form action="/PHH_Bookmark/accountSetting/leave" method="post">
-      <input type="submit" value="退会">
-    </form>
+    <% include layout %>
+    <main>
+      <div id="pagetitle">アカウント設定</div>
+      <div id="settingBody">
+        <div class="headline">登録データ</div>
+        <div class="data">ユーザー名：<%= myData.name %></div>
+        <div class="data">メールアドレス：<%= myData.mail %></div>
+        <div id="change">
+          <p class="subtitle">メールアドレスの変更</p>
+          <form action="/PHH_Bookmark/accountSetting/mail" method="post">
+            <div id="mail"><input type="text" value="<%= myData.mail %>" placeholder="メールアドレスを入力" name="mail" class="text"></div>
+            <% if(typeof mailNotice !== 'undefined'){ %>
+              <p class="notice"><%= mailNotice %></p>
+            <% } %>
+            <div class="changeButton"><input type="submit" value="メールアドレスを変更" class="button"></div>
+          </form>
+          <form action="/PHH_Bookmark/accountSetting/password" method="post">
+            <div class="subtitle">パスワードの変更</div>
+            <div id="password">
+              <div><input type="password" placeholder="現在のパスワード" name="currentPassword" class="text"></div>
+              <div><input type="password" placeholder="新しいパスワード" name="newPassword" class="text"></div>
+              <div><input type="password" placeholder="新しいパスワード（もう一度）" name="newPasswordConfirm" class="text"></div>
+            </div>
+            <% if(typeof confirmNotice !== 'undefined'){ %>
+              <p class="notice"><%= confirmNotice %></p>
+            <% } %>
+            <% if(typeof passwordNotice !== 'undefined'){ %>
+              <p class="notice"><%= passwordNotice %></p>
+            <% } %>
+            <div class="changeButton"><input type="submit" value="パスワードを変更" class="button"></div>
+            <% if(typeof finishChangingPassword !== 'undefined'){ %>
+              <p><%= finishChangingPassword %></p>
+            <% } %>
+          </form>
+          <form action="/PHH_Bookmark/accountSetting/leave" method="post">
+            <div id="leave"><input type="submit" value="退会"></div>
+          </form>
+        </div>
+      </div>
+    </main>
   </body>
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
   <script>
