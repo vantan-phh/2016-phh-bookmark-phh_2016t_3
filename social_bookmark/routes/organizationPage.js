@@ -582,6 +582,7 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
   var pageLength = allBookmarkData.length;
   var bookmarkData;
   var addedUserNickNames;
+  var numberOfSearchedBookmarks;
   index = parseInt(index, 10);
   searchIndex = parseInt(searchIndex, 10);
   if(allBookmarkData[0].length === 0){
@@ -644,6 +645,7 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
         var promise = new Promise((resolve) => {
           var selectSearchedBookmarks = 'SELECT * FROM `bookmarks` WHERE `org_id` = ? AND ( `title` LIKE "' + keyWordsForQuery + '%" )';
           connection.query(selectSearchedBookmarks, [orgId]).then((result) => {
+            numberOfSearchedBookmarks = result[0].length;
             var searchedBookmarkData = result[0];
             resolve(searchedBookmarkData);
           });
@@ -701,6 +703,7 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
           searchPageLength,
           index,
           searchIndex,
+          numberOfSearchedBookmarks,
         });
       })
       .catch(() => {
@@ -720,6 +723,7 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
           searchPageLength,
           index,
           searchIndex,
+          numberOfSearchedBookmarks,
         });
       });
     }else if(searchFromTitle === undefined && searchFromDescription === 'on' && searchFromTextsOnSites === undefined){
@@ -741,6 +745,7 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
         var promise = new Promise((resolve) => {
           var selectSearchedBookmarks = 'SELECT * FROM `bookmarks` WHERE `org_id` = ? AND ( `description` LIKE "' + keyWordsForQuery + '%" )';
           connection.query(selectSearchedBookmarks, [orgId]).then((result) => {
+            numberOfSearchedBookmarks = result[0].length;
             var searchedBookmarkData = result[0];
             resolve(searchedBookmarkData);
           });
@@ -798,6 +803,7 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
           searchPageLength,
           index,
           searchIndex,
+          numberOfSearchedBookmarks,
         });
       }).catch(() => {
         var searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
@@ -816,6 +822,7 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
           searchPageLength,
           index,
           searchIndex,
+          numberOfSearchedBookmarks,
         });
       });
     }else if(searchFromTitle === undefined && searchFromDescription === undefined && searchFromTextsOnSites === 'on'){
@@ -837,6 +844,7 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
         var promise = new Promise((resolve) => {
           var selectSearchedBookmarks = 'SELECT * FROM `bookmarks` WHERE `org_id` = ? AND ( `text` LIKE "' + keyWordsForQuery + '%")';
           connection.query(selectSearchedBookmarks, [orgId]).then((result) => {
+            numberOfSearchedBookmarks = result[0].length;
             var searchedBookmarkData = result[0];
             resolve(searchedBookmarkData);
           });
@@ -894,6 +902,7 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
           searchPageLength,
           index,
           searchIndex,
+          numberOfSearchedBookmarks,
         });
       }).catch(() => {
         var searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
@@ -912,6 +921,7 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
           searchPageLength,
           index,
           searchIndex,
+          numberOfSearchedBookmarks,
         });
       });
     }else if(searchFromTitle === 'on' && searchFromDescription === 'on' && searchFromTextsOnSites === undefined){
@@ -952,6 +962,7 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
         var selectSearchedBookmarks = 'SELECT * FROM `bookmarks` WHERE `org_id` = ? AND (( `title` LIKE "' + keyWordsForQueryByTitle + '%" ) OR ( `description` LIKE "' + keyWordsForQueryByDescription + '%"))';
         var promise = new Promise((resolve) => {
           connection.query(selectSearchedBookmarks, [orgId]).then((result) => {
+            numberOfSearchedBookmarks = result[0].length;
             var searchedBookmarkData = result[0];
             resolve(searchedBookmarkData);
           });
@@ -1009,6 +1020,7 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
           searchPageLength,
           index,
           searchIndex,
+          numberOfSearchedBookmarks,
         });
       }).catch(() => {
         var searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
@@ -1027,6 +1039,7 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
           searchPageLength,
           index,
           searchIndex,
+          numberOfSearchedBookmarks,
         });
       });
     }else if(searchFromTitle === 'on' && searchFromDescription === undefined && searchFromTextsOnSites === 'on'){
@@ -1067,6 +1080,7 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
         var promise = new Promise((resolve) => {
           var selectSearchedBookmarks = 'SELECT * FROM `bookmarks` WHERE `org_id` = ? AND (( `title` LIKE "' + keyWordsForQueryWithTitle + '%" ) OR ( `text` LIKE "' + keyWordsForQueryWithText + '%" ))';
           connection.query(selectSearchedBookmarks, [orgId]).then((result) => {
+            numberOfSearchedBookmarks = result[0].length;
             var searchedBookmarkData = result[0];
             resolve(searchedBookmarkData);
           });
@@ -1124,6 +1138,7 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
           searchPageLength,
           index,
           searchIndex,
+          numberOfSearchedBookmarks,
         });
       }).catch(() => {
         var searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
@@ -1142,6 +1157,7 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
           searchPageLength,
           index,
           searchIndex,
+          numberOfSearchedBookmarks,
         });
       });
     }else if(searchFromTitle === undefined && searchFromDescription === 'on' && searchFromTextsOnSites === 'on'){
@@ -1180,8 +1196,9 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
         var keyWordsForQueryWithText = values.keyWordsForQueryWithText;
         var keyWordsForQueryWithDescription = values.keyWordsForQueryWithDescription;
         var promise = new Promise((resolve) => {
-          var selectSearchedBookmarks = 'SELECT * FROM `bookmarks` WHERE `org_id` = ? AND (( `description` LIKE "' + keyWordsForQueryWithDescription + '%" ) OR ( "' + keyWordsForQueryWithText + '%" ))';
+          var selectSearchedBookmarks = 'SELECT * FROM `bookmarks` WHERE `org_id` = ? AND (( `description` LIKE "' + keyWordsForQueryWithDescription + '%" ) OR ( `text` LIKE "' + keyWordsForQueryWithText + '%" ))';
           connection.query(selectSearchedBookmarks, [orgId]).then((result) => {
+            numberOfSearchedBookmarks = result[0].length;
             var searchedBookmarkData = result[0];
             resolve(searchedBookmarkData);
           });
@@ -1239,6 +1256,7 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
           searchPageLength,
           index,
           searchIndex,
+          numberOfSearchedBookmarks,
         });
       }).catch(() => {
         var searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
@@ -1257,6 +1275,7 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
           searchPageLength,
           index,
           searchIndex,
+          numberOfSearchedBookmarks,
         });
       });
     }else if(searchFromTitle === 'on' && searchFromDescription === 'on' && searchFromTextsOnSites === 'on'){
@@ -1318,6 +1337,7 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
         var promise = new Promise((resolve) => {
           var selectSearchedBookmarks = 'SELECT * FROM `bookmarks` WHERE `org_id` = ? AND (( `title` LIKE "' + keyWordsForQueryWithTitle + '%" ) OR ( `description` LIKE "' + keyWordsForQueryWithDescription + '%" ) OR ( `text` LIKE "' + keyWordsForQueryWithText + '%" ))';
           connection.query(selectSearchedBookmarks, [orgId]).then((result) => {
+            numberOfSearchedBookmarks = result[0].length;
             var searchedBookmarkData = result[0];
             resolve(searchedBookmarkData);
           });
@@ -1375,6 +1395,7 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
           searchPageLength,
           index,
           searchIndex,
+          numberOfSearchedBookmarks,
         });
       }).catch(() => {
         var searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
@@ -1393,6 +1414,7 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
           searchPageLength,
           index,
           searchIndex,
+          numberOfSearchedBookmarks,
         });
       });
     }
