@@ -121,19 +121,19 @@ router.post('/', (req, res) => {
       }).then((value) => {
         var queryResult = value;
         var promise = new Promise((resolve) => {
-          var nickNames = [];
+          var commentUserData = [];
           queryResult.forEach((currentValue, index, array) => {
-            var pullNickName = 'SELECT `nick_name` FROM `users` WHERE `user_id` = ?';
-            connection.query(pullNickName, [currentValue.user_id]).then((result) => {
+            var pullCommentUserData = 'SELECT * FROM `users` WHERE `user_id` = ?';
+            connection.query(pullCommentUserData, [currentValue.user_id]).then((result) => {
               if(index + 1 === array.length){
-                nickNames.push(result[0][0].nick_name);
+                commentUserData.push(result[0][0]);
                 var values = {
                   queryResult,
-                  nickNames,
+                  commentUserData,
                 };
                 resolve(values);
               }else{
-                nickNames.push(result[0][0].nick_name);
+                commentUserData.push(result[0][0].nick_name);
               }
             });
           });
@@ -151,6 +151,7 @@ router.post('/', (req, res) => {
             bookmark : result[0],
             browsingUserId : userId,
             commentNickName : nickNames,
+            commentUserData : values.commentUserData,
             commentNotice : 'セキュリティ上の観点からコメントに「+, -, %, ;」は使えません',
           });
         });
