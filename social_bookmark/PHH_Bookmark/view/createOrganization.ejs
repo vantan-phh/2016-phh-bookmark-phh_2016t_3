@@ -3,78 +3,92 @@
   <head>
     <meta charset="utf-8">
     <title></title>
+    <link rel="stylesheet" type="text/css" href="/css/createOrganization.css">
   </head>
   <body>
-    <form action="/PHH_Bookmark/createOrganization/create" method="post" enctype="multipart/form-data" name="mainForm" id="mainFrom">
-      <% if(typeof orgName !== 'undefined') { %>
-        <input type="text" placeholder="組織名" name="orgName" id="orgName" value="<%= orgName %>">
-      <% } else { %>
-        <input type="text" placeholder="組織名" name="orgName" id="orgName">
-      <% } %>
-      <% if(typeof orgNameNotice !== 'undefined'){ %>
-        <p><%= orgNameNotice %></p>
-      <% } %>
-      <% if(typeof orgIntroduction !== 'undefined') { %>
-        <input type="text" placeholder="description" name="orgIntroduction" id="orgIntroduction" value="<%= orgIntroduction %>">
-      <% } else {%>
-        <input type="text" placeholder="description" name="orgIntroduction" id="orgIntroduction">
-      <% } %>
-      <% if(typeof orgIntroductionNotice !== 'undefined'){ %>
-        <p><%= orgIntroductionNotice %></p>
-      <% } %>
-      <input type="file" accept="image/*" name="image_file">
-      <% if(typeof thumbailNotice !== 'undefined'){%>
-        <p><%= thumbailNotice %></p>
-      <% } %>
-      <input type="text" placeholder="招待メンバー" name="invitedUser" id="invitedUser">
-      <% if(typeof searchUserNotice !== 'undefined'){ %>
-        <p><%= searchUserNotice %></p>
-      <% } %>
-      <input type="button" value="検索" id="searchUser">
-      <% if(typeof searchedUsers !== 'undefined'){%>
-        <div>検索にヒットしたユーザー</div>
-        <% for(var i = 0; i < searchedUsers.length; i++){ %>
-          <div><%= searchedUsers[i].nick_name %> <%= searchedUsers[i].name %>
-            <input type="button" value="決定" class="set" name="<%= searchedUsers[i].name %>,<%= searchedUsers[i].nick_name %>">
-          </div>
+    <% include layout %>
+    <div id="all">
+      <p id="pagetitle">組織を作成する</p>
+      <form action="/PHH_Bookmark/createOrganization/create" method="post" enctype="multipart/form-data" name="mainForm" id="mainFrom">
+        <% if(typeof orgName !== 'undefined') { %>
+          <div class="form"><input type="text" placeholder="組織名" name="orgName" id="orgName" value="<%= orgName %>"></div>
+        <% } else { %>
+          <div class="form"><input type="text" placeholder="組織名" name="orgName" id="orgName"></div>
         <% } %>
-      <% } %>
-      <% if(typeof noUser !== 'undefined'){ %>
-        <%= noUser %>
-      <% } %>
-      <input type="submit" value="作成" id="createOrg" name="createOrg" class="button">
-      <input type="hidden" name="result" value="">
-    </form>
-    <% if(typeof orgNameExists !== 'undefined'){%>
-      <div><%= orgNameExists %></div>
-    <% } %>
-    <div id="memberList">
-      <% if(typeof selectedNickNames !== 'undefined') { %>
-        選択されたユーザー
-        <% for(var i = 0; i < selectedNickNames.length; i++){ %>
-          <div><%= selectedNickNames[i] %><%= selectedUserNames[i] %><input type="button" value="削除" name="<%= selectedUserNames[i] %>" class="deleteButton"></div>
+        <% if(typeof orgNameNotice !== 'undefined'){ %>
+          <p><%= orgNameNotice %></p>
         <% } %>
-      <% } %>
+        <% if(typeof orgNameExists !== 'undefined'){%>
+          <div><%= orgNameExists %></div>
+        <% } %>
+        <% if(typeof orgIntroduction !== 'undefined') { %>
+          <div class="form"><textarea type="text" placeholder="description" name="orgIntroduction" id="orgIntroduction" value="<%= orgIntroduction %>"></textarea></div>
+        <% } else {%>
+          <div class="form"><textarea type="text" placeholder="description" name="orgIntroduction" id="orgIntroduction"></textarea></div>
+        <% } %>
+        <% if(typeof orgIntroductionNotice !== 'undefined'){ %>
+          <p><%= orgIntroductionNotice %></p>
+        <% } %>
+        <p class="subtitle">サムネイル</p>
+        <div><input type="file" accept="image/*" name="image_file"></div>
+        <% if(typeof thumbailNotice !== 'undefined'){%>
+          <p><%= thumbailNotice %></p>
+        <% } %>
+        <div id="create"><input type="submit" value="作成" id="createOrg" name="createOrg" class="button"></div>
+        <input type="hidden" name="result" value="">
+        <div id="userLists">
+          <div id="inviteAndSearch">
+            <p class="subtitle">ユーザーの招待</p>
+            <div id="searchForm">
+              <div class="form"><input type="text" placeholder="ユーザー名を入力" name="invitedUser" id="invitedUser"></div>
+              <input type="button" value="検索" id="searchUser">
+            </div>
+            <% if(typeof searchUserNotice !== 'undefined'){ %>
+              <p><%= searchUserNotice %></p>
+            <% } %>
+            <% if(typeof searchedUsers !== 'undefined'){%>
+              <div class="subtitle">検索にヒットしたユーザー</div>
+              <div id="hitUserList">
+              <% for(var i = 0; i < searchedUsers.length; i++){ %>
+                <div class="hitUser"><%= searchedUsers[i].nick_name %> <%= searchedUsers[i].name %>
+                  <input type="button" value="決定" class="set" name="<%= searchedUsers[i].name %>,<%= searchedUsers[i].nick_name %>">
+                </div>
+              <% } %>
+              </div>
+            <% } %>
+            <% if(typeof noUser !== 'undefined'){ %>
+              <%= noUser %>
+            <% } %>
+          </form>
+        </div>
+        <div id="memberList">
+          <% if(typeof selectedNickNames !== 'undefined') { %>
+            <div class="subtitle"> 選択されたユーザー</div>
+            <% for(var i = 0; i < selectedNickNames.length; i++){ %>
+              <div class="selectedUser"><%= selectedNickNames[i] %><%= selectedUserNames[i] %><input type="button" value="削除" name="<%= selectedUserNames[i] %>" class="deleteButton"></div>
+            <% } %>
+          <% } %>
+        </div>
+      </div>
+
+      <form action="/PHH_Bookmark/createOrganization/searchUser" method="post" name="searchUser">
+        <input type="hidden" name="result">
+        <input type="hidden" name="orgName">
+        <input type="hidden" name="orgIntroduction">
+      </form>
+
+      <form action="/PHH_Bookmark/createOrganization/selectUser" method="post" name="selectUser">
+        <input type="hidden" name="result">
+        <input type="hidden" name="orgName">
+        <input type="hidden" name="orgIntroduction">
+      </form>
+
+      <form action="/PHH_Bookmark/createOrganization/excludeUser" method="post" name="excludeUser">
+        <input type="hidden" name="result">
+        <input type="hidden" name="orgName">
+        <input type="hidden" name="orgIntroduction">
+      </form>
     </div>
-
-    <form action="/PHH_Bookmark/createOrganization/searchUser" method="post" name="searchUser">
-      <input type="hidden" name="result">
-      <input type="hidden" name="orgName">
-      <input type="hidden" name="orgIntroduction">
-    </form>
-
-    <form action="/PHH_Bookmark/createOrganization/selectUser" method="post" name="selectUser">
-      <input type="hidden" name="result">
-      <input type="hidden" name="orgName">
-      <input type="hidden" name="orgIntroduction">
-    </form>
-
-    <form action="/PHH_Bookmark/createOrganization/excludeUser" method="post" name="excludeUser">
-      <input type="hidden" name="result">
-      <input type="hidden" name="orgName">
-      <input type="hidden" name="orgIntroduction">
-    </form>
-
   </body>
 </html>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
