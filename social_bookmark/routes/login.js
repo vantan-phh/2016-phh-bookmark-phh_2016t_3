@@ -48,7 +48,7 @@ router.post('/', (req, res) => {
             }else{
               req.session.user_id = false;
               res.render('login.ejs', {
-                noUser : '入力された値からユーザーが探せません。',
+                noUser : 'ログインに失敗しました',
               });
             }
           });
@@ -111,7 +111,7 @@ router.post('/', (req, res) => {
         }else{
           req.session.user_id = false;
           res.render('login.ejs', {
-            noUser : '入力された値からユーザーが探せません。',
+            noUser : 'ログインに失敗しました',
           });
         }
       });
@@ -132,7 +132,7 @@ router.post('/', (req, res) => {
             }else{
               req.session.user_id = false;
               res.render('login.ejs', {
-                noUser : '入力した値からユーザーが探せません。',
+                noUser : 'ログインに失敗しました',
               });
             }
           });
@@ -180,14 +180,14 @@ router.post('/', (req, res) => {
           }else{
             req.session.user_id = false;
             res.render('login.ejs', {
-              noUser : '入力した値からユーザーが探せません。',
+              noUser : 'ログインに失敗しました',
             });
           }
         });
       });
     }else{
       res.render('login.ejs', {
-        usernameNotice : '正しいユーザーネームを入力してください',
+        usernameNotice : '正しいユーザーネームを',
       });
     }
   }
