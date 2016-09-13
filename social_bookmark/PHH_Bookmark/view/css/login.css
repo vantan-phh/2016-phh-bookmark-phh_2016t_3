@@ -119,7 +119,7 @@ main{
   margin-top: 50px;
   padding: 20px;
   width: 280px;
-  height: 270px;
+  height: auto;
 }
 
 h2{
@@ -128,21 +128,26 @@ h2{
 }
 label p{
   white-space: pre;
-  margin: 0 0 9px 0;
+  margin-top: 15px;
+  margin-bottom: 15px;
 }
 .input{
   padding: 5px;
   margin-bottom: 5px;
   width: 230px;
+  font-size: 16px;
 }
 #submitButton{
-  border-style: none;
-  background-color: #00e100;
+  margin-left: 80px;
+  background: linear-gradient(#07d34f, #05b142);
+  border: none;
+  border-radius: 2px;
   color: white;
   font-size: 15px;
-  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.15);
-  width: 230px;
-  height: 30px;
+  text-shadow: 0.5px 0.5px 0.5px black;
+  width: 70px;
+  height: 26px;
+  border-style: none;
   margin-top: 10px;
 }
   #submitButton:hover{
@@ -154,4 +159,12 @@ label p{
   position:absolute;
   left: -15px;
   width: 300px;
+}
+
+.notice{
+  width: 200px;
+  margin: 0 auto;
+    margin-top: 10px;
+  margin-bottom: 5px;
+  color: red;
 }
