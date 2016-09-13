@@ -8,20 +8,34 @@
   <body>
     <% include layout %>
     <main>
-      <a href="/PHH_Bookmark/topPage"><input type="button" value="topPage"></a>
-      <p><%= nickName %></p>
-      <img src="<%= thumbnailPath %>" width="128" height="128"></img>
-      <p><%= introduction %></p>
-      <% if(typeof recentBookmarks !== 'undefined'){ %>
-        <% for(var i = 0; i < recentBookmarks.length; i++){ %>
-          <a name="bookmarkId<%= recentBookmarks[i].bookmark_id%>"><%= recentBookmarks[i].title %></a>
-          <a href="<%= recentBookmarks[i].url %>"><%= recentBookmarks[i].url %></a>
-          <%= recentBookmarks[i].description %>
+      <div id="user-info">
+        <div>
+          <img src="<%= thumbnailPath %>" width="128" height="128"></img>
+        </div>
+        <div class="div">
+          <p><%= nickName %></p>
+          <p><%= introduction %></p>
+        </div>
+      </div>
+      <div id="lists">
+        <% if(typeof recentBookmarks !== 'undefined'){ %>
+          <% for(var i = 0; i < recentBookmarks.length; i++){ %>
+            <% if(i % 2 === 0){ %>
+              <div class="list1">
+            <% }else{%>
+              <div class="list2">
+            <% } %>
+              <a name="bookmarkId<%= recentBookmarks[i].bookmark_id%>"><%= recentBookmarks[i].title %></a>
+              <a href="<%= recentBookmarks[i].url %>"><%= recentBookmarks[i].url %></a>
+              <%= recentBookmarks[i].description %>
+            </div>
+          <% } %>
         <% } %>
-      <% } %>
+      </div>
       <% if(typeof orgData !== 'undefined'){ %>
+        <p id="org">所属している組織</p>
         <% for(var i = 0; i < orgData.length; i++){ %>
-          <img src="<%= orgData[i].image_path %>">
+          <img class="img" src="<%= orgData[i].image_path %>">
           <%= orgData[i].name %>
         <% } %>
       <% } %>
