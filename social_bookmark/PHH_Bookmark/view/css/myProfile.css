@@ -3,7 +3,7 @@
   font-family: sans-serif;
 }
 body{
-  background-color: #fafafa;
+  background-color: #fefefe;
   margin: 0px;
 }
 /*----------------------------/
@@ -13,67 +13,59 @@ main{
   background-color: #fefefe;
   border: solid 1px gray;
   margin-top: 50px;
-  width: 700px;
-  height: 500px;
-  position: absolute;
+  margin-bottom: 100px;
+  width: 802px;
+  height: auto;
+  position: relative;
   left: 300px;
+  padding-left: 100px;
+  padding-top: 70px;
+  padding-bottom: 100px;
 }
-
-#img{
-  display: table-cell;
-  min-width: 150px;
-  min-height: 150px;
-  position: absolute;
-  left: 50px;
-  top: 50px;
+#user-info{
+  overflow: hidden;
 }
-#img img{
-  width:auto;
-  height:auto;
-  max-width:150px;
-  max-height:150px;
-  min-height: 150px;
-  min-width: 150px;
-  vertical-align: middle;
+#user-info>div{
+  float: left;
 }
-
-#nickname{
-  position: relative;
-  left: 220px;
-  top: 60px;
+#lists{
+  overflow: hidden;
 }
-#username{
-  font-size: 13px;
-  position: relative;
-  left: 220px;
-  top: 60px;
+#org{
+  font-size: 20px;
+  /*color: rgba(34, 195, 80, 0.6);*/
 }
-
-#intro{
-  font-size: 13px;
-  word-wrap: break-word;
-  width: 400px;
-  position: relative;
-  left: 220px;
-  top: 80px;
+.div{
+  margin-left: 150px;
+  margin-top: 40px;
+  width: 350px;
 }
-
-#goEditProfile{
-  background: linear-gradient(#07d34f, #05b142);
-  border-radius: 2px;
-  color: white;
-  display: inline-block;
-  font-size: 15px;
-  text-align: center;
-  text-decoration: none;
-  text-shadow: 0.5px 0.5px 0.5px black;
-  width: 100px;
-  height: 30px;
-  padding: 7px;
-  position: relative;
-  left: 550px;
-  top: 70px;
+.list1{
+  background-color: #129475;
+  border-radius: 10px;
+  float: left;
+  padding: 0 5px 0 0;
+  margin: 0 10px 10px 0;
+  width: 200px;
+  height: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-text-overflow: ellipsis;
+  -o-text-overflow: ellipsis;
 }
-#goEditProfile:hover{
-  background: linear-gradient(#049336, #036b27);
+.list2{
+  background-color: #acf432;
+  border-radius: 10px;
+  float: left;
+  padding: 0 5px 0 0;
+  margin: 0 10px 10px 0;
+  width: 200px;
+  height: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-text-overflow: ellipsis;
+  -o-text-overflow: ellipsis;
+}
+.img{
+  height: 20px;
 }
