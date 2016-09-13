@@ -27,10 +27,17 @@
       <% if(typeof orgData !== 'undefined'){ %>
         <% for(var i = 0; i < orgData.length; i++){ %>
           <img src="<%= orgData[i].image_path %>">
-          <%= orgData[i].name %>
+          <% if(typeof isMe !== 'undefined'){ %>
+            <a name="<%= orgData[i].org_id %>" class="orgId"><%= orgData[i].name %></a>
+          <% }else{ %>
+            <%= orgData[i].name %>
+          <% } %>
         <% } %>
       <% } %>
       <form name="toSubmitBookmarkData" action="/PHH_Bookmark/submitBookmarkData" method="post">
+        <input type="hidden" name="result">
+      </form>
+      <form name="submitOrgId" action="/PHH_Bookmark/organizationPage/submitOrgId" method="post">
         <input type="hidden" name="result">
       </form>
     </main>
@@ -39,10 +46,15 @@
   <script>
   $(function(){
     var $bookmarkId = $("[name^='bookmarkId']");
+    var $orgId = $('.orgId');
     $bookmarkId.click(function(){
       document.toSubmitBookmarkData.result.value = this.name;
       document.toSubmitBookmarkData.submit();
     });
+    $orgId.click(function(){
+      document.submitOrgId.result.value = this.name;
+      document.submitOrgId.submit();
+    })
   });
   </script>
 </html>

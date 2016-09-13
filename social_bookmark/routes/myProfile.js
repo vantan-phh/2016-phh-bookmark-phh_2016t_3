@@ -181,6 +181,7 @@ router.get('/', (req, res) => {
       introduction : values.introduction,
       recentBookmarks : values.recentBookmarks,
       orgData : values.orgData,
+      isMe : true,
     });
   }).catch((values) => {
     res.render('userProfile', {
@@ -190,6 +191,7 @@ router.get('/', (req, res) => {
       introduction : values.introduction,
       recentBookmarks : values.recentBookmarks,
       orgData : values.orgData,
+      isMe : true,
     });
   });
 });
