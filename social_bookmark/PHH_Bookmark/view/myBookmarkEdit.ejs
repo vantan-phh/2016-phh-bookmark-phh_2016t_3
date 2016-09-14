@@ -7,35 +7,33 @@
   </head>
   <body>
     <% include layout %>
-    <div id="search">
-      <button>検索</button>
-      <input type="text">
-    </div>
     <main>
       <div id="organization"></div>
       <div id="list">
         <form accept-charset="UTF-8" action="/PHH_Bookmark/myBookmarkEdit" method="post">
             <!--<input type="text" placeholder="URLを入力" id="url" name="new_bookmark_url">-->
+          URL：
           <% if(typeof url !== 'undefined'){ %>
             <%= url %>
           <% } %>
-          <input type="text" placeholder="タイトル" value="<%= title %>" id="title" name="title">
-          <% if(typeof titleNotice !== 'undefined'){ %>
-            <p><%= titleNotice %></p>
-          <% } %>
-          <% if(typeof description !== 'undefined'){ %>
-              <input type="text" placeholder="説明" value="<%= description %>" name="description">
-          <% }else{ %>
-            <input type="text" placeholder="説明" id="description" name="description">
-          <% } %>
-          <% if(typeof descriptionNotice !== 'undefined'){ %>
-            <p><%= descriptionNotice %></p>
-          <% } %>
-          <input type="submit" value="送信" class="button">
+          <div id="change">
+            <p class="subtitle">タイトル</p>
+            <div class="form"><input type="text" placeholder="タイトル" value="<%= title %>" id="title" name="title"></div>
+            <% if(typeof titleNotice !== 'undefined'){ %>
+              <p class="notice"><%= titleNotice %></p>
+            <% } %>
+            <p class="subtitle">説明文</p>
+            <% if(typeof description !== 'undefined'){ %>
+              <div class="form"><textarea type="text" placeholder="説明" value="<%= description %>" name="description"></textarea></div>
+            <% }else{ %>
+              <div class="form"><textarea type="text" placeholder="説明" id="description" name="description"></textarea></div>
+            <% } %>
+            <% if(typeof descriptionNotice !== 'undefined'){ %>
+              <p class="notice"><%= descriptionNotice %></p>
+            <% } %>
+            <input type="submit" value="送信" class="button">
+          </div>
         </form>
-        <% if (typeof user !== 'undefined') { %>
-          <span class="login-user"><%= user.name %>さんとしてログインしています</span>
-        <% } %>
       </div>
     </main>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
