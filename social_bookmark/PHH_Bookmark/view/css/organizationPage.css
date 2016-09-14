@@ -144,6 +144,7 @@ header{
   cursor: pointer;
 }
 #tes{
- background-color: lightgreen;
+ background-color: rgba(127, 246, 85, 0.7);;
  float: left;
+ border-radius: 10px;
 }
