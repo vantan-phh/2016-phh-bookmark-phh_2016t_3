@@ -129,10 +129,20 @@ router.post('/', (req, res) => {
     });
     return promise;
   }).then((value) => {
-    password = value[0];
-    var salt = value[1];
-    var createAccount = 'INSERT INTO `users` (`name`,`mail`,`salt`,`hash`,`nick_name`,`image_path`) VALUES(?, ?, ?, ?, ?, ?)';
-    connection.query(createAccount, [userName, eMail, salt, password, userName, 'http://res.cloudinary.com/dy4f7hul5/image/upload/v1469220623/sample.jpg']).then(() => {
+    var promise = new Promise((resolve) => {
+      password = value[0];
+      var salt = value[1];
+      var createAccount = 'INSERT INTO `users` (`name`,`mail`,`salt`,`hash`,`nick_name`,`image_path`) VALUES(?, ?, ?, ?, ?, ?)';
+      connection.query(createAccount, [userName, eMail, salt, password, userName, 'http://res.cloudinary.com/dy4f7hul5/image/upload/v1469220623/sample.jpg']).then(() => {
+        resolve();
+      });
+    });
+    return promise;
+  }).then(() => {
+    var selectUserId = 'SELECT `user_id` FROM `users` WHERE `name` = ?';
+    connection.query(selectUserId, [userName]).then((result) => {
+      if(req.session.user_id) delete req.session.user_id;
+      req.session.user_id = result[0][0].user_id;
       res.redirect('/PHH_Bookmark/login');
     });
   });
