@@ -86,7 +86,7 @@
               <input type="submit" value="送信" class="button">
             <% }else if(typeof url !== 'undefined'){ %>
               <input type="text" placeholder="コメント" id="description" name="description">
-              <input id="submit" type="submit" value="送信" class="button">
+              <input id="bookmarkSubmit" type="submit" value="送信" class="button">
             <% } %>
             <% if(typeof titleNotice !== 'undefined'){ %>
               <p id="titleNotice"><%= titleNotice %></p>
@@ -194,6 +194,7 @@
           document.submitOrgId.submit();
         });
         $button.click(function(){
+          console.log(this.form.submit);
           this.disabled = true;
           this.form.submit();
         });

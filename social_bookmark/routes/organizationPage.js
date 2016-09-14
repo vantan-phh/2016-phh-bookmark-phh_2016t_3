@@ -137,7 +137,6 @@ function addNumberOfComments(values){
 
 router.post('/submitOrgId', (req, res) => {
   var orgId = req.body.result;
-  console.log(orgId);
   if(req.session.org_id){
     delete req.session.org_id;
   }
