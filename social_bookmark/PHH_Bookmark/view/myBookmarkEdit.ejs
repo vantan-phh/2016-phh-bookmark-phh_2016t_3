@@ -17,12 +17,12 @@
             <%= url %>
           <% } %>
           <div id="change">
-            <p>タイトル</p>
+            <p class="subtitle">タイトル</p>
             <div class="form"><input type="text" placeholder="タイトル" value="<%= title %>" id="title" name="title"></div>
             <% if(typeof titleNotice !== 'undefined'){ %>
               <p class="notice"><%= titleNotice %></p>
             <% } %>
-            <p>説明文</p>
+            <p class="subtitle">説明文</p>
             <% if(typeof description !== 'undefined'){ %>
               <div class="form"><textarea type="text" placeholder="説明" value="<%= description %>" name="description"></textarea></div>
             <% }else{ %>
