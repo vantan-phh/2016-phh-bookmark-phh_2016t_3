@@ -71,22 +71,21 @@ router.post('/searchUser', (req, res) => {
       if(selectedUserNames.length > 0){
         (() => {
           var promise = new Promise((resolve) => {
-            var userNamesForQuery = '';
+            var selectOverlapUser = 'SELECT `user_id` FROM `users` WHERE `name` = ';
             selectedUserNames.forEach((currentValue, index, array) => {
               if(index + 1 === array.length){
-                userNamesForQuery += '"' + currentValue + '"';
-                resolve(userNamesForQuery);
+                selectOverlapUser += '?';
+                resolve(selectOverlapUser);
               }else{
-                userNamesForQuery += '"' + currentValue + '" OR `name` = ';
+                selectOverlapUser += '? OR `name` = ';
               }
             });
           });
           return promise;
         })().then((_value) => {
-          var userNamesForQuery = _value;
+          var selectOverlapUser = _value;
           var promise = new Promise((resolve) => {
-            var selectOverlapUser = 'SELECT `user_id` FROM `users` WHERE `name` = ' + userNamesForQuery;
-            connection.query(selectOverlapUser).then((result) => {
+            connection.query(selectOverlapUser, selectedUserNames).then((result) => {
               var selectedIds = result[0];
               resolve(selectedIds);
             });
@@ -106,8 +105,9 @@ router.post('/searchUser', (req, res) => {
           return promise;
         }).then((_value) => {
           overlapUsers = _value;
-          var excludeOverlapUsers = 'SELECT `name`, `nick_name` FROM (SELECT * FROM `users` WHERE `user_id` NOT IN (?)) AS `a` WHERE `name` LIKE "%' + invitedUser + '%"';
-          connection.query(excludeOverlapUsers, [overlapUsers]).then((result) => {
+          invitedUser = '%' + invitedUser + '%';
+          var excludeOverlapUsers = 'SELECT `name`, `nick_name` FROM (SELECT * FROM `users` WHERE `user_id` NOT IN (?)) AS `a` WHERE `name` LIKE ?';
+          connection.query(excludeOverlapUsers, [overlapUsers, invitedUser]).then((result) => {
             if(result[0].length > 0){
               var searchedUsers = result[0];
               res.render('createOrganization.ejs', {
@@ -129,8 +129,9 @@ router.post('/searchUser', (req, res) => {
           });
         });
       }else{ // when no one selected still
-        var excludeOwnData = 'SELECT `name`, `nick_name` FROM (SELECT * FROM `users` WHERE `name` NOT IN (?)) AS `a` WHERE `name` LIKE "%' + invitedUser + '%"';
-        connection.query(excludeOwnData, [ownUserName]).then((result) => {
+        invitedUser = '%' + invitedUser + '%';
+        var excludeOwnData = 'SELECT `name`, `nick_name` FROM (SELECT * FROM `users` WHERE `name` NOT IN (?)) AS `a` WHERE `name` LIKE ?';
+        connection.query(excludeOwnData, [ownUserName, invitedUser]).then((result) => {
           if(result[0].length > 0){
             res.render('createOrganization.ejs', {
               orgName,
@@ -286,27 +287,26 @@ router.post('/create', upload.single('image_file'), (req, res) => {
       }).then((value) => {
         var orgId = value;
         var promise = new Promise((resolve) => {
-          var userNamesForQuery = '';
+          var selectUserId = 'SELECT `user_id` FROM `users` WHERE `name` = ';
           selectedUserNames.forEach((currentValue, index, array) => {
             if(index + 1 === array.length){
-              userNamesForQuery += '"' + currentValue + '"';
+              selectUserId += '?';
               var values = {
                 orgId,
-                userNamesForQuery,
+                selectUserId,
               };
               resolve(values);
             }else{
-              userNamesForQuery += '"' + currentValue + '" OR `name` = ';
+              selectUserId += '? OR `name` = ';
             }
           });
         });
         return promise;
       }).then((values) => {
         var orgId = values.orgId;
-        var userNamesForQuery = values.userNamesForQuery;
+        var selectUserId = values.userNamesForQuery;
         var promise = new Promise((resolve) => {
-          var selectUserId = 'SELECT `user_id` FROM `users` WHERE `name` = ' + userNamesForQuery;
-          connection.query(selectUserId).then((result) => {
+          connection.query(selectUserId, [values.selectedUserNames]).then((result) => {
             var selectedUserIds = result[0];
             values = {
               orgId,
@@ -362,27 +362,25 @@ router.post('/create', upload.single('image_file'), (req, res) => {
       }).then((value) => {
         var orgId = value;
         var promise = new Promise((resolve) => {
-          var userNamesForQuery = '';
+          var selectUserId = 'SELECT `user_id` FROM `users` WHERE `name` = ';
           selectedUserNames.forEach((currentValue, index, array) => {
             if(index + 1 === array.length){
-              userNamesForQuery += '"' + currentValue + '"';
+              selectUserId += '?';
               var values = {
                 orgId,
-                userNamesForQuery,
+                selectUserId,
               };
               resolve(values);
             }else{
-              userNamesForQuery += '"' + currentValue + '" OR `name` = ';
+              selectUserId += '? OR `name` = ';
             }
           });
         });
         return promise;
       }).then((values) => {
         var orgId = values.orgId;
-        var userNamesForQuery = values.userNamesForQuery;
         var promise = new Promise((resolve) => {
-          var selectUserId = 'SELECT `user_id` FROM `users` WHERE `name` = ' + userNamesForQuery;
-          connection.query(selectUserId).then((result) => {
+          connection.query(values.selectUserId, [selectedUserNames]).then((result) => {
             var selectedUserIds = result[0];
             values = {
               orgId,
