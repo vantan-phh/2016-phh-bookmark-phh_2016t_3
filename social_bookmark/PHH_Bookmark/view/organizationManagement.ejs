@@ -8,32 +8,40 @@
   <body>
     <% include layout %>
     <main>
-      <form action="/PHH_Bookmark/organizationManagement" method="post" enctype="multipart/form-data">
-        <div id="name" class="inputForm">組織名</div>
-        <input id="setName" class="inputForm" type="text" value="<%= orgName %>" name="orgName" placeholder="組織名">
-        <% if(typeof orgNameNotice !== 'undefined'){ %>
-          <p id="errorName"><%= orgNameNotice %></p>
-        <% } %>
-        <div id="introduction" class="inputForm">紹介文</div>
-        <textarea id="setIntro" class="inputForm" name="orgIntroduction" placeholder="紹介文"><%= orgIntroduction%></textarea>
-        <% if(typeof orgIntroductionNotice !== 'undefined'){ %>
-          <p id="errorIntro"><%= orgIntroductionNotice %></p>
-        <% } %>
-        <% if(typeof orgThumbnail !== 'undefined'){%>
-          <div id="img">
-            <img src="<%= orgThumbnail %>">
+      <p id="pageTitle">組織管理ページ</p>
+      <div id="body">
+        <form action="/PHH_Bookmark/organizationManagement" method="post" enctype="multipart/form-data">
+          <div id="name" class="formTitle">組織名</div>
+          <input id="setName" class="orgNameForm" type="text" value="<%= orgName %>" name="orgName" placeholder="例）ツール3">
+          <% if(typeof orgNameNotice !== 'undefined'){ %>
+            <p class="notice"><%= orgNameNotice %></p>
+          <% } %>
+          <div id="introduction" class="formTitle">紹介文</div>
+          <textarea id="setIntro" class="orgIntroForm" name="orgIntroduction" placeholder="例）ソーシャルブックマークの開発をします"><%= orgIntroduction%></textarea>
+          <% if(typeof orgIntroductionNotice !== 'undefined'){ %>
+            <p class="notice"><%= orgIntroductionNotice %></p>
+          <% } %>
+          <p>サムネイル</p>
+          <% if(typeof orgThumbnail !== 'undefined'){%>
+            <div id="img">
+              <img src="<%= orgThumbnail %>">
+            </div>
+          <% } %>
+          <% if(typeof thumbnailNotice !== 'undefined'){%>
+            <p class="notice"><%= thumbnailNotice %></p>
+          <% } %>
+          <input id="file" class="input" type="file" accept="image/*" name="image_file">
+          <div>
+            <input id="submit" type="submit" value="変更">
           </div>
-        <% } %>
-        <% if(typeof thumbnailNotice !== 'undefined'){%>
-          <p><%= thumbnailNotice %></p>
-        <% } %>
-        <input id="file" class="input" type="file" accept="image/*" name="image_file">
-        <input id="submit" type="submit" value="変更">
-      </form>
+        </form>
+        <div id="breakForm">
+          <form action="/PHH_Bookmark/organizationManagement/dissolve" method="post" id="dissolve">
+            <input type="button" value="組織を解散" id="dissolveButton">
+          </form>
+        </div>
+      </div>
     </main>
-    <form action="/PHH_Bookmark/organizationManagement/dissolve" method="post" id="dissolve">
-      <input type="button" value="組織を解散" id="dissolveButton">
-    </form>
   </body>
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
   <script>
@@ -50,7 +58,7 @@
         $dissolve.append('<input type="button" value="キャンセル" id="cancel" class="beforeDissolve">');
         $dissolve.append('<p class="beforeDissolve">下の解散ボタンをクリックするとこの組織は解散され、元には戻せません。メンバーともよく相談してから押してください。</p>');
         $dissolve.append('<p class="beforeDissolve">＊上のキャンセルボタンを押すとこのメッセージと解散ボタンを非表示にすることができます。');
-        $dissolve.append('<input type="submit" value="解散" class="beforeDissolve">');
+        $dissolve.append('<input type="submit" value="解散" id="break" class="beforeDissolve">');
         $("#cancel").click(function(){
           $dissolve.append($dissolveButton);
           $('.beforeDissolve').detach();
