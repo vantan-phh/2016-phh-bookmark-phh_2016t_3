@@ -11,21 +11,21 @@ var index;
 var allSearchedBookmarkData;
 var searchIndex;
 
-function createBookmarkIdsForQuery(value){
+function createSelectCommentQuery(value){
   var promise = new Promise((resolve, reject) => {
     if(value[0].length){
-      var bookmarkIdsForQuery = '';
+      var selectCommentQuery = 'SELECT * FROM `comments` WHERE `bookmark_id` = ';
       value.forEach((currentValue, _index, array) => {
         currentValue.forEach((_currentValue, __index, _array) => {
           if(_index + 1 === array.length && __index + 1 === _array.length){
-            bookmarkIdsForQuery += _currentValue.bookmark_id;
+            selectCommentQuery += '?';
             var values = {
               allBookmarkData : value,
-              bookmarkIdsForQuery,
+              selectCommentQuery,
             };
             resolve(values);
           }else{
-            bookmarkIdsForQuery += _currentValue.bookmark_id + ' OR `bookmark_id` = ';
+            selectCommentQuery += '? OR `bookmark_id` = ';
           }
         });
       });
@@ -36,31 +36,28 @@ function createBookmarkIdsForQuery(value){
   return promise;
 }
 
-function selectComment(values){
+function createCommentedBookmarkIds(values){
   var promise = new Promise((resolve) => {
-    var selectCommentQuery = 'SELECT * FROM `comments` WHERE `bookmark_id` = ' + values.bookmarkIdsForQuery;
-    connection.query(selectCommentQuery).then((result) => {
-      values.selectedComments = result[0];
-      resolve(values);
+    var commentedBookmarkIds = [];
+    values.allBookmarkData.forEach((currentValue, _index, array) => {
+      currentValue.forEach((_currentValue, __index, _array) => {
+        commentedBookmarkIds.push(_currentValue.bookmark_id);
+        if(_index + 1 === array.length && __index + 1 === _array.length){
+          values.commentedBookmarkIds = commentedBookmarkIds;
+          resolve(values);
+        }
+      });
     });
   });
   return promise;
 }
 
-function createCommentedBookmarkIds(values){
-  var promise = new Promise((resolve, reject) => {
-    if(values.selectedComments.length){
-      var commentedBookmarkIds = [];
-      values.selectedComments.forEach((currentValue, _index, array) => {
-        commentedBookmarkIds.push(currentValue.bookmark_id);
-        if(_index + 1 === array.length){
-          values.commentedBookmarkIds = commentedBookmarkIds;
-          resolve(values);
-        }
-      });
-    }else{
-      reject(values.allBookmarkData);
-    }
+function selectComment(values){
+  var promise = new Promise((resolve) => {
+    connection.query(values.selectCommentQuery, values.commentedBookmarkIds).then((result) => {
+      values.selectedComments = result[0];
+      resolve(values);
+    });
   });
   return promise;
 }
@@ -92,16 +89,18 @@ function createComments(values){
 }
 
 function pushSelectedComments(values){
+  'use strict';
   var promise = new Promise((resolve) => {
+    values.commentsKeys = Object.keys(values.comments);
     values.selectedComments.forEach((currentValue, _index, array) => {
-      for(var key in values.comments){
-        if(key === currentValue.bookmark_id.toString()){
-          values.comments[key].push(currentValue);
+      values.commentsKeys.forEach((_currentValue, __index, _array) => {
+        if(_currentValue === currentValue.bookmark_id.toString()){
+          values.comments[_currentValue].push(currentValue);
         }
-        if(_index + 1 === array.length){
+        if(_index + 1 === array.length && __index + 1 === _array.length){
           resolve(values);
         }
-      }
+      });
     });
   });
   return promise;
@@ -111,18 +110,18 @@ function addNumberOfComments(values){
   var promise = new Promise((resolve) => {
     values.allBookmarkData.forEach((currentValue, _index, array) => {
       currentValue.forEach((_currentValue, __index, _array) => {
-        for(var key in values.comments){
-          if(key === _currentValue.bookmark_id.toString()){
-            if(values.comments[key].length){
-              _currentValue.numberOfComments = values.comments[key].length;
+        values.commentsKeys.forEach((__currentValue, ___index, __array) => {
+          if(__currentValue === _currentValue.bookmark_id.toString()){
+            if(values.comments[__currentValue].length){
+              _currentValue.numberOfComments = values.comments[__currentValue].length;
             }else{
               _currentValue.numberOfComments = 0;
             }
           }
-          if(_index + 1 === array.length && __index + 1 === _array.length){
+          if(_index + 1 === array.length && __index + 1 === _array.length && ___index + 1 === __array.length){
             resolve(values.allBookmarkData);
           }
-        }
+        });
       });
     });
   });
@@ -204,10 +203,9 @@ router.get('/', (req, res) => {
       });
     });
     return promise;
-  }).then(createBookmarkIdsForQuery)
-  .then(selectComment)
+  }).then(createSelectCommentQuery)
   .then(createCommentedBookmarkIds)
-  .then(FilterCommentedBookmarkIds)
+  .then(selectComment)
   .then(createComments)
   .then(pushSelectedComments)
   .then(addNumberOfComments)
@@ -443,14 +441,30 @@ router.post('/delete', (req, res) => {
   var ids = req.body;
   (() => {
     var promise = new Promise((resolve) => {
-      for(var x in ids){
-        var query = 'DELETE FROM `bookmarks` WHERE `bookmark_id` = ?';
-        connection.query(query, [x]);
-      }
-      resolve();
+      ids = Object.keys(ids);
+      var query = 'DELETE FROM `bookmarks` WHERE `bookmark_id` = ';
+      ids.forEach((currentValue, _index, array) => {
+        if(_index + 1 === array.length){
+          query += '?';
+          var values = {
+            ids,
+            query,
+          };
+          resolve(values);
+        }else{
+          query += '? OR `bookmark_id` =';
+        }
+      });
     });
     return promise;
-  })().then(() => {
+  })().then((values) => {
+    var promise = new Promise((resolve) => {
+      connection.query(values.query, values.ids).then(() => {
+        resolve();
+      });
+    });
+    return promise;
+  }).then(() => {
     res.redirect('/PHH_Bookmark/myPage');
   });
 });
