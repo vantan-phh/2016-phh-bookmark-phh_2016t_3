@@ -33,23 +33,30 @@ router.get('/', (req, res) => {
   }).then((values) => {
     var selectedAdminIds = values.selectedAdminIds;
     var promise = new Promise((resolve) => {
-      var adminIdsForQuery = '';
+      var selectAdmins = 'SELECT * FROM `users` WHERE `user_id` = ';
       selectedAdminIds.forEach((currentValue, index, array) => {
         if(index + 1 === array.length){
-          adminIdsForQuery += currentValue.user_id;
-          values.adminIdsForQuery = adminIdsForQuery;
+          selectAdmins += '?';
+          values.selectAdmins = selectAdmins;
           resolve(values);
         }else{
-          adminIdsForQuery += currentValue.user_id + ' OR `user_id` = ';
+          selectAdmins += '? OR `user_id` = ';
         }
       });
     });
     return promise;
   }).then((values) => {
-    var adminIdsForQuery = values.adminIdsForQuery;
     var promise = new Promise((resolve) => {
-      var selectAdmins = 'SELECT * FROM `users` WHERE `user_id` = ' + adminIdsForQuery;
-      connection.query(selectAdmins).then((result) => {
+      values.adminIds = [];
+      values.selectedAdminIds.forEach((currentValue, index, array) => {
+        values.adminIds.push(currentValue.user_id);
+        if(index + 1 === array.length) resolve(values);
+      });
+    });
+    return promise;
+  }).then((values) => {
+    var promise = new Promise((resolve) => {
+      connection.query(values.selectAdmins, values.adminIds).then((result) => {
         values.selectedAdminData = result[0];
         resolve(values);
       });
@@ -66,37 +73,38 @@ router.get('/', (req, res) => {
     return promise;
   }).then((values) => {
     var selectedNotAdminIds = values.selectedNotAdminIds;
-    var promise = new Promise((resolve) => {
-      var notAdminIdsForQuery = '';
+    var promise = new Promise((resolve, reject) => {
+      var selectNotAdminData = 'SELECT * FROM `users` WHERE `user_id` = ';
       if(selectedNotAdminIds.length > 0){
         selectedNotAdminIds.forEach((currentValue, index, array) => {
           if(index + 1 === array.length){
-            notAdminIdsForQuery += currentValue.user_id;
-            values.notAdminIdsForQuery = notAdminIdsForQuery;
+            selectNotAdminData += '?';
+            values.selectNotAdminData = selectNotAdminData;
             resolve(values);
           }else{
-            notAdminIdsForQuery += currentValue.user_id + ' OR `user_id` = ';
+            selectNotAdminData += '? OR `user_id` = ';
           }
         });
       }else{
-        values.notAdminIdsForQuery = notAdminIdsForQuery;
-        resolve(values);
+        reject(values);
       }
     });
     return promise;
   }).then((values) => {
-    var notAdminIdsForQuery = values.notAdminIdsForQuery;
     var promise = new Promise((resolve) => {
-      if(notAdminIdsForQuery === ''){
-        values.selectedNotAdminData = [];
+      values.notAdminIds = [];
+      values.selectedNotAdminIds.forEach((currentValue, index, array) => {
+        values.notAdminIds.push(currentValue.user_id);
+        if(index + 1 === array.length) resolve(values);
+      });
+    });
+    return promise;
+  }).then((values) => {
+    var promise = new Promise((resolve) => {
+      connection.query(values.selectNotAdminData, values.notAdminIds).then((result) => {
+        values.selectedNotAdminData = result[0];
         resolve(values);
-      }else{
-        var selectNotAdminData = 'SELECT * FROM `users` WHERE `user_id` = ' + notAdminIdsForQuery;
-        connection.query(selectNotAdminData).then((result) => {
-          values.selectedNotAdminData = result[0];
-          resolve(values);
-        });
-      }
+      });
     });
     return promise;
   }).then((values) => {
@@ -109,6 +117,28 @@ router.get('/', (req, res) => {
     });
     return promise;
   }).then((values) => {
+    if(cannotLeave === 1){
+      cannotLeave = 0;
+      res.render('organizationMembers.ejs', {
+        orgName : values.orgData.name,
+        orgIntroduction : values.orgData.introduction,
+        orgThumbnail : values.orgData.image_path,
+        selectedAdminData : values.selectedAdminData,
+        selectedNotAdminData : values.selectedNotAdminData,
+        myUserName : values.myUserName,
+        cannotLeaveNotice : 'この組織の管理者が1名のみのため、脱退はできません。',
+      });
+    }else{
+      res.render('organizationMembers.ejs', {
+        orgName : values.orgData.name,
+        orgIntroduction : values.orgData.introduction,
+        orgThumbnail : values.orgData.image_path,
+        selectedAdminData : values.selectedAdminData,
+        selectedNotAdminData : values.selectedNotAdminData,
+        myUserName : values.myUserName,
+      });
+    }
+  }).catch((values) => {
     if(cannotLeave === 1){
       cannotLeave = 0;
       res.render('organizationMembers.ejs', {
