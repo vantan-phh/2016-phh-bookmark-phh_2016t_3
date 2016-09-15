@@ -9,120 +9,124 @@ body{
 /*----------------------------/
           コンテンツ
 -----------------------------*/
+
 main{
-  margin-top: 40px;
-  position: absolute;
-  left: 150px;
-}
-
-#read{
-  display: inline-block;
   position: relative;
-  margin: 0 0 10px 0;
-}
-
-#search{
-  position: relative;
-  left: 700px;
   top: 100px;
-}
-#searchResult{
-  position: relative;
-  left: 700px;
-  top: 200px;
-}
-
-#list{
+  left: 200px;
   width: 800px;
-  min-height: 100%;
-  overflow: auto;
-  padding: 10px 10px;
+  margin-bottom: 100px;
 }
-
-#inputBookmark{
-  margin: 0 0 10px 0;
+#pageTitle{
+  font-size: 25px;
 }
-#inputBookmark input{
-  padding: 5px;
+#orgAndBookmarks{
+  margin-left: 15px;
 }
-#inputBookmark #url{
+.subTitle{
+  margin-top: 10px;
+  font-size: 18px;
+}
+.orgInfo{
+  position: relative;
+  width: 200px;
+  float: left;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+.thumbnail{
+  float: left;
+}
+.thumbnail>img{
+  height: 40px;
+  max-width: 80px;
+}
+#search{
+  clear: both;
+}
+#searchCheck{
+  overflow: hidden;
+  width: 400px;
+}
+#titleCheck{
+  float: left;
+}
+#descriptionCheck{
+  float: left;
+}
+#searchForm{
+  font-size: 14px;
+}
+.formTitle{
+  font-size: 13px;
+}
+#url{
+  font-size: 14px;
+}
+#title{
+  width: 200px;
   font-size: 15px;
-  width: 600px;
-  margin-bottom: 5px;
-}
-#inputBookmark #title{
-  width: 200px;
-}
-#inputBookmark #description{
-  width: 300px;
-}
-
-#bookmark1{
-  background-color: #e1e1e1;
-  border-radius: 10px;
-  float: left;
-  padding: 0 5px 0 0;
-  margin: 0 10px 10px 0;
-  width: 200px;
-  height: 150px;
-}
-#bookmark2{
-  background-color: #36a029;
-  border-radius: 10px;
-  float: left;
-  padding: 0 5px 0 0;
-  margin: 0 10px 10px 0;
-  width: 200px;
-  height: 150px;
-}
-
-.checkbox{
-  margin: 5px 13px 0 5px;
-}
-.edit{
-  float: right;
-  margin: 5px 5px 0 0;
-}
-li{
-  margin-left: 20px;
-}
-.title{
-  display: inline-block;
-  max-width: 170px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  -webkit-text-overflow: ellipsis;
-  -o-text-overflow: ellipsis;
-}
-.title:hover{
-  opacity: 0.6;
-  cursor: pointer;
-}
-.url{
-  display: inline-block;
-  max-width: 170px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  -webkit-text-overflow: ellipsis;
-  -o-text-overflow: ellipsis;
-  padding-top: 2px;
-}
-.description{
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  overflow: hidden;
-  padding-top: 5px;
-}
-
-#deleteBtn{
-  background-color: #36a029;
-  padding: 5px;
-  border: solid black 1px;
-  border-radius: 2px;
 }
 #description{
-  background-color: #364364;
+  resize: none;
+  font-size: 14px;
+  width: 300px;
+  height: 80px;
+}
+.notice{
+  color: red;
+  margin-left: 5px;
+}
+#paging{
+  clear: both;
+  margin-bottom: 50px;
+}
+#myBookmarkList{
+  margin-top: 10px;
+}
+.numOfHit{
+  clear: both;
+}
+.odd, .even{
+  border-radius: 10px;
+  float: left;
+  padding: 0 5px 0 0;
+  margin: 0 10px 10px 0;
+  width: 200px;
+  height: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-text-overflow: ellipsis;
+  -o-text-overflow: ellipsis;
+}
+.odd{
+  background-color: #129475;
+  color: #F5F1E4;
+}
+.even{
+  background-color: #acf432;
+  border-radius: 10px;
+}
+#deleteBtn{
+  clear: both;
+}
+.toHead{
+  float: left;
+}
+.toBack{
+  float: left;
+  margin-left: 10px;
+}
+.displayPageNumber{
+  float: left;
+  position: absolute;
+  margin-left: 230px;
+}
+.toNext{
+  float: right;
+  margin-right: 10px;
+}
+.toLast{
+  float: right;
+  margin-right: 180px
 }
