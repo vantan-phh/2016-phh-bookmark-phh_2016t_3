@@ -12,9 +12,9 @@
         <div>
           <label><p id="readNickname">ニックネーム</p>
           <% if(nickName !== undefined){ %>
-            <input class="nickname" type="text" name="nick_name" placeholder="ニックネーム" value="<%= nickName %>">
+            <input class="nickname" type="text" name="nick_name" placeholder="例）PHH 太郎" value="<%= nickName %>">
           <% } else { %>
-            <input class="nickname" type="text" name="nick_name" placeholder="ニックネーム"></label>
+            <input class="nickname" type="text" name="nick_name" placeholder="PHH 太郎"></label>
           <% } %>
           <% if(typeof nickNameNotice !== 'undefined'){ %>
             <p id="errorNickname"><%= nickNameNotice %></p>
@@ -22,9 +22,9 @@
 
           <label><p id="readIntro">自己紹介</p>
           <% if(introduction) { %>
-            <textarea class="intro" type="text" name="introduction" placeholder="自己紹介文"><%= introduction %></textarea>
+            <textarea class="intro" type="text" name="introduction" placeholder="例）PHH 太郎です。プログラミング頑張ります！"><%= introduction %></textarea>
           <% } else { %>
-            <textarea class="intro" type="text" name="introduction" placeholder="自己紹介文"></textarea></label>
+            <textarea class="intro" type="text" name="introduction" placeholder="例）PHH 太郎です。プログラミング頑張ります！"></textarea></label>
           <% } %>
           <% if(typeof introductionNotice !== 'undefined'){ %>
             <p id="errorIntro"><%= introductionNotice %></p>
