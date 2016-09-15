@@ -24,7 +24,7 @@
             <% } %>
             <p class="subtitle">説明文</p>
             <% if(typeof description !== 'undefined'){ %>
-              <div class="form"><textarea type="text" placeholder="説明" value="<%= description %>" name="description"></textarea></div>
+              <div class="form"><textarea type="text" placeholder="説明" name="description"><%= description %></textarea></div>
             <% }else{ %>
               <div class="form"><textarea type="text" placeholder="説明" id="description" name="description"></textarea></div>
             <% } %>
