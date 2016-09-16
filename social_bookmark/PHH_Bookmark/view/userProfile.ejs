@@ -40,7 +40,7 @@
       <% if(typeof orgData !== 'undefined'){ %>
         <p id="org">所属している組織</p>
         <% for(var i = 0; i < orgData.length; i++){ %>
-          <img src="<%= orgData[i].image_path %>">
+          <img class="img" src="<%= orgData[i].image_path %>">
           <% if(typeof isMe !== 'undefined'){ %>
             <a name="<%= orgData[i].org_id %>" class="orgId"><%= orgData[i].name %></a>
           <% }else{ %>

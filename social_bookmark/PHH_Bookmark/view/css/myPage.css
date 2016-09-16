@@ -38,7 +38,9 @@ main{
   overflow: auto;
   padding: 10px 10px;
 }
-
+#list.thumbnail{
+  height: 20px;
+}
 #inputBookmark{
   margin: 0 0 10px 0;
 }
