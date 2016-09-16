@@ -26,9 +26,9 @@
           <p class="subTitle">ブックマークの検索</p>
           <form action="/PHH_Bookmark/myPage/bookmarkList/<%= index %>/searchBookmarkList/1" method="post">
             <div id="searchCheck">
-              <div id="titleCheck"><input type="checkbox" checked="checked" name="searchFromTitle">タイトル</div>
-              <div id="descriptionCheck"><input type="checkbox" name="searchFromDescription">説明文</div>
-              <div id="textCheck"><input type="checkbox" name="searchFromTextsOnSites">URL先のテキスト</div>
+              <input type="checkbox" checked="checked" name="searchFromTitle"><span id="titleCheck">タイトル</span>
+              <input type="checkbox" name="searchFromDescription"><span id="descriptionCheck">説明文</span>
+              <input type="checkbox" name="searchFromTextsOnSites"><span id="textCheck">URL先のテキスト</span>
               <input id="searchForm" type="text" placeholder="検索ワードを入力" name="keyWord">
               <input type="submit" value="検索" class="button">
             </div>
