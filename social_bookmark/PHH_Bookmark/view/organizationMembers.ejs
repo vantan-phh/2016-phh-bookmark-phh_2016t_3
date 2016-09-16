@@ -3,39 +3,51 @@
   <head>
     <meta charset="utf-8">
     <title></title>
+    <link rel="stylesheet" type="text/css" href="/css/organizationMembers.css">
   </head>
   <body>
-    <h2><%= orgName %></h2>
-    <img src="<%= orgThumbnail %>">
-    <div><%= orgIntroduction %></div>
+    <% include layout %>
+    <main>
+      <p id="pageTitle">所属メンバー一覧</p>
 
-    <form action="/PHH_Bookmark/organizationMembers/leave" method="post">
-      <div>管理者一覧</div>
-      <% for(var i = 0; i < selectedAdminData.length; i++){ %>
-        <a name="<%= selectedAdminData[i].user_id %>" class="userId"><%= selectedAdminData[i].nick_name%></a>
-        <a name="<%= selectedAdminData[i].user_id %>" class="userId"><%= selectedAdminData[i].name %></a>
-        <% if(selectedAdminData[i].name === myUserName){ %>
-          <input type="submit" value="脱退" class="button">
-          <% if(typeof cannotLeaveNotice !== 'undefined'){ %>
-            <p><%= cannotLeaveNotice %></p>
+      <div id="orgInfo">
+        <img src="<%= orgThumbnail %>">
+        <p><%= orgName %></p>
+        <div><%= orgIntroduction %></div>
+      </div>
+
+      <form action="/PHH_Bookmark/organizationMembers/leave" method="post">
+        <div class="subTitle">管理者一覧</div>
+        <% for(var i = 0; i < selectedAdminData.length; i++){ %>
+          <div class="adminUser">
+            <a name="<%= selectedAdminData[i].user_id %>" class="userId"><%= selectedAdminData[i].nick_name%></a>
+            <a name="<%= selectedAdminData[i].user_id %>" class="userId">(<%= selectedAdminData[i].name %>)</a>
+            <% if(selectedAdminData[i].name === myUserName){ %>
+              <input type="submit" value="脱退" class="button">
+              <% if(typeof cannotLeaveNotice !== 'undefined'){ %>
+                <p><%= cannotLeaveNotice %></p>
+              <% } %>
+            <% } %>
+          </div>
+        <% } %>
+
+        <div class="subTitle">一般メンバー一覧</div>
+        <% if(typeof selectedNotAdminData !== 'undefined'){ %>
+          <% for(var i = 0; i < selectedNotAdminData.length; i++){%>
+            <div class="normalUser">
+              <a name="<%= selectedNotAdminData[i].user_id %>" class="userId"><%= selectedNotAdminData[i].nick_name %></a>
+              <a name="<%= selectedNotAdminData[i].user_id %>" class="userId">(<%= selectedNotAdminData[i].name %>)</a>
+              <% if (selectedNotAdminData[i].name === myUserName){ %>
+                <input type="submit" value="脱退" class="button">
+              <% } %>
+            </div>
           <% } %>
         <% } %>
-      <% } %>
-
-      <div>一般メンバー一覧</div>
-      <% if(typeof selectedNotAdminData !== 'undefined'){ %>
-        <% for(var i = 0; i < selectedNotAdminData.length; i++){%>
-          <a name="<%= selectedNotAdminData[i].user_id %>" class="userId"><%= selectedNotAdminData[i].nick_name %></a>
-          <a name="<%= selectedNotAdminData[i].user_id %>" class="userId"><%= selectedNotAdminData[i].name %></a>
-          <% if (selectedNotAdminData[i].name === myUserName){ %>
-            <input type="submit" value="脱退" class="button">
-          <% } %>
-        <% } %>
-      <% } %>
-    </form>
-    <form action="/PHH_Bookmark/otherProfile" name="toOtherProfile" method="post">
-      <input type="hidden" name="result">
-    </form>
+      </form>
+      <form action="/PHH_Bookmark/otherProfile" name="toOtherProfile" method="post">
+        <input type="hidden" name="result">
+      </form>
+    </main>
   </body>
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
   <script>

@@ -1,0 +1,29 @@
+main{
+  position: relative;
+  top: 100px;
+  left: 400px;
+  width: 400px;
+  margin-bottom: 100px;
+}
+#pageTitle{
+  font-size: 25px;
+  margin-bottom: 20px;
+}
+#orgInfo{
+  overflow: hidden;
+}
+#orgInfo>img{
+  float: left;
+  width: 150px;
+  height: 150px;
+}
+#orgInfo>p, #orgInfo>div{
+  margin-left: 160px;
+}
+.subTitle{
+  font-size: 20px;
+  margin-top: 10px;
+}
+.adminUser, .normalUser{
+  margin-left: 10px;
+}
