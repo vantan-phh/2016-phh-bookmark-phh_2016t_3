@@ -39,7 +39,7 @@
           <% if(typeof searchedBookmarkData !== 'undefined'){ %>
             <div id="searchResult">
             <p>検索結果</p>
-            <p class="numOfHit">ヒットした件数：<%= numberOfSearchedBookmarks %>件
+            <p class="numOfHit">ヒットした件数：<%= numberOfSearchedBookmarks %>件</p>
             <% if(searchedBookmarkData.length > 0){ %>
               <% for(var i = 0; i < searchedBookmarkData.length; i++){ %>
                 <% if(i % 2 ===0){ %>
@@ -97,7 +97,7 @@
             <form action="/PHH_Bookmark/myPage/bookmarkList/<%= index %>" method="post">
               <% if(typeof url !== 'undefined'){ %>
                 <input type="text" placeholder="URLを入力" name="url" value="<%= url %>" id="url">
-                <input type="button" value="再送信" name="submitUrl" id="submitUrl">
+                <input type="button" value="URLを再送信" name="submitUrl" id="submitUrl">
               <% }else{ %>
                 <input type="text" placeholder="URLを入力" name="url" id="url">
                 <input type="button" value="送信" name="submitUrl" id="submitUrl">
@@ -135,6 +135,7 @@
             <p class="notice"><%= descriptionNotice %></p>
           <% } %>
           <div id="myBookmarkList">
+            <p>ブックマーク一覧</p>
             <form name="my_bookmark" action="/PHH_Bookmark/myPage/delete" method="post">
               <% for(var i = 0; i < bookmarkData.length; i++){ %>
                 <% if(i % 2 === 0){ %>
