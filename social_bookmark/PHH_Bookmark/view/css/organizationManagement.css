@@ -1,70 +1,81 @@
-/*----------------------------/
-          コンテンツ
------------------------------*/
 main{
-  background-color: #fefefe;
-  border: solid 1px gray;
-  margin-top: 50px;
-  width: 700px;
-  height: 400px;
   position: relative;
-  left: 300px;
+  top: 100px;
+  left: 350px;
+  width: 500px;
+  margin-bottom: 100px;
 }
-
-#img{
-  border: solid 4px gray;
-  border-radius: 2px;
-  display: table-cell;
-  min-width: 150px;
-  min-height: 150px;
-  position: relative;
-  left: 50px;
-  top: 50px;
+#pageTitle{
+  font-size: 25px;
 }
-.inputForm{
-  display: flex;
-  flex-direction: column-reverse;
-  justify-content: flex-end;
-  position: relative;
-  right: 0px;
-  margin-top: 20px;
+#body{
+  margin-left: 50px;
 }
-.thumbnail img{
-  width:auto;
-  height:auto;
-  max-width:350px;
-  max-height:150px;
-  min-height: 150px;
-  min-width: 150px;
-  vertical-align: middle;
+#name{
+  margin-top: 10px;
 }
-#errorName{
-  color: #EE2323;
-  position: relative;
-  left: 435px;
-  top: 97px;
+.formTitle{
+  font-size: 13px;
 }
-
-#errorIntro{
-  color: #EE2323;
-  position: relative;
-  left: 400px;
-  top: 235px;
+.orgNameForm{
+  font-size: 14px;
+  width: 200px;
 }
-
-#submit{
+.orgIntroForm{
+  resize: none;
+  font-size: 13px;
+  width: 300px;
+  height: 70px;
+}
+.notice{
+  color: red;
+}
+#submit, #cancel{
   background: linear-gradient(#07d34f, #05b142);
   border: none;
   border-radius: 2px;
   color: white;
   font-size: 15px;
   text-shadow: 0.5px 0.5px 0 black;
+}
+#submit:hover, #cancel:hover{
+  background: linear-gradient(#049336, #036b27);
+}
+#submit{
   width: 70px;
   height: 30px;
   position: relative;
-  left: 320px;
-  top: 100px;
+  margin-top: 30px;
+  margin-left: 120px;
 }
-#submit:hover{
-  background: linear-gradient(#049336, #036b27);
+#cancel{
+  width: 100px;
+  height: 25px;
+  position: relative;
+  margin-top: 50px;
+}
+#dissolveButton, #break{
+  background: linear-gradient(#F73A36, #C72F2C);
+  border: none;
+  border-radius: 2px;
+  color: white;
+  font-size: 15px;
+  text-shadow: 0.5px 0.5px 0 black;
+}
+#dissolveButton:hover, #break:hover{
+  background: linear-gradient(#AD2C2A, #8C2523);
+}
+#dissolveButton{
+  width: 120px;
+  height: 30px;
+  position: relative;
+  margin-top: 110px;
+  margin-left: 95px;
+}
+#break{
+  margin-left: 190px;
+  margin-top: 20px;
+}
+#breakForm{
+  margin-left: 0px;
 }

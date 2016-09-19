@@ -18,17 +18,22 @@ main{
   position: absolute;
   left: 300px;
 }
-
+#pageTitle{
+  position: relative;
+  left: 60px;
+  top: 15px;
+  font-size: 25px;
+}
 #readNickname{
   font-size: 13px;
   position: absolute;
   left: 230px;
-  top: 60px;
+  top: 70px;
 }
 .nickname{
   position: absolute;
   left: 230px;
-  top: 80px;
+  top: 90px;
 }
 #errorNickname{
   color: red;
@@ -41,7 +46,7 @@ main{
   font-size: 13px;
   position: absolute;
   left: 230px;
-  top: 110px;
+  top: 120px;
 }
 .intro{
   resize: none;
@@ -49,7 +54,7 @@ main{
   height: 60px;
   position: absolute;
   left: 230px;
-  top: 130px;
+  top: 140px;
 }
 #errorIntro{
   color: red;

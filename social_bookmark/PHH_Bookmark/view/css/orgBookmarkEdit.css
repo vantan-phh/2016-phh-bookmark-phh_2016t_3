@@ -1,0 +1,55 @@
+main{
+  position: relative;
+  top: 100px;
+  left: 200px;
+  width: 800px;
+  margin-bottom: 100px;
+}
+#orgInfo{
+  overflow: hidden;
+  margin-bottom: 50px;
+}
+#img>img{
+  float: left;
+  width: 150px;
+  height: 150px;
+}
+#pageTitle{
+  font-size: 25px;
+}
+#bookmarkInfo{
+  margin-left: 100px;
+  margin-top: 50px;
+}
+.formTitle{
+  font-size: 13px;
+}
+#title{
+  width: 200px;
+  font-size: 15px;
+}
+#description{
+  resize: none;
+  font-size: 14px;
+  width: 300px;
+  height: 80px;
+}
+.notice{
+  color: red;
+  margin-left: 5px;
+}
+#submitButton>input{
+  margin-left: 110px;
+  margin-top: 30px;
+  background: linear-gradient(#07d34f, #05b142);
+  border: none;
+  border-radius: 2px;
+  color: white;
+  font-size: 15px;
+  text-shadow: 0.5px 0.5px 0.5px black;
+  width: 80px;
+  height: 26px;
+}
+#submitButton>input:hover{
+  background: linear-gradient(#049336, #036b27);
+}

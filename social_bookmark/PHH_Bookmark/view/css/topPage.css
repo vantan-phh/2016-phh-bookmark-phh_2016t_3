@@ -135,7 +135,8 @@ main{
   background-color: #acf432;
 }
 .orglist2{
-  background-color: #129475
+  background-color: #129475;
+  color: white;
 }
 .thumbnail1{
   height: 15px;
@@ -161,6 +162,7 @@ text-decoration: underline;
 
 .result1{
   background-color: #129475;
+  color: #F5F1E4;
   border-radius: 10px;
   float: left;
   padding: 0 5px 0 0;

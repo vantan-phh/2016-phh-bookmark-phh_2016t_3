@@ -6,14 +6,17 @@
 }
 #pagetitle{
   font-size: 25px;
+  margin-bottom: 10px;
 }
 .subtitle{
   font-size: 17px;
   margin-top: 10px;
   margin-bottom: 10px;
 }
+.formTitle{
+  font-size: 15px;
+}
 .form{
-  margin-top: 10px;
   margin-bottom: 10px;
 }
 .form input{
@@ -21,6 +24,7 @@
 }
 .form textarea{
   font-size: 15px;
+  resize: none;
   width: 300px;
   height: 100px;
 }
@@ -43,6 +47,9 @@
 #searchForm{
   overflow: hidden;
   width: 250px;
+}
+#invitedUser{
+  margin-top: 10px;
 }
 #invitedUser{
   float: left;
@@ -83,6 +90,7 @@
 #userLists{
   overflow: hidden;
   margin-top: 40px;
+  margin-bottom: 100px;
 }
 #inviteAndSearch{
   float: left;

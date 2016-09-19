@@ -10,10 +10,11 @@
     <div id="all">
       <p id="pagetitle">組織を作成する</p>
       <form action="/PHH_Bookmark/createOrganization/create" method="post" enctype="multipart/form-data" name="mainForm" id="mainFrom">
+        <p class="formTitle">組織名</p>
         <% if(typeof orgName !== 'undefined') { %>
-          <div class="form"><input type="text" placeholder="組織名" name="orgName" id="orgName" value="<%= orgName %>"></div>
+          <div class="form"><input type="text" name="orgName" id="orgName" value="<%= orgName %>"></div>
         <% } else { %>
-          <div class="form"><input type="text" placeholder="組織名" name="orgName" id="orgName"></div>
+          <div class="form"><input type="text" name="orgName" id="orgName"></div>
         <% } %>
         <% if(typeof orgNameNotice !== 'undefined'){ %>
           <p><%= orgNameNotice %></p>
@@ -21,10 +22,11 @@
         <% if(typeof orgNameExists !== 'undefined'){%>
           <div><%= orgNameExists %></div>
         <% } %>
+        <p class="formTitle">紹介文</p>
         <% if(typeof orgIntroduction !== 'undefined') { %>
-          <div class="form"><textarea type="text" placeholder="description" name="orgIntroduction" id="orgIntroduction"><%= orgIntroduction %></textarea></div>
+          <div class="form"><textarea type="text" name="orgIntroduction" id="orgIntroduction"><%= orgIntroduction %></textarea></div>
         <% } else {%>
-          <div class="form"><textarea type="text" placeholder="description" name="orgIntroduction" id="orgIntroduction"></textarea></div>
+          <div class="form"><textarea type="text" name="orgIntroduction" id="orgIntroduction"></textarea></div>
         <% } %>
         <% if(typeof orgIntroductionNotice !== 'undefined'){ %>
           <p><%= orgIntroductionNotice %></p>
