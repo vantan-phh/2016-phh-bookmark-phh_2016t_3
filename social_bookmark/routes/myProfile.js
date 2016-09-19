@@ -36,35 +36,45 @@ router.get('/', (req, res) => {
     });
     return promise;
   }).then((values) => {
-    var promise = new Promise((resolve) => {
-      var belongOrgIdsForQuery = '';
+    var promise = new Promise((resolve, reject) => {
       if(values.selectedBelongOrgIds.length > 0){
+        var selectOrgData = 'SELECT * FROM `organizations` WHERE `org_id` = ';
         values.selectedBelongOrgIds.forEach((currentValue, index, array) => {
           if(index + 1 === array.length){
-            belongOrgIdsForQuery += currentValue.org_id;
-            values.belongOrgIdsForQuery = belongOrgIdsForQuery;
+            selectOrgData += '?';
+            values.selectOrgData = selectOrgData;
             resolve(values);
           }else{
-            belongOrgIdsForQuery += currentValue.org_id + ' OR `org_id` = ';
+            selectOrgData += '? OR `org_id` = ';
           }
         });
       }else{
-        resolve(values);
+        reject(values);
       }
     });
     return promise;
   }).then((values) => {
     var promise = new Promise((resolve) => {
-      if(values.belongOrgIdsForQuery){
-        var selectOrgData = 'SELECT * FROM `organizations` WHERE `org_id` = ' + values.belongOrgIdsForQuery;
-        connection.query(selectOrgData).then((result) => {
-          values.orgData = result[0];
-          resolve(values);
-        });
-      }else{
-        values.orgData = [];
+      var belongOrgIds = [];
+      values.selectedBelongOrgIds.forEach((currentValue, index, array) => {
+        belongOrgIds.push(currentValue.org_id);
+        values.belongOrgIds = belongOrgIds;
+        if(index + 1 === array.length) resolve(values);
+      });
+    });
+    return promise;
+  }).then((values) => {
+    var promise = new Promise((resolve) => {
+      connection.query(values.selectOrgData, values.belongOrgIds).then((result) => {
+        values.orgData = result[0];
         resolve(values);
-      }
+      });
+    });
+    return promise;
+  }).catch((values) => {
+    var promise = new Promise((resolve) => {
+      values.orgData = [];
+      resolve(values);
     });
     return promise;
   }).then((values) => {
@@ -79,14 +89,14 @@ router.get('/', (req, res) => {
   }).then((values) => {
     var promise = new Promise((resolve, reject) => {
       if(values.recentBookmarks.length){
-        var bookmarkIdsForQuery = '';
+        var selectComment = 'SELECT * FROM `comments` WHERE `bookmark_id` = ';
         values.recentBookmarks.forEach((currentValue, index, array) => {
           if(index + 1 === array.length){
-            bookmarkIdsForQuery += currentValue.bookmark_id;
-            values.bookmarkIdsForQuery = bookmarkIdsForQuery;
+            selectComment += '?';
+            values.selectComment = selectComment;
             resolve(values);
           }else{
-            bookmarkIdsForQuery += currentValue.bookmark_id + ' OR `bookmark_id` = ';
+            selectComment += '? OR `bookmark_id` = ';
           }
         });
       }else{
@@ -96,8 +106,16 @@ router.get('/', (req, res) => {
     return promise;
   }).then((values) => {
     var promise = new Promise((resolve) => {
-      var selectComment = 'SELECT * FROM `comments` WHERE `bookmark_id` = ' + values.bookmarkIdsForQuery;
-      connection.query(selectComment).then((result) => {
+      values.recentBookmarkIds = [];
+      values.recentBookmarks.forEach((currentValue, index, array) => {
+        values.recentBookmarkIds.push(currentValue.bookmark_id);
+        if(index + 1 === array.length) resolve(values);
+      });
+    });
+    return promise;
+  }).then((values) => {
+    var promise = new Promise((resolve) => {
+      connection.query(values.selectComment, values.recentBookmarkIds).then((result) => {
         values.selectedComments = result[0];
         resolve(values);
       });
@@ -143,33 +161,30 @@ router.get('/', (req, res) => {
     return promise;
   }).then((values) => {
     var promise = new Promise((resolve) => {
+      values.commentsKeys = Object.keys(values.comments);
       values.selectedComments.forEach((currentValue, index, array) => {
-        for(var key in values.comments){
+        values.commentsKeys.forEach((key, _index, _array) => {
           if(key === currentValue.bookmark_id.toString()){
             values.comments[key].push(currentValue);
           }
-          if(index + 1 === array.length){
+          if(index + 1 === array.length && _index + 1 === _array.length){
             resolve(values);
           }
-        }
+        });
       });
     });
     return promise;
   }).then((values) => {
     var promise = new Promise((resolve) => {
       values.recentBookmarks.forEach((currentValue, index, array) => {
-        for(var key in values.comments){
+        values.commentsKeys.forEach((key, _index, _array) => {
           if(key === currentValue.bookmark_id.toString()){
-            if(values.comments[key].length){
-              currentValue.numberOfComments = values.comments[key].length;
-            }else{
-              currentValue.numberOfComments = 0;
-            }
+            currentValue.numberOfComments = values.comments[key].length ? values.comments[key].length : 0;
           }
-          if(index + 1 === array.length){
+          if(index + 1 === array.length && _index + 1 === _array.length){
             resolve(values);
           }
-        }
+        });
       });
     });
     return promise;

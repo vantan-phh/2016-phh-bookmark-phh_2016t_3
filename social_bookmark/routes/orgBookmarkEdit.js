@@ -170,30 +170,26 @@ router.post('/delete', (req, res) => {
   var idArray = [];
   (() => {
     var promise = new Promise((resolve) => {
-      for(var x in ids){
-        idArray.push(x);
-      }
-      resolve(idArray);
+      resolve(Object.keys(ids));
     });
     return promise;
   })().then((value) => {
     idArray = value;
     var promise = new Promise((resolve) => {
-      var idsForQuery = '';
+      var deleteBookmark = 'DELETE FROM `bookmarks` WHERE `bookmark_id` =';
       idArray.forEach((currentValue, index, array) => {
         if(index + 1 === array.length){
-          idsForQuery += currentValue;
-          resolve(idsForQuery);
+          deleteBookmark += '?';
+          resolve(deleteBookmark);
         }else{
-          idsForQuery += currentValue + ' OR `bookmark_id` = ';
+          deleteBookmark += '? OR `bookmark_id` = ';
         }
       });
     });
     return promise;
   }).then((value) => {
-    var idsForQuery = value;
-    var deleteBookmark = 'DELETE FROM `bookmarks` WHERE `bookmark_id` = ' + idsForQuery;
-    connection.query(deleteBookmark).then(() => {
+    var deleteBookmark = value;
+    connection.query(deleteBookmark, idArray).then(() => {
       res.redirect('/PHH_Bookmark/organizationPage');
     });
   });

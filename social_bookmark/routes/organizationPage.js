@@ -17,21 +17,21 @@ var index;
 var allSearchedBookmarkData;
 var searchIndex;
 
-function createBookmarkIdsForQuery(value){
+function createSelectCommentQuery(value){
   var promise = new Promise((resolve, reject) => {
     if(value[0].length){
-      var bookmarkIdsForQuery = '';
+      var selectCommentQuery = 'SELECT * FROM `comments` WHERE `bookmark_id` = ';
       value.forEach((currentValue, _index, array) => {
         currentValue.forEach((_currentValue, __index, _array) => {
           if(_index + 1 === array.length && __index + 1 === _array.length){
-            bookmarkIdsForQuery += _currentValue.bookmark_id;
+            selectCommentQuery += '?';
             var values = {
               allBookmarkData : value,
-              bookmarkIdsForQuery,
+              selectCommentQuery,
             };
             resolve(values);
           }else{
-            bookmarkIdsForQuery += _currentValue.bookmark_id + ' OR `bookmark_id` = ';
+            selectCommentQuery += '? OR `bookmark_id` = ';
           }
         });
       });
@@ -42,31 +42,32 @@ function createBookmarkIdsForQuery(value){
   return promise;
 }
 
-function selectComment(values){
+function createCommentedBookmarkIds(values){
   var promise = new Promise((resolve) => {
-    var selectCommentQuery = 'SELECT * FROM `comments` WHERE `bookmark_id` = ' + values.bookmarkIdsForQuery;
-    connection.query(selectCommentQuery).then((result) => {
-      values.selectedComments = result[0];
-      resolve(values);
+    var commentedBookmarkIds = [];
+    values.allBookmarkData.forEach((currentValue, _index, array) => {
+      currentValue.forEach((_currentValue, __index, _array) => {
+        commentedBookmarkIds.push(_currentValue.bookmark_id);
+        if(_index + 1 === array.length && __index + 1 === _array.length){
+          values.commentedBookmarkIds = commentedBookmarkIds;
+          resolve(values);
+        }
+      });
     });
   });
   return promise;
 }
 
-function createCommentedBookmarkIds(values){
+function selectComment(values){
   var promise = new Promise((resolve, reject) => {
-    if(values.selectedComments.length){
-      var commentedBookmarkIds = [];
-      values.selectedComments.forEach((currentValue, _index, array) => {
-        commentedBookmarkIds.push(currentValue.bookmark_id);
-        if(_index + 1 === array.length){
-          values.commentedBookmarkIds = commentedBookmarkIds;
-          resolve(values);
-        }
-      });
-    }else{
-      reject(values.allBookmarkData);
-    }
+    connection.query(values.selectCommentQuery, values.commentedBookmarkIds).then((result) => {
+      values.selectedComments = result[0];
+      if(values.selectedComments.length){
+        resolve(values);
+      }else{
+        reject(values.allBookmarkData);
+      }
+    });
   });
   return promise;
 }
@@ -98,16 +99,18 @@ function createComments(values){
 }
 
 function pushSelectedComments(values){
+  'use strict';
   var promise = new Promise((resolve) => {
+    values.commentsKeys = Object.keys(values.comments);
     values.selectedComments.forEach((currentValue, _index, array) => {
-      for(var key in values.comments){
-        if(key === currentValue.bookmark_id.toString()){
-          values.comments[key].push(currentValue);
+      values.commentsKeys.forEach((_currentValue, __index, _array) => {
+        if(_currentValue === currentValue.bookmark_id.toString()){
+          values.comments[_currentValue].push(currentValue);
         }
-        if(_index + 1 === array.length){
+        if(_index + 1 === array.length && __index + 1 === _array.length){
           resolve(values);
         }
-      }
+      });
     });
   });
   return promise;
@@ -117,18 +120,18 @@ function addNumberOfComments(values){
   var promise = new Promise((resolve) => {
     values.allBookmarkData.forEach((currentValue, _index, array) => {
       currentValue.forEach((_currentValue, __index, _array) => {
-        for(var key in values.comments){
-          if(key === _currentValue.bookmark_id.toString()){
-            if(values.comments[key].length){
-              _currentValue.numberOfComments = values.comments[key].length;
+        values.commentsKeys.forEach((__currentValue, ___index, __array) => {
+          if(__currentValue === _currentValue.bookmark_id.toString()){
+            if(values.comments[__currentValue].length){
+              _currentValue.numberOfComments = values.comments[__currentValue].length;
             }else{
               _currentValue.numberOfComments = 0;
             }
           }
-          if(_index + 1 === array.length && __index + 1 === _array.length){
+          if(_index + 1 === array.length && __index + 1 === _array.length && ___index + 1 === __array.length){
             resolve(values.allBookmarkData);
           }
-        }
+        });
       });
     });
   });
@@ -219,9 +222,9 @@ router.get('/', (req, res) => {
       }
     });
     return promise;
-  }).then(createBookmarkIdsForQuery)
-  .then(selectComment)
+  }).then(createSelectCommentQuery)
   .then(createCommentedBookmarkIds)
+  .then(selectComment)
   .then(FilterCommentedBookmarkIds)
   .then(createComments)
   .then(pushSelectedComments)
@@ -597,6 +600,124 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
   var keyWords = keyWord.match(splitKeyWord);
   var keyWordsForQuery;
   var addedUserNickNamesForSearched = [];
+
+  function createSelectSearchedBookmarksByOneColumn(column){
+    var promise = new Promise((resolve) => {
+      var selectSearchedBookmarks = 'SELECT * FROM `bookmarks` WHERE `org_id` = ? AND (`' + column + '` LIKE';
+      keyWords.forEach((currentValue, _index, array) => {
+        if(_index + 1 === array.length){
+          selectSearchedBookmarks += ' ?)';
+          resolve(selectSearchedBookmarks);
+        }else{
+          selectSearchedBookmarks += ' ? AND `' + column + '` LIKE';
+        }
+      });
+    });
+    return promise;
+  }
+
+  function createSelectSearchedBookmarksByTwoColumn(column1, column2){
+    var promise = new Promise((resolve) => {
+      var selectSearchedBookmarks = 'SELECT * FROM `bookmarks` WHERE `org_id` = ? AND (( `' + column1 + '` LIKE';
+      keyWords.forEach((currentValue, _index, array) => {
+        if(_index + 1 === array.length){
+          selectSearchedBookmarks += ' ?) OR (`' + column2 + '` LIKE';
+        }else{
+          selectSearchedBookmarks += ' ? AND `' + column1 + '` LIKE';
+        }
+      });
+      keyWords.forEach((currentValue, _index, array) => {
+        if(_index + 1 === array.length){
+          selectSearchedBookmarks += ' ?))';
+          resolve(selectSearchedBookmarks);
+        }else{
+          selectSearchedBookmarks += ' ? AND `' + column2 + '` LIKE';
+        }
+      });
+    });
+    return promise;
+  }
+
+  function createKeyWordsForQueryByOneColumn(value){
+    var promise = new Promise((resolve) => {
+      keyWordsForQuery = [];
+      keyWords.forEach((currentValue, _index, array) => {
+        keyWordsForQuery.push('%' + currentValue + '%');
+        if(_index + 1 === array.length){
+          var values = {
+            selectSearchedBookmarks : value,
+            keyWordsForQuery,
+          };
+          resolve(values);
+        }
+      });
+    });
+    return promise;
+  }
+
+  function createKeyWordsForQueryByTwoColumn(value){
+    var promise = new Promise((resolve) => {
+      keyWordsForQuery = [];
+      keyWords.forEach((currentValue) => {
+        keyWordsForQuery.push('%' + currentValue + '%');
+      });
+      keyWords.forEach((currentValue, _index, array) => {
+        keyWordsForQuery.push('%' + currentValue + '%');
+        if(_index + 1 === array.length){
+          var values = {
+            selectSearchedBookmarks : value,
+            keyWordsForQuery,
+          };
+          resolve(values);
+        }
+      });
+    });
+    return promise;
+  }
+
+  function doSelectSearchedBookmarks(values){
+    var promise = new Promise((resolve) => {
+      values.keyWordsForQuery.unshift(orgId);
+      connection.query(values.selectSearchedBookmarks, values.keyWordsForQuery).then((result) => {
+        numberOfSearchedBookmarks = result[0].length;
+        var searchedBookmarkData = result[0];
+        resolve(searchedBookmarkData);
+      });
+    });
+    return promise;
+  }
+
+  function selectNickNameAndDivideSearchedBookmarkData(value){
+    var searchedBookmarkData = value;
+    var promise = new Promise((resolve) => {
+      var selectNickName = 'SELECT `nick_name` FROM `users` WHERE `user_id` = ?';
+      if(searchedBookmarkData.length > 0){
+        searchedBookmarkData.forEach((currentValue) => {
+          connection.query(selectNickName, [currentValue.user_id]).then((result) => {
+            addedUserNickNamesForSearched.push(result[0][0].nick_name);
+            if(searchedBookmarkData.length === addedUserNickNamesForSearched.length){
+              var n = 12;
+              allSearchedBookmarkData = [];
+              for (let i = 0; i < searchedBookmarkData.length; i += n) {
+                allSearchedBookmarkData.push(searchedBookmarkData.slice(i, i + n));
+              }
+              slicedAddedUserNickNamesForSearched = [];
+              for (let i = 0; i < addedUserNickNamesForSearched.length; i += n) {
+                slicedAddedUserNickNamesForSearched.push(addedUserNickNamesForSearched.slice(i, i + n));
+              }
+              resolve();
+            }
+          });
+        });
+      }else{
+        allSearchedBookmarkData = [[]];
+        slicedAddedUserNickNamesForSearched = [[]];
+        resolve();
+      }
+    });
+    return promise;
+  }
+
   (() => {
     var promise = new Promise((resolve) => {
       if(checkSpace.test(keyWord)){
@@ -627,61 +748,13 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
     return promise;
   }).then(() => {
     if(searchFromTitle === 'on' && searchFromDescription === undefined && searchFromTextsOnSites === undefined){
-      (() => {
-        var promise = new Promise((resolve) => {
-          keyWordsForQuery = '%';
-          keyWords.forEach((currentValue, _index, array) => {
-            if(_index + 1 === array.length){
-              keyWordsForQuery += currentValue;
-              resolve(keyWordsForQuery);
-            }else{
-              keyWordsForQuery += currentValue + '%" AND `title` LIKE "%';
-            }
-          });
-        });
-        return promise;
-      })().then((value) => {
-        keyWordsForQuery = value;
-        var promise = new Promise((resolve) => {
-          var selectSearchedBookmarks = 'SELECT * FROM `bookmarks` WHERE `org_id` = ? AND ( `title` LIKE "' + keyWordsForQuery + '%" )';
-          connection.query(selectSearchedBookmarks, [orgId]).then((result) => {
-            numberOfSearchedBookmarks = result[0].length;
-            var searchedBookmarkData = result[0];
-            resolve(searchedBookmarkData);
-          });
-        });
-        return promise;
-      }).then((searchedBookmarkData) => {
-        var promise = new Promise((resolve) => {
-          var selectNickName = 'SELECT `nick_name` FROM `users` WHERE `user_id` = ?';
-          if(searchedBookmarkData.length > 0){
-            searchedBookmarkData.forEach((currentValue) => {
-              connection.query(selectNickName, [currentValue.user_id]).then((result) => {
-                addedUserNickNamesForSearched.push(result[0][0].nick_name);
-                if(searchedBookmarkData.length === addedUserNickNamesForSearched.length){
-                  var n = 12;
-                  allSearchedBookmarkData = [];
-                  for (let i = 0; i < searchedBookmarkData.length; i += n) {
-                    allSearchedBookmarkData.push(searchedBookmarkData.slice(i, i + n));
-                  }
-                  slicedAddedUserNickNamesForSearched = [];
-                  for (let i = 0; i < addedUserNickNamesForSearched.length; i += n) {
-                    slicedAddedUserNickNamesForSearched.push(addedUserNickNamesForSearched.slice(i, i + n));
-                  }
-                  resolve();
-                }
-              });
-            });
-          }else{
-            allSearchedBookmarkData = [[]];
-            slicedAddedUserNickNamesForSearched = [[]];
-            resolve();
-          }
-        });
-        return promise;
-      }).then(createBookmarkIdsForQuery)
-      .then(selectComment)
+      createSelectSearchedBookmarksByOneColumn('title')
+      .then(createKeyWordsForQueryByOneColumn)
+      .then(doSelectSearchedBookmarks)
+      .then(selectNickNameAndDivideSearchedBookmarkData)
+      .then(createSelectCommentQuery)
       .then(createCommentedBookmarkIds)
+      .then(selectComment)
       .then(FilterCommentedBookmarkIds)
       .then(createComments)
       .then(pushSelectedComments)
@@ -727,61 +800,13 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
         });
       });
     }else if(searchFromTitle === undefined && searchFromDescription === 'on' && searchFromTextsOnSites === undefined){
-      (() => {
-        var promise = new Promise((resolve) => {
-          keyWordsForQuery = '%';
-          keyWords.forEach((currentValue, _index, array) => {
-            if(_index + 1 === array.length){
-              keyWordsForQuery += currentValue;
-              resolve(keyWordsForQuery);
-            }else{
-              keyWordsForQuery += currentValue + '%" AND `description` LIKE "%';
-            }
-          });
-        });
-        return promise;
-      })().then((value) => {
-        keyWordsForQuery = value;
-        var promise = new Promise((resolve) => {
-          var selectSearchedBookmarks = 'SELECT * FROM `bookmarks` WHERE `org_id` = ? AND ( `description` LIKE "' + keyWordsForQuery + '%" )';
-          connection.query(selectSearchedBookmarks, [orgId]).then((result) => {
-            numberOfSearchedBookmarks = result[0].length;
-            var searchedBookmarkData = result[0];
-            resolve(searchedBookmarkData);
-          });
-        });
-        return promise;
-      }).then((searchedBookmarkData) => {
-        var promise = new Promise((resolve) => {
-          var selectNickName = 'SELECT `nick_name` FROM `users` WHERE `user_id` = ?';
-          if(searchedBookmarkData.length > 0){
-            searchedBookmarkData.forEach((currentValue) => {
-              connection.query(selectNickName, [currentValue.user_id]).then((result) => {
-                addedUserNickNamesForSearched.push(result[0][0].nick_name);
-                if(searchedBookmarkData.length === addedUserNickNamesForSearched.length){
-                  var n = 12;
-                  allSearchedBookmarkData = [];
-                  for (let i = 0; i < searchedBookmarkData.length; i += n) {
-                    allSearchedBookmarkData.push(searchedBookmarkData.slice(i, i + n));
-                  }
-                  slicedAddedUserNickNamesForSearched = [];
-                  for (let i = 0; i < addedUserNickNamesForSearched.length; i += n) {
-                    slicedAddedUserNickNamesForSearched.push(addedUserNickNamesForSearched.slice(i, i + n));
-                  }
-                  resolve();
-                }
-              });
-            });
-          }else{
-            allSearchedBookmarkData = [[]];
-            slicedAddedUserNickNamesForSearched = [[]];
-            resolve();
-          }
-        });
-        return promise;
-      }).then(createBookmarkIdsForQuery)
-      .then(selectComment)
+      createSelectSearchedBookmarksByOneColumn('description')
+      .then(createKeyWordsForQueryByOneColumn)
+      .then(doSelectSearchedBookmarks)
+      .then(selectNickNameAndDivideSearchedBookmarkData)
+      .then(createSelectCommentQuery)
       .then(createCommentedBookmarkIds)
+      .then(selectComment)
       .then(FilterCommentedBookmarkIds)
       .then(createComments)
       .then(pushSelectedComments)
@@ -826,61 +851,13 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
         });
       });
     }else if(searchFromTitle === undefined && searchFromDescription === undefined && searchFromTextsOnSites === 'on'){
-      keyWordsForQuery = '%';
-      (() => { // create table for inserting text of the site and select searchedBookmarkData.
-        var promise = new Promise((resolve) => {
-          keyWords.forEach((currentValue, _index, array) => {
-            if(_index + 1 === array.length){
-              keyWordsForQuery += currentValue;
-              resolve(keyWordsForQuery);
-            }else{
-              keyWordsForQuery += currentValue + '%" AND `text` LIKE "%';
-            }
-          });
-        });
-        return promise;
-      })().then((value) => { // select this org bookmarks to insert `texts` table only bookmarks that is this orgs'
-        keyWordsForQuery = value;
-        var promise = new Promise((resolve) => {
-          var selectSearchedBookmarks = 'SELECT * FROM `bookmarks` WHERE `org_id` = ? AND ( `text` LIKE "' + keyWordsForQuery + '%")';
-          connection.query(selectSearchedBookmarks, [orgId]).then((result) => {
-            numberOfSearchedBookmarks = result[0].length;
-            var searchedBookmarkData = result[0];
-            resolve(searchedBookmarkData);
-          });
-        });
-        return promise;
-      }).then((searchedBookmarkData) => {
-        var promise = new Promise((resolve) => {
-          if(searchedBookmarkData.length > 0){
-            var selectNickName = 'SELECT `nick_name` FROM `users` WHERE `user_id` = ?';
-            searchedBookmarkData.forEach((currentValue) => {
-              connection.query(selectNickName, [currentValue.user_id]).then((result) => {
-                addedUserNickNamesForSearched.push(result[0][0].nick_name);
-                if(searchedBookmarkData.length === addedUserNickNamesForSearched.length){
-                  var n = 12;
-                  allSearchedBookmarkData = [];
-                  for (let i = 0; i < searchedBookmarkData.length; i += n) {
-                    allSearchedBookmarkData.push(searchedBookmarkData.slice(i, i + n));
-                  }
-                  slicedAddedUserNickNamesForSearched = [];
-                  for (let i = 0; i < addedUserNickNamesForSearched.length; i += n) {
-                    slicedAddedUserNickNamesForSearched.push(addedUserNickNamesForSearched.slice(i, i + n));
-                  }
-                  resolve();
-                }
-              });
-            });
-          }else{
-            allSearchedBookmarkData = [[]];
-            slicedAddedUserNickNamesForSearched = [[]];
-            resolve();
-          }
-        });
-        return promise;
-      }).then(createBookmarkIdsForQuery)
-      .then(selectComment)
+      createSelectSearchedBookmarksByOneColumn('text')
+      .then(createKeyWordsForQueryByOneColumn)
+      .then(doSelectSearchedBookmarks)
+      .then(selectNickNameAndDivideSearchedBookmarkData)
+      .then(createSelectCommentQuery)
       .then(createCommentedBookmarkIds)
+      .then(selectComment)
       .then(FilterCommentedBookmarkIds)
       .then(createComments)
       .then(pushSelectedComments)
@@ -925,80 +902,13 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
         });
       });
     }else if(searchFromTitle === 'on' && searchFromDescription === 'on' && searchFromTextsOnSites === undefined){
-      (() => {
-        var promise = new Promise((resolve) => {
-          var keyWordsForQueryByTitle = '%';
-          keyWords.forEach((currentValue, _index, array) => {
-            if(_index + 1 === array.length){
-              keyWordsForQueryByTitle += currentValue;
-              resolve(keyWordsForQueryByTitle);
-            }else{
-              keyWordsForQueryByTitle += currentValue + '%" AND `title` LIKE "%';
-            }
-          });
-        });
-        return promise;
-      })().then((value) => {
-        var keyWordsForQueryByTitle = value;
-        var promise = new Promise((resolve) => {
-          var keyWordsForQueryByDescription = '%';
-          keyWords.forEach((currentValue, _index, array) => {
-            if(_index + 1 === array.length){
-              keyWordsForQueryByDescription += currentValue;
-              var values = {
-                keyWordsForQueryByDescription,
-                keyWordsForQueryByTitle,
-              };
-              resolve(values);
-            }else{
-              keyWordsForQueryByDescription += currentValue + '%" AND `description` LIKE "%';
-            }
-          });
-        });
-        return promise;
-      }).then((values) => {
-        var keyWordsForQueryByTitle = values.keyWordsForQueryByTitle;
-        var keyWordsForQueryByDescription = values.keyWordsForQueryByDescription;
-        var selectSearchedBookmarks = 'SELECT * FROM `bookmarks` WHERE `org_id` = ? AND (( `title` LIKE "' + keyWordsForQueryByTitle + '%" ) OR ( `description` LIKE "' + keyWordsForQueryByDescription + '%"))';
-        var promise = new Promise((resolve) => {
-          connection.query(selectSearchedBookmarks, [orgId]).then((result) => {
-            numberOfSearchedBookmarks = result[0].length;
-            var searchedBookmarkData = result[0];
-            resolve(searchedBookmarkData);
-          });
-        });
-        return promise;
-      }).then((searchedBookmarkData) => {
-        var promise = new Promise((resolve) => {
-          var selectNickName = 'SELECT `nick_name` FROM `users` WHERE `user_id` = ?';
-          if(searchedBookmarkData.length > 0){
-            searchedBookmarkData.forEach((currentValue) => {
-              connection.query(selectNickName, [currentValue.user_id]).then((result) => {
-                addedUserNickNamesForSearched.push(result[0][0].nick_name);
-                if(searchedBookmarkData.length === addedUserNickNamesForSearched.length){
-                  var n = 12;
-                  allSearchedBookmarkData = [];
-                  for (let i = 0; i < searchedBookmarkData.length; i += n) {
-                    allSearchedBookmarkData.push(searchedBookmarkData.slice(i, i + n));
-                  }
-                  slicedAddedUserNickNamesForSearched = [];
-                  for (let i = 0; i < addedUserNickNamesForSearched.length; i += n) {
-                    slicedAddedUserNickNamesForSearched.push(addedUserNickNamesForSearched.slice(i, i + n));
-                  }
-                  resolve();
-                }
-              });
-            });
-          }else{
-            allSearchedBookmarkData = [[]];
-            slicedAddedUserNickNamesForSearched = [[]];
-            resolve();
-          }
-        });
-        return promise;
-      }).then(createBookmarkIdsForQuery)
-      .then(selectComment)
+      createSelectSearchedBookmarksByTwoColumn('title', 'description')
+      .then(createKeyWordsForQueryByTwoColumn)
+      .then(doSelectSearchedBookmarks)
+      .then(selectNickNameAndDivideSearchedBookmarkData)
+      .then(createSelectCommentQuery)
       .then(createCommentedBookmarkIds)
+      .then(selectComment)
       .then(FilterCommentedBookmarkIds)
       .then(createComments)
       .then(pushSelectedComments)
@@ -1043,80 +953,13 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
         });
       });
     }else if(searchFromTitle === 'on' && searchFromDescription === undefined && searchFromTextsOnSites === 'on'){
-      (() => {
-        var promise = new Promise((resolve) => {
-          var keyWordsForQueryWithTitle = '%';
-          keyWords.forEach((currentValue, _index, array) => {
-            if(_index + 1 === array.length){
-              keyWordsForQueryWithTitle += currentValue;
-              resolve(keyWordsForQueryWithTitle);
-            }else{
-              keyWordsForQueryWithTitle += currentValue + '%" AND `title` LIKE "%';
-            }
-          });
-        });
-        return promise;
-      })().then((value) => {
-        var keyWordsForQueryWithTitle = value;
-        var promise = new Promise((resolve) => {
-          var keyWordsForQueryWithText = '%';
-          keyWords.forEach((currentValue, _index, array) => {
-            if(_index + 1 === array.length){
-              keyWordsForQueryWithText += currentValue;
-              var values = {
-                keyWordsForQueryWithText,
-                keyWordsForQueryWithTitle,
-              };
-              resolve(values);
-            }else{
-              keyWordsForQueryWithText += currentValue + '%" AND `text` LIKE "%';
-            }
-          });
-        });
-        return promise;
-      }).then((values) => {
-        var keyWordsForQueryWithText = values.keyWordsForQueryWithText;
-        var keyWordsForQueryWithTitle = values.keyWordsForQueryWithTitle;
-        var promise = new Promise((resolve) => {
-          var selectSearchedBookmarks = 'SELECT * FROM `bookmarks` WHERE `org_id` = ? AND (( `title` LIKE "' + keyWordsForQueryWithTitle + '%" ) OR ( `text` LIKE "' + keyWordsForQueryWithText + '%" ))';
-          connection.query(selectSearchedBookmarks, [orgId]).then((result) => {
-            numberOfSearchedBookmarks = result[0].length;
-            var searchedBookmarkData = result[0];
-            resolve(searchedBookmarkData);
-          });
-        });
-        return promise;
-      }).then((searchedBookmarkData) => {
-        var promise = new Promise((resolve) => {
-          var selectNickName = 'SELECT `nick_name` FROM `users` WHERE `user_id` = ?';
-          if(searchedBookmarkData.length > 0){
-            searchedBookmarkData.forEach((currentValue) => {
-              connection.query(selectNickName, [currentValue.user_id]).then((result) => {
-                addedUserNickNamesForSearched.push(result[0][0].nick_name);
-                if(searchedBookmarkData.length === addedUserNickNamesForSearched.length){
-                  var n = 12;
-                  allSearchedBookmarkData = [];
-                  for (let i = 0; i < searchedBookmarkData.length; i += n) {
-                    allSearchedBookmarkData.push(searchedBookmarkData.slice(i, i + n));
-                  }
-                  slicedAddedUserNickNamesForSearched = [];
-                  for (let i = 0; i < addedUserNickNamesForSearched.length; i += n) {
-                    slicedAddedUserNickNamesForSearched.push(addedUserNickNamesForSearched.slice(i, i + n));
-                  }
-                  resolve();
-                }
-              });
-            });
-          }else{
-            allSearchedBookmarkData = [[]];
-            slicedAddedUserNickNamesForSearched = [[]];
-            resolve();
-          }
-        });
-        return promise;
-      }).then(createBookmarkIdsForQuery)
-      .then(selectComment)
+      createSelectSearchedBookmarksByTwoColumn('title', 'text')
+      .then(createKeyWordsForQueryByTwoColumn)
+      .then(doSelectSearchedBookmarks)
+      .then(selectNickNameAndDivideSearchedBookmarkData)
+      .then(createSelectCommentQuery)
       .then(createCommentedBookmarkIds)
+      .then(selectComment)
       .then(FilterCommentedBookmarkIds)
       .then(createComments)
       .then(pushSelectedComments)
@@ -1161,80 +1004,13 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
         });
       });
     }else if(searchFromTitle === undefined && searchFromDescription === 'on' && searchFromTextsOnSites === 'on'){
-      (() => {
-        var promise = new Promise((resolve) => {
-          var keyWordsForQueryWithDescription = '%';
-          keyWords.forEach((currentValue, _index, array) => {
-            if(_index + 1 === array.length){
-              keyWordsForQueryWithDescription += currentValue;
-              resolve(keyWordsForQueryWithDescription);
-            }else{
-              keyWordsForQueryWithDescription += currentValue + '%" AND `description` LIKE "';
-            }
-          });
-        });
-        return promise;
-      })().then((value) => {
-        var keyWordsForQueryWithDescription = value;
-        var promise = new Promise((resolve) => {
-          var keyWordsForQueryWithText = '%';
-          keyWords.forEach((currentValue, _index, array) => {
-            if(_index + 1 === array.length){
-              keyWordsForQueryWithText += currentValue;
-              var values = {
-                keyWordsForQueryWithText,
-                keyWordsForQueryWithDescription,
-              };
-              resolve(values);
-            }else{
-              keyWordsForQueryWithText += currentValue + '%" `text` LIKE "%';
-            }
-          });
-        });
-        return promise;
-      }).then((values) => {
-        var keyWordsForQueryWithText = values.keyWordsForQueryWithText;
-        var keyWordsForQueryWithDescription = values.keyWordsForQueryWithDescription;
-        var promise = new Promise((resolve) => {
-          var selectSearchedBookmarks = 'SELECT * FROM `bookmarks` WHERE `org_id` = ? AND (( `description` LIKE "' + keyWordsForQueryWithDescription + '%" ) OR ( `text` LIKE "' + keyWordsForQueryWithText + '%" ))';
-          connection.query(selectSearchedBookmarks, [orgId]).then((result) => {
-            numberOfSearchedBookmarks = result[0].length;
-            var searchedBookmarkData = result[0];
-            resolve(searchedBookmarkData);
-          });
-        });
-        return promise;
-      }).then((searchedBookmarkData) => {
-        var promise = new Promise((resolve) => {
-          var selectNickName = 'SELECT `nick_name` FROM `users` WHERE `user_id` = ?';
-          if(searchedBookmarkData.length > 0){
-            searchedBookmarkData.forEach((currentValue) => {
-              connection.query(selectNickName, [currentValue.user_id]).then((result) => {
-                addedUserNickNamesForSearched.push(result[0][0].nick_name);
-                if(searchedBookmarkData.length === addedUserNickNamesForSearched.length){
-                  var n = 12;
-                  allSearchedBookmarkData = [];
-                  for (let i = 0; i < searchedBookmarkData.length; i += n) {
-                    allSearchedBookmarkData.push(searchedBookmarkData.slice(i, i + n));
-                  }
-                  slicedAddedUserNickNamesForSearched = [];
-                  for (let i = 0; i < addedUserNickNamesForSearched.length; i += n) {
-                    slicedAddedUserNickNamesForSearched.push(addedUserNickNamesForSearched.slice(i, i + n));
-                  }
-                  resolve();
-                }
-              });
-            });
-          }else{
-            allSearchedBookmarkData = [[]];
-            slicedAddedUserNickNamesForSearched = [[]];
-            resolve();
-          }
-        });
-        return promise;
-      }).then(createBookmarkIdsForQuery)
-      .then(selectComment)
+      createSelectSearchedBookmarksByTwoColumn('description', 'text')
+      .then(createKeyWordsForQueryByTwoColumn)
+      .then(doSelectSearchedBookmarks)
+      .then(selectNickNameAndDivideSearchedBookmarkData)
+      .then(createSelectCommentQuery)
       .then(createCommentedBookmarkIds)
+      .then(selectComment)
       .then(FilterCommentedBookmarkIds)
       .then(createComments)
       .then(pushSelectedComments)
@@ -1281,99 +1057,69 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
     }else if(searchFromTitle === 'on' && searchFromDescription === 'on' && searchFromTextsOnSites === 'on'){
       (() => {
         var promise = new Promise((resolve) => {
-          var keyWordsForQueryWithTitle = '%';
+          var selectSearchedBookmarks = 'SELECT * FROM `bookmarks` WHERE `org_id` = ? AND ((`title` LIKE';
           keyWords.forEach((currentValue, _index, array) => {
             if(_index + 1 === array.length){
-              keyWordsForQueryWithTitle += currentValue;
-              resolve(keyWordsForQueryWithTitle);
+              selectSearchedBookmarks += ' ?) OR (`description` LIKE';
+              resolve(selectSearchedBookmarks);
             }else{
-              keyWordsForQueryWithTitle += currentValue + '%" AND `title` LIKE "%';
+              selectSearchedBookmarks += ' ? AND `title` LIKE';
             }
           });
         });
         return promise;
       })().then((value) => {
-        var keyWordsForQueryWithTitle = value;
+        var selectSearchedBookmarks = value;
         var promise = new Promise((resolve) => {
-          var keyWordsForQueryWithDescription = '%';
           keyWords.forEach((currentValue, _index, array) => {
             if(_index + 1 === array.length){
-              keyWordsForQueryWithDescription += currentValue;
+              selectSearchedBookmarks += ' ?) OR (`text` LIKE';
+              resolve(selectSearchedBookmarks);
+            }else{
+              selectSearchedBookmarks += ' ? AND `description` LIKE';
+            }
+          });
+        });
+        return promise;
+      }).then((value) => {
+        var promise = new Promise((resolve) => {
+          var selectSearchedBookmarks = value;
+          keyWords.forEach((currentValue, _index, array) => {
+            if(_index + 1 === array.length){
+              selectSearchedBookmarks += ' ?))';
+              resolve(selectSearchedBookmarks);
+            }else{
+              selectSearchedBookmarks += ' ? AND `text` LIKE';
+            }
+          });
+        });
+        return promise;
+      }).then((value) => {
+        var promise = new Promise((resolve) => {
+          keyWordsForQuery = [];
+          keyWords.forEach((currentValue) => {
+            keyWordsForQuery.push('%' + currentValue + '%');
+          });
+          keyWords.forEach((currentValue) => {
+            keyWordsForQuery.push('%' + currentValue + '%');
+          });
+          keyWords.forEach((currentValue, _index, array) => {
+            keyWordsForQuery.push('%' + currentValue + '%');
+            if(_index + 1 === array.length){
               var values = {
-                keyWordsForQueryWithTitle,
-                keyWordsForQueryWithDescription,
+                selectSearchedBookmarks : value,
+                keyWordsForQuery,
               };
               resolve(values);
-            }else{
-              keyWordsForQueryWithDescription += currentValue + '%" AND `description` LIKE "%';
             }
           });
         });
         return promise;
-      }).then((values) => {
-        var keyWordsForQueryWithDescription = values.keyWordsForQueryWithDescription;
-        var keyWordsForQueryWithTitle = values.keyWordsForQueryWithTitle;
-        var promise = new Promise((resolve) => {
-          var keyWordsForQueryWithText = '%';
-          keyWords.forEach((currentValue, _index, array) => {
-            if(_index + 1 === array.length){
-              keyWordsForQueryWithText += currentValue;
-              values = {
-                keyWordsForQueryWithText,
-                keyWordsForQueryWithTitle,
-                keyWordsForQueryWithDescription,
-              };
-              resolve(values);
-            }else{
-              keyWordsForQueryWithText += currentValue + '%" AND `text` LIKE "%';
-            }
-          });
-        });
-        return promise;
-      }).then((values) => {
-        var keyWordsForQueryWithText = values.keyWordsForQueryWithText;
-        var keyWordsForQueryWithTitle = values.keyWordsForQueryWithTitle;
-        var keyWordsForQueryWithDescription = values.keyWordsForQueryWithDescription;
-        var promise = new Promise((resolve) => {
-          var selectSearchedBookmarks = 'SELECT * FROM `bookmarks` WHERE `org_id` = ? AND (( `title` LIKE "' + keyWordsForQueryWithTitle + '%" ) OR ( `description` LIKE "' + keyWordsForQueryWithDescription + '%" ) OR ( `text` LIKE "' + keyWordsForQueryWithText + '%" ))';
-          connection.query(selectSearchedBookmarks, [orgId]).then((result) => {
-            numberOfSearchedBookmarks = result[0].length;
-            var searchedBookmarkData = result[0];
-            resolve(searchedBookmarkData);
-          });
-        });
-        return promise;
-      }).then((searchedBookmarkData) => {
-        var promise = new Promise((resolve) => {
-          var selectNickName = 'SELECT `nick_name` FROM `users` WHERE `user_id` = ?';
-          if(searchedBookmarkData.length > 0){
-            searchedBookmarkData.forEach((currentValue) => {
-              connection.query(selectNickName, [currentValue.user_id]).then((result) => {
-                addedUserNickNamesForSearched.push(result[0][0].nick_name);
-                if(searchedBookmarkData.length === addedUserNickNamesForSearched.length){
-                  var n = 12;
-                  allSearchedBookmarkData = [];
-                  for (let i = 0; i < searchedBookmarkData.length; i += n) {
-                    allSearchedBookmarkData.push(searchedBookmarkData.slice(i, i + n));
-                  }
-                  slicedAddedUserNickNamesForSearched = [];
-                  for (let i = 0; i < addedUserNickNamesForSearched.length; i += n) {
-                    slicedAddedUserNickNamesForSearched.push(addedUserNickNamesForSearched.slice(i, i + n));
-                  }
-                  resolve();
-                }
-              });
-            });
-          }else{
-            allSearchedBookmarkData = [[]];
-            slicedAddedUserNickNamesForSearched = [[]];
-            resolve();
-          }
-        });
-        return promise;
-      }).then(createBookmarkIdsForQuery)
-      .then(selectComment)
+      }).then(doSelectSearchedBookmarks)
+      .then(selectNickNameAndDivideSearchedBookmarkData)
+      .then(createSelectCommentQuery)
       .then(createCommentedBookmarkIds)
+      .then(selectComment)
       .then(FilterCommentedBookmarkIds)
       .then(createComments)
       .then(pushSelectedComments)
