@@ -33,13 +33,13 @@
           <div id="organization">
             <h3>organization some new bookmarks</h3>
             <% if(typeof orgBookmarks !== 'undefined'){ %>
-              <% for(var i = 0; i < selectedOrgDataForOrgBookmarks.length; i++){ %>
+              <% for(var i = 0; i < orgData.length; i++){ %>
                 <% for(var key in orgBookmarks){ %>
-                  <% if(selectedOrgDataForOrgBookmarks[i].org_id == key){ %>
+                  <% if(orgData[i].org_id == key){ %>
                     <% if(orgBookmarks[key].length > 0){ %>
                       <div class="thumbname">
-                        <img class="thumbnail2" src="<%= selectedOrgDataForOrgBookmarks[i].image_path %>">
-                        <a name="<%= selectedOrgDataForOrgBookmarks[i].org_id %>" class="orgId2"><%= selectedOrgDataForOrgBookmarks[i].name %></a>
+                        <img class="thumbnail2" src="<%= orgData[i].image_path %>">
+                        <a name="<%= orgData[i].org_id %>" class="orgId2"><%= orgData[i].name %></a>
                       </div>
                       <div>
                         <% for(var j = 0; j < orgBookmarks[key].length; j++){ %>
