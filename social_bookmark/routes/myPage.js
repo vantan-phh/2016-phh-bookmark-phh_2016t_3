@@ -145,46 +145,52 @@ router.param('searchIndex', (req, res, next, value) => {
 router.get('/', (req, res) => {
   var userId = req.session.user_id;
   (() => {
-    var promise = new Promise((resolve) => {
+    var promise = new Promise((resolve, reject) => {
       var selectBelongOrg = 'SELECT `org_id` FROM `organization_memberships` WHERE `user_id` = ?';
       connection.query(selectBelongOrg, [userId]).then((result) => {
-        var selectedBelongOrgIds = result[0];
-        resolve(selectedBelongOrgIds);
+        result[0].length ? resolve(result[0]) : reject();
       });
     });
     return promise;
   })().then((value) => {
     var selectedBelongOrgIds = value;
     var promise = new Promise((resolve) => {
-      if(selectedBelongOrgIds.length){
-        let belongOrgIdsForQuery = '';
-        selectedBelongOrgIds.forEach((currentValue, _index, array) => {
-          if(_index + 1 === array.length){
-            belongOrgIdsForQuery += currentValue.org_id;
-            resolve(belongOrgIdsForQuery);
-          }else{
-            belongOrgIdsForQuery += currentValue.org_id + ' OR `org_id` = ';
-          }
-        });
-      }else{
-        var belongOrgIdsForQuery = false;
-        resolve(belongOrgIdsForQuery);
-      }
+      let selectOrgData = 'SELECT * FROM `organizations` WHERE `org_id` = ';
+      selectedBelongOrgIds.forEach((currentValue, _index, array) => {
+        if(_index + 1 === array.length){
+          selectOrgData += '?';
+          var values = {
+            selectedBelongOrgIds,
+            selectOrgData,
+          };
+          resolve(values);
+        }else{
+          selectOrgData += '? OR `org_id` = ';
+        }
+      });
     });
     return promise;
-  }).then((value) => {
-    var belongOrgIdsForQuery = value;
+  }).then((values) => {
     var promise = new Promise((resolve) => {
-      if(belongOrgIdsForQuery){
-        var selectOrgData = 'SELECT * FROM `organizations` WHERE `org_id` = ' + belongOrgIdsForQuery;
-        connection.query(selectOrgData).then((result) => {
-          orgData = result[0];
-          resolve();
-        });
-      }else{
-        orgData = {};
+      values.orgIds = [];
+      values.selectedBelongOrgIds.forEach((currentValue, _index, array) => {
+        values.orgIds.push(currentValue.org_id);
+        if(_index + 1 === array.length) resolve(values);
+      });
+    });
+    return promise;
+  }).then((values) => {
+    var promise = new Promise((resolve) => {
+      connection.query(values.selectOrgData, values.orgIds).then((result) => {
+        orgData = result[0];
         resolve();
-      }
+      });
+    });
+    return promise;
+  }).catch(() => {
+    var promise = new Promise((resolve) => {
+      orgData = [];
+      resolve();
     });
     return promise;
   }).then(() => {
