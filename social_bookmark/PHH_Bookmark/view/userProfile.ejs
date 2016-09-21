@@ -26,21 +26,24 @@
               <div class="list2">
             <% } %>
               <a name="bookmarkId<%= recentBookmarks[i].bookmark_id%>"><%= recentBookmarks[i].title %></a>
-              <a href="<%= recentBookmarks[i].url %>"><%= recentBookmarks[i].url %></a>
-              <%= recentBookmarks[i].description %>
+              <br><a href="<%= recentBookmarks[i].url %>"><%= recentBookmarks[i].url %></a>
+              <br><p><%= recentBookmarks[i].description %></p>
               <% if(recentBookmarks[i].numberOfComments){ %>
-                コメント<%= recentBookmarks[i].numberOfComments %>件
+                <p>コメント<%= recentBookmarks[i].numberOfComments %>件</p>
               <% }else{ %>
-                コメント0件
+                <p>コメント0件</p>
               <% } %>
             </div>
           <% } %>
+          </div>
         <% } %>
       </div>
       <% if(typeof orgData !== 'undefined'){ %>
         <p id="org">所属している組織</p>
         <% for(var i = 0; i < orgData.length; i++){ %>
-          <img src="<%= orgData[i].image_path %>">
+          <div class="orgImg">
+            <img src="<%= orgData[i].image_path %>">
+          </div>
           <% if(typeof isMe !== 'undefined'){ %>
             <a name="<%= orgData[i].org_id %>" class="orgId"><%= orgData[i].name %></a>
           <% }else{ %>
