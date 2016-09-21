@@ -294,6 +294,7 @@ router.post('/create', upload.single('image_file'), (req, res) => {
               var values = {
                 orgId,
                 selectUserId,
+                selectedUserNames,
               };
               resolve(values);
             }else{
@@ -304,9 +305,9 @@ router.post('/create', upload.single('image_file'), (req, res) => {
         return promise;
       }).then((values) => {
         var orgId = values.orgId;
-        var selectUserId = values.userNamesForQuery;
+        var selectUserId = values.selectUserId;
         var promise = new Promise((resolve) => {
-          connection.query(selectUserId, [values.selectedUserNames]).then((result) => {
+          connection.query(selectUserId, values.selectedUserNames).then((result) => {
             var selectedUserIds = result[0];
             values = {
               orgId,
@@ -326,11 +327,9 @@ router.post('/create', upload.single('image_file'), (req, res) => {
               connection.query(intoMembershipsQuery, [currentValue.user_id, orgId, false]);
             }else if(currentValue.user_id === req.session.user_id){
               connection.query(intoMembershipsQuery, [currentValue.user_id, orgId, true]).then(() => {
-                if(index + 1 === array.length){
-                  resolve(orgId);
-                }
               });
             }
+            if(index + 1 === array.length) resolve(orgId);
           });
         });
         return promise;
@@ -380,7 +379,7 @@ router.post('/create', upload.single('image_file'), (req, res) => {
       }).then((values) => {
         var orgId = values.orgId;
         var promise = new Promise((resolve) => {
-          connection.query(values.selectUserId, [selectedUserNames]).then((result) => {
+          connection.query(values.selectUserId, selectedUserNames).then((result) => {
             var selectedUserIds = result[0];
             values = {
               orgId,
