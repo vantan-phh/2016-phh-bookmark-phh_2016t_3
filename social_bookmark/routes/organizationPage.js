@@ -1163,6 +1163,21 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
           numberOfSearchedBookmarks,
         });
       });
+    }else{
+      res.render('organizationPage.ejs', {
+        bookmarkData,
+        orgName,
+        orgIntroduction,
+        orgThumbnail,
+        isAdmin,
+        addedUserNickNames,
+        addedUserNickNamesForSearched,
+        pageLength,
+        index,
+        searchIndex,
+        numberOfSearchedBookmarks,
+        checkNotice : '検索したい項目にチェックを入れてください',
+      });
     }
   });
 });
