@@ -967,6 +967,16 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
           numberOfSearchedBookmarks,
         });
       });
+    }else{
+      res.render('myPage.ejs', {
+        bookmarkData,
+        orgData,
+        pageLength,
+        index,
+        searchIndex,
+        numberOfSearchedBookmarks,
+        checkNotice : '検索したい項目にチェックを入れてください',
+      });
     }
   });
 });

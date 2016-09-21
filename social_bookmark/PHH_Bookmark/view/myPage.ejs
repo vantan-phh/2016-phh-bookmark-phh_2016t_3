@@ -36,6 +36,9 @@
           <% if(typeof keyWordNotice !== 'undefined'){ %>
             <p class="notice"><%= keyWordNotice %></p>
           <% } %>
+          <% if(typeof checkNotice !== 'undefined'){ %>
+            <p><%= checkNotice %></p>
+          <% } %>
           <% if(typeof searchedBookmarkData !== 'undefined'){ %>
             <div id="searchResult">
             <p>検索結果</p>
