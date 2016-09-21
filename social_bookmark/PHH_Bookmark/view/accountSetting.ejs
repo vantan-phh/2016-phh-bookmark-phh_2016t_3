@@ -50,10 +50,39 @@
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
   <script>
     $(function(){
+      var $mail = $('[name="mail"]');
+      var $currentPassword = $('[name="currentPassword"]');
+      var $newPassword = $('[name="newPassword"]');
+      var $newPasswordConfirm = $('[name="newPasswordConfirm"]');
       var $button = $(".button");
+      var $password = $('#password');
+
+      var checkForm = /^[a-zA-Z0-9]+$/;
+      var checkEmail = /^([a-zA-Z0-9])+([a-zA-Z0-9\._-])*@([a-zA-Z0-9_-])+([a-zA-Z0-9\._-]+)+$/;
+
       $button.click(function(){
         this.disabled = true;
         this.form.submit();
+      });
+      $mail.keyup(function(){
+        var mail = $mail.val();
+        $('#mailNotice').detach();
+        if(!checkEmail.test(mail)) $mail.after('<p id="mailNotice">正しいメールアドレスを入力してください</p>');
+      });
+      $currentPassword.keyup(function(){
+        var currentPassword = $currentPassword.val();
+        $('#currentPasswordNotice').detach();
+        if(!checkForm.test(currentPassword) || currentPassword.length < 8) $currentPassword.after('<p id="currentPasswordNotice">パスワードは半角英数8文字以上です</p>');
+      });
+      $newPassword.keyup(function(){
+        var newPassword = $newPassword.val();
+        $('#newPasswordNotice').detach();
+        if(!checkForm.test(newPassword) || newPassword.length < 8) $newPassword.after('<p id="newPasswordNotice">パスワードは半角英数8文字以上です</p>');
+      });
+      $newPasswordConfirm.keyup(function(){
+        var newPasswordConfirm = $newPasswordConfirm.val();
+        $('#newPasswordConfirmNotice').detach();
+        if(!checkForm.test(newPasswordConfirm) || newPasswordConfirm.length < 8) $newPasswordConfirm.after('<p id="newPasswordConfirmNotice">パスワードは半角英数8文字以上です</p>');
       });
     });
   </script>
