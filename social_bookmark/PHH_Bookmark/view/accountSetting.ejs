@@ -41,7 +41,7 @@
             <% } %>
           </form>
           <form action="/PHH_Bookmark/accountSetting/leave" method="post">
-            <div id="leave"><input type="submit" value="退会"></div>
+            <div id="leave"><input type="button" value="退会" id="leaveButton"></div>
           </form>
         </div>
       </div>
@@ -56,6 +56,8 @@
       var $newPasswordConfirm = $('[name="newPasswordConfirm"]');
       var $button = $(".button");
       var $password = $('#password');
+      var $leaveButton = $('#leaveButton');
+      var $leave = $('#leave');
 
       var checkForm = /^[a-zA-Z0-9]+$/;
       var checkEmail = /^([a-zA-Z0-9])+([a-zA-Z0-9\._-])*@([a-zA-Z0-9_-])+([a-zA-Z0-9\._-]+)+$/;
@@ -83,6 +85,18 @@
         var newPasswordConfirm = $newPasswordConfirm.val();
         $('#newPasswordConfirmNotice').detach();
         if(!checkForm.test(newPasswordConfirm) || newPasswordConfirm.length < 8) $newPasswordConfirm.after('<p id="newPasswordConfirmNotice">パスワードは半角英数8文字以上です</p>');
+      });
+      $leaveButton.click(function(){
+        $leaveButton.detach();
+        $leave.append('<input type="button" value="キャンセル" id="cancel" class="beforeLeave">');
+        $leave.append('<p class="beforeLeave">下の退会ボタンをクリックすると本サービスからあなたのデータを消すことができます。*');
+        $leave.append('<p class="beforeLeave">上のキャンセルボタンを押すとこのメッセージと退会ボタンを消すことができます');
+        $leave.append('<input type="submit" value="退会" class="beforeLeave">');
+        $leave.append('<p class="beforeLeave">*組織にあなたが登録したブックマークは残ります。消したい場合は退会前に組織ページからブックマークを削除してください。</p>')
+        $('#cancel').click(function(){
+          $leave.append($leaveButton);
+          $('.beforeLeave').detach();
+        });
       });
     });
   </script>
