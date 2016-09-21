@@ -46,10 +46,37 @@
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <script>
       $(function(){
+        var $email = $('[name="email"]');
+        var $userName = $('[name="user_name"]');
         var $button = $(".button");
+        var $password = $('[name="password"]');
+        var $againPassword = $('[name="again_password"]');
+        var checkForm = /^[a-zA-Z0-9]+$/;
+        var checkEmail = /^([a-zA-Z0-9])+([a-zA-Z0-9\._-])*@([a-zA-Z0-9_-])+([a-zA-Z0-9\._-]+)+$/;
+
         $button.click(function(){
           this.disabled = true;
           this.form.submit();
+        });
+        $email.keyup(function(){
+          var email = $email.val();
+          $('#emailNotice').detach();
+          if(!checkEmail.test(email)) $email.after('<p id="emailNotice">正しいメールアドレスを入力してください</p>');
+        });
+        $userName.keyup(function(){
+          var userName = $userName.val();
+          $('#userNameNotice').detach();
+          if(!checkForm.test(userName) || userName.length > 16) $userName.after('<p id="userNameNotice">ユーザーネームは半角英数16文字以下です');
+        });
+        $password.keyup(function(){
+          var password = $password.val();
+          $('#passwordNotice').detach();
+          if(!checkForm.test(password) || password.length < 8) $password.after('<p id="passwordNotice">パスワードは半角英数８文字以上です');
+        });
+        $againPassword.keyup(function(){
+          var againPassword = $againPassword.val();
+          $('#againPasswordNotice').detach();
+          if(!checkForm.test(againPassword) || againPassword.length < 8) $againPassword.after('<p id="againPasswordNotice">パスワードは半角英数８文字以上です');
         });
       });
     </script>
