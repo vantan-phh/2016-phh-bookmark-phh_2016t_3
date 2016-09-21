@@ -6,8 +6,8 @@ var connection = require('../mysqlConnection');
 var bookmarkId;
 var url;
 
-router.get('/', (req, res) => {
-  bookmarkId = req.query.result;
+router.post('/get', (req, res) => {
+  bookmarkId = req.body.result;
   var selectBookmarkData = 'SELECT * FROM `bookmarks` WHERE `bookmark_id` = ?';
   connection.query(selectBookmarkData, [bookmarkId]).then((result) => {
     var title = result[0][0].title;
