@@ -55,7 +55,7 @@
             <p class="headline">メンバー一覧</p>
             <% for(var i = 0; i < memberUserNames.length; i ++){ %>
               <div class="members">
-                <p class="memberName"><%= memberUserNames[i] %></p><!-- <p><%= memberNickNames[i] %></p> -->
+                <p class="memberName"><%= memberNickNames[i] %>(<%= memberUserNames[i] %>)</p>
                 <% if(memberUserNames[i] === myUserName){ %>
                   <input type="button" value="脱退" id="leave">
                 <% } else { %>
