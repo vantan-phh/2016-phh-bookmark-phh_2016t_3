@@ -48,6 +48,9 @@ label input{
 label .readInput{
   margin: 3px 0 10px 0;
 }
+.error{
+  color: red;
+}
 #submitBtn{
   margin-top: 15px;
   color: white;

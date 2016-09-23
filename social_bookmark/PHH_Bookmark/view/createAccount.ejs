@@ -12,14 +12,14 @@
         <h2>Create an Account</h2>
         <label><p class="read">Email Address</p><input name="email" type="text" placeholder="メールアドレスを入力してください"></label>
         <% if (typeof eMailExists !== 'undefined') { %>
-          <p><%= eMailExists %></p>
+          <p class="error"><%= eMailExists %></p>
         <% } %>
         <% if (typeof mailNotice !== 'undefined') { %>
           <p class="error"><%= mailNotice %></p>
         <% } %>
         <label><p class="read">Username</p><input name="user_name" type="text" placeholder="ユーザーネームを入力してください"></label>
         <% if(typeof userNameExists !== 'undefined'){ %>
-          <p><%= userNameExists %></p>
+          <p class="error"><%= userNameExists %></p>
         <% } %>
         <% if (typeof usernameNotice !== 'undefined') { %>
           <p class="error"><%= usernameNotice %></p>
@@ -50,23 +50,23 @@
         $email.keyup(function(){
           var email = $email.val();
           $('#emailNotice').detach();
-          if(!checkEmail.test(email)) $email.after('<p id="emailNotice">正しいメールアドレスを入力してください</p>');
+          if(!checkEmail.test(email)) $email.after('<p class="error" id="emailNotice">正しいメールアドレスを入力してください</p>');
         });
         $userName.keyup(function(){
           var userName = $userName.val();
           $('#userNameNotice').detach();
-          if(!checkForm.test(userName) || userName.length > 16) $userName.after('<p id="userNameNotice">ユーザーネームは半角英数16文字以下です</p>');
+          if(!checkForm.test(userName) || userName.length > 16) $userName.after('<p class="error" id="userNameNotice">ユーザーネームは半角英数16文字以下です</p>');
         });
         $password.keyup(function(){
           var password = $password.val();
           $('#passwordNotice').detach();
-          if(!checkForm.test(password) || password.length < 8) $password.after('<p id="passwordNotice">パスワードは半角英数８文字以上です</p>');
+          if(!checkForm.test(password) || password.length < 8) $password.after('<p class="error" id="passwordNotice">パスワードは半角英数８文字以上です</p>');
         });
         $againPassword.keyup(function(){
           var againPassword = $againPassword.val();
           var password = $password.val();
           $('#againPasswordNotice').detach();
-          if(againPassword !== password) $againPassword.after('<p id="againPasswordNotice">パスワードが一致しません</p>');
+          if(againPassword !== password) $againPassword.after('<p class="error" id="againPasswordNotice">パスワードが一致しません</p>');
         });
       });
     </script>
