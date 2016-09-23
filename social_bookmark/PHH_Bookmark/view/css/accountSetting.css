@@ -62,9 +62,11 @@ main{
 }
 #leave{
   margin-top: 100px;
-  margin-left: 550px;
+  margin-left: 450px;
+  width: 300px;
 }
 #leave input{
+  margin-left: 90px;
   background: linear-gradient(#F73A36, #C72F2C);
   border: none;
   border-radius: 2px;
@@ -76,4 +78,11 @@ main{
 }
 #leave input:hover{
   background: linear-gradient(#AD2C2A, #8C2523);
+}
+.beforeLeave{
+  margin-top: 20px;
+}
+.beforeLeaveAttention{
+  margin-top: 20px;
+  color: red;
 }
