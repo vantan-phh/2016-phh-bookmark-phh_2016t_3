@@ -10,8 +10,8 @@ body{
           コンテンツ
 -----------------------------*/
 main{
-  background-color: #fefefe;
-  border: solid 1px gray;
+  background-color: rgba(170, 170, 160, 0.3);
+  border-radius: 10px;
   margin-top: 50px;
   margin-bottom: 100px;
   width: 802px;

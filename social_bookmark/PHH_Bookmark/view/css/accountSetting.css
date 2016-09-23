@@ -4,6 +4,8 @@ main{
   margin: 0 auto;
   margin-bottom: 150px;
   position: relative;
+  background-color: rgba(170, 170, 160, 0.3);
+  border-radius: 10px;
 }
 #pagetitle{
   font-size: 25px;

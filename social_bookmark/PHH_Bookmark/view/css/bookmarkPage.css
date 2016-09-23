@@ -6,6 +6,8 @@ main{
   left: 300px;
   top: 60px;
   margin: 0 auto;
+  background-color: rgba(170, 170, 160, 0.3);
+  border-radius: 10px;
 }
 
 #wrapper{

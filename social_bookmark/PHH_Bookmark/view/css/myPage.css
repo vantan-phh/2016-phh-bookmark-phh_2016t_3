@@ -11,6 +11,8 @@ body{
 -----------------------------*/
 
 main{
+  background-color: rgba(170, 170, 160, 0.3);
+  border-radius: 10px;
   position: relative;
   top: 100px;
   left: 200px;

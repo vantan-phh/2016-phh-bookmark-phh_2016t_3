@@ -6,6 +6,8 @@ main{
   width: 750px;
   margin: 0 auto;
   position: relative;
+  background-color: rgba(170, 170, 160, 0.3);
+  border-radius: 10px;
 }
 
 .headline{
@@ -133,6 +135,9 @@ main{
 .members input{
   float: right;
   margin: 5px 5px 0 0;
+}
+#clear{
+  clear: both;
 }
 
 #management{
