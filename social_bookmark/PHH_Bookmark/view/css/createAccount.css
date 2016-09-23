@@ -49,6 +49,7 @@ label .readInput{
   margin: 3px 0 10px 0;
 }
 #submitBtn{
+  margin-top: 15px;
   color: white;
   font-size: 20px;
   background-color: #00e100;
