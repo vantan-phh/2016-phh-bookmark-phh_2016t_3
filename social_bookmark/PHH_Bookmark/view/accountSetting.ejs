@@ -43,6 +43,9 @@
           <form action="/PHH_Bookmark/accountSetting/leave" method="post">
             <div id="leave"><input type="button" value="退会" id="leaveButton"></div>
           </form>
+          <% if(typeof organizationNotice !== 'undefined'){ %>
+            <%= organizationNotice %>
+          <% } %>
         </div>
       </div>
     </main>

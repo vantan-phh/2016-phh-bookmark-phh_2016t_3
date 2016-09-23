@@ -186,6 +186,65 @@ router.post('/leave', (req, res) => {
   var myId = req.session.user_id;
   (() => {
     var promise = new Promise((resolve) => {
+      var checkOrganization = 'SELECT * FROM (SELECT * FROM `organization_memberships` WHERE `user_id` = ? AND `is_admin` = true) AS a';
+      connection.query(checkOrganization, [myId]).then((result) => {
+        resolve(result[0]);
+      });
+    });
+    return promise;
+  })().then((value) => {
+    var promise = new Promise((resolve) => {
+      var orgIds = [];
+      value.forEach((currentValue, index, array) => {
+        orgIds.push(currentValue.org_id);
+        if(index + 1 === array.length){
+          var values = {
+            orgIds,
+            selectedMemberships : value,
+          };
+          resolve(values);
+        }
+      });
+    });
+    return promise;
+  }).then((values) => {
+    var promise = new Promise((resolve) => {
+      values.orgIds = values.orgIds.filter((currentValue, index, array) => array.indexOf(currentValue) === index);
+      resolve(values);
+    });
+    return promise;
+  }).then((values) => {
+    var promise = new Promise((resolve) => {
+      values.memberships = {};
+      values.orgIds.forEach((currentValue, index, array) => {
+        values.memberships[currentValue] = [];
+        if(index + 1 === array.length) resolve(values);
+      });
+    });
+    return promise;
+  }).then((values) => {
+    var promise = new Promise((resolve) => {
+      values.selectedMemberships.forEach((currentValue, index, array) => {
+        values.orgIds.forEach((_currentValue, _index, _array) => {
+          if(currentValue.org_id === _currentValue) values.memberships[_currentValue].push(currentValue.user_id);
+          if(index + 1 === array.length && _index + 1 === _array.length) resolve(values);
+        });
+      });
+    });
+    return promise;
+  }).then((values) => {
+    var promise = new Promise((resolve, reject) => {
+      var cannotLeave = 0;
+      for(var i = 0; i < values.orgIds.length; i++){
+        if(values.memberships[values.orgIds[i]].length <= 1){
+          cannotLeave++;
+        }
+      }
+      cannotLeave > 0 ? reject() : resolve();
+    });
+    return promise;
+  }).then(() => {
+    var promise = new Promise((resolve) => {
       var deleteMembership = 'DELETE FROM `organization_memberships` WHERE `user_id` = ?';
       connection.query(deleteMembership, [myId]).then(() => {
         resolve();
@@ -194,7 +253,7 @@ router.post('/leave', (req, res) => {
       });
     });
     return promise;
-  })().then(() => {
+  }).then(() => {
     var promise = new Promise((resolve) => {
       var deleteBookmarks = 'DELETE FROM `bookmarks` WHERE `user_id` = ? AND `org_id` = NULL';
       connection.query(deleteBookmarks, [myId]).then(() => {
@@ -209,6 +268,14 @@ router.post('/leave', (req, res) => {
     connection.query(deleteFromUsers, [myId]).then(() => {
       delete req.session.user_id;
       res.redirect('/PHH_Bookmark/left');
+    });
+  }).catch(() => {
+    var selectMyData = 'SELECT * FROM `users` WHERE `user_id` = ?';
+    connection.query(selectMyData, [myId]).then((result) => {
+      res.render('accountSetting', {
+        myData : result[0][0],
+        organizationNotice : '管理者があなたのみの組織が存在するため退会できません。権限を他のユーザーに付与するかその組織を解散してください',
+      });
     });
   });
 });
