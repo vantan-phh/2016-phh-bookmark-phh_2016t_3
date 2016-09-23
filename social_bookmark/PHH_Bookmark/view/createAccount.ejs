@@ -66,17 +66,18 @@
         $userName.keyup(function(){
           var userName = $userName.val();
           $('#userNameNotice').detach();
-          if(!checkForm.test(userName) || userName.length > 16) $userName.after('<p id="userNameNotice">ユーザーネームは半角英数16文字以下です');
+          if(!checkForm.test(userName) || userName.length > 16) $userName.after('<p id="userNameNotice">ユーザーネームは半角英数16文字以下です</p>');
         });
         $password.keyup(function(){
           var password = $password.val();
           $('#passwordNotice').detach();
-          if(!checkForm.test(password) || password.length < 8) $password.after('<p id="passwordNotice">パスワードは半角英数８文字以上です');
+          if(!checkForm.test(password) || password.length < 8) $password.after('<p id="passwordNotice">パスワードは半角英数８文字以上です</p>');
         });
         $againPassword.keyup(function(){
           var againPassword = $againPassword.val();
+          var password = $password.val();
           $('#againPasswordNotice').detach();
-          if(!checkForm.test(againPassword) || againPassword.length < 8) $againPassword.after('<p id="againPasswordNotice">パスワードは半角英数８文字以上です');
+          if(againPassword !== password) $againPassword.after('<p id="againPasswordNotice">パスワードが一致しません</p>');
         });
       });
     </script>
