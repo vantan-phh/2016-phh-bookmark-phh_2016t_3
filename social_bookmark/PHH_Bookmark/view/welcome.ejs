@@ -3,8 +3,24 @@
   <head>
     <meta charset="utf-8">
     <title></title>
+    <link rel="stylesheet" type="text/css" href="/css/welcome.css">
   </head>
   <body>
-    ようこそ。
+    <% include layout %>
+    <main>
+      <p id="pageTitle">ようこそ</p>
+      <div id="descriptionBody">
+        <p class="description">PHH Bookmarkは特定組織内でのより高速・安心・低難易度でのURLの共有を促進するソーシャルブックマークサービスです。</p>
+        <p class="description"></p>
+        <div id="noAccount">
+          <p class="guide">初めてのかた</p>
+          <a href="/PHH_Bookmark/createAccount"><button id="createAccount">アカウントを作る</button></a>
+        </div>
+        <div id="haveAccount">
+          <p class="guide">アカウントをお持ちのかた</p>
+          <a href="/PHH_Bookmark/login"><button id="login">ログイン</button></a>
+        </div>
+      </div>
+    </main>
   </body>
 </html>

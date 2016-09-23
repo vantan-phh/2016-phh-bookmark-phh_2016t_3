@@ -1,0 +1,54 @@
+main{
+  position: relative;
+  left: 300px;
+  top: 100px;
+}
+#pageTitle{
+  font-size: 30px;
+}
+#descriptionBody{
+  margin-top: 30px;
+  margin-left: 20px;
+}
+.description{
+  width: 600px;
+}
+.guide{
+  margin-top: 100px;
+  margin-left: 30px;
+  margin-bottom: 30px;
+}
+#createAccount{
+  color: white;
+  background: linear-gradient(#07d34f, #05b142);
+  font-size: 15px;
+  border: none;
+  text-decoration: none;
+  text-shadow: 0.5px 0.5px 0.5px black;
+  padding: 6px;
+  margin-left: 12px;
+}
+#createAccount:hover{
+  background: linear-gradient(#049336, #036b27);
+}
+#noAccount{
+  float: left;
+  vertical-align: middle;
+}
+#haveAccount{
+  margin-left: 300px;
+  vertical-align: middle;
+}
+#login{
+  color: white;
+  background: linear-gradient(#D4D4D4, #BABABA);
+  font-size: 15px;
+  border: none;
+  text-decoration: none;
+  text-shadow: 0.5px 0.5px 0.5px black;
+  padding: 6px;
+  margin-left: 90px;
+}
+#login:hover{
+  background: linear-gradient(#9C9C9C, #828282);
+}
