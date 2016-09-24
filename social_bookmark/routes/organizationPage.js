@@ -16,24 +16,23 @@ var slicedAddedUserNickNamesForSearched;
 var index;
 var allSearchedBookmarkData;
 var searchIndex;
+var numberOfSearchedBookmarks;
 
 function createSelectCommentQuery(value){
   var promise = new Promise((resolve, reject) => {
-    if(value[0].length){
+    if(value.length){
       var selectCommentQuery = 'SELECT * FROM `comments` WHERE `bookmark_id` = ';
       value.forEach((currentValue, _index, array) => {
-        currentValue.forEach((_currentValue, __index, _array) => {
-          if(_index + 1 === array.length && __index + 1 === _array.length){
-            selectCommentQuery += '?';
-            var values = {
-              allBookmarkData : value,
-              selectCommentQuery,
-            };
-            resolve(values);
-          }else{
-            selectCommentQuery += '? OR `bookmark_id` = ';
-          }
-        });
+        if(_index + 1 === array.length){
+          selectCommentQuery += '?';
+          var values = {
+            bookmarkData : value,
+            selectCommentQuery,
+          };
+          resolve(values);
+        }else{
+          selectCommentQuery += '? OR `bookmark_id` = ';
+        }
       });
     }else{
       reject(value);
@@ -45,14 +44,12 @@ function createSelectCommentQuery(value){
 function createCommentedBookmarkIds(values){
   var promise = new Promise((resolve) => {
     var commentedBookmarkIds = [];
-    values.allBookmarkData.forEach((currentValue, _index, array) => {
-      currentValue.forEach((_currentValue, __index, _array) => {
-        commentedBookmarkIds.push(_currentValue.bookmark_id);
-        if(_index + 1 === array.length && __index + 1 === _array.length){
-          values.commentedBookmarkIds = commentedBookmarkIds;
-          resolve(values);
-        }
-      });
+    values.bookmarkData.forEach((currentValue, _index, array) => {
+      commentedBookmarkIds.push(currentValue.bookmark_id);
+      if(_index + 1 === array.length){
+        values.commentedBookmarkIds = commentedBookmarkIds;
+        resolve(values);
+      }
     });
   });
   return promise;
@@ -65,7 +62,7 @@ function selectComment(values){
       if(values.selectedComments.length){
         resolve(values);
       }else{
-        reject(values.allBookmarkData);
+        reject(values.bookmarkData);
       }
     });
   });
@@ -78,7 +75,7 @@ function FilterCommentedBookmarkIds(values){
       values.commentedBookmarkIds = values.commentedBookmarkIds.filter((currentValue, _index, array) => array.indexOf(currentValue) === _index);
       resolve(values);
     }else{
-      reject(values.allBookmarkData);
+      reject(values.bookmarkData);
     }
   });
   return promise;
@@ -118,20 +115,18 @@ function pushSelectedComments(values){
 
 function addNumberOfComments(values){
   var promise = new Promise((resolve) => {
-    values.allBookmarkData.forEach((currentValue, _index, array) => {
-      currentValue.forEach((_currentValue, __index, _array) => {
-        values.commentsKeys.forEach((__currentValue, ___index, __array) => {
-          if(__currentValue === _currentValue.bookmark_id.toString()){
-            if(values.comments[__currentValue].length){
-              _currentValue.numberOfComments = values.comments[__currentValue].length;
-            }else{
-              _currentValue.numberOfComments = 0;
-            }
+    values.bookmarkData.forEach((currentValue, _index, array) => {
+      values.commentsKeys.forEach((_currentValue, __index, _array) => {
+        if(_currentValue === currentValue.bookmark_id.toString()){
+          if(values.comments[_currentValue].length){
+            currentValue.numberOfComments = values.comments[_currentValue].length;
+          }else{
+            currentValue.numberOfComments = 0;
           }
-          if(_index + 1 === array.length && __index + 1 === _array.length && ___index + 1 === __array.length){
-            resolve(values.allBookmarkData);
-          }
-        });
+        }
+        if(_index + 1 === array.length && __index + 1 === _array.length){
+          resolve(values.bookmarkData);
+        }
       });
     });
   });
@@ -222,14 +217,7 @@ router.get('/', (req, res) => {
       }
     });
     return promise;
-  }).then(createSelectCommentQuery)
-  .then(createCommentedBookmarkIds)
-  .then(selectComment)
-  .then(FilterCommentedBookmarkIds)
-  .then(createComments)
-  .then(pushSelectedComments)
-  .then(addNumberOfComments)
-  .then((value) => {
+  }).then((value) => {
     var promise = new Promise((resolve) => {
       connection.query(selectOwnBookmarkIds, [myId, orgId]).then((result) => {
         ownBookmarkIds = result[0];
@@ -264,7 +252,7 @@ router.get('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =>
     addedUserNickNames = slicedAddedUserNickNames[index - 1];
   }
   if(searchIndex === 0){
-    if(pageLength >= index && index > 0){
+    const renderOrganizationPage = () => {
       res.render('organizationPage.ejs', {
         bookmarkData,
         orgName,
@@ -276,7 +264,19 @@ router.get('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =>
         pageLength,
         index,
         searchIndex,
+        numberOfSearchedBookmarks,
       });
+    };
+    if(pageLength >= index && index > 0){
+      createSelectCommentQuery(bookmarkData)
+      .then(createCommentedBookmarkIds)
+      .then(selectComment)
+      .then(FilterCommentedBookmarkIds)
+      .then(createComments)
+      .then(pushSelectedComments)
+      .then(addNumberOfComments)
+      .then(renderOrganizationPage)
+      .catch(renderOrganizationPage);
     }else{
       res.redirect('/PHH_Bookmark/myPage/bookmarkList/1/searchBookmarkList/0');
     }
@@ -284,21 +284,33 @@ router.get('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =>
     var addedUserNickNamesForSearched = slicedAddedUserNickNamesForSearched[searchIndex - 1];
     var searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
     var searchPageLength = allSearchedBookmarkData.length;
-    res.render('organizationPage.ejs', {
-      bookmarkData,
-      searchedBookmarkData,
-      orgName,
-      orgIntroduction,
-      orgThumbnail,
-      ownBookmarkIds,
-      isAdmin,
-      addedUserNickNames,
-      addedUserNickNamesForSearched,
-      pageLength,
-      index,
-      searchIndex,
-      searchPageLength,
-    });
+    const renderOrganizationPage = () => {
+      res.render('organizationPage.ejs', {
+        bookmarkData,
+        searchedBookmarkData,
+        orgName,
+        orgIntroduction,
+        orgThumbnail,
+        ownBookmarkIds,
+        isAdmin,
+        addedUserNickNames,
+        addedUserNickNamesForSearched,
+        pageLength,
+        index,
+        searchIndex,
+        searchPageLength,
+        numberOfSearchedBookmarks,
+      });
+    };
+    createSelectCommentQuery(searchedBookmarkData)
+    .then(createCommentedBookmarkIds)
+    .then(selectComment)
+    .then(FilterCommentedBookmarkIds)
+    .then(createComments)
+    .then(pushSelectedComments)
+    .then(addNumberOfComments)
+    .then(renderOrganizationPage)
+    .catch(renderOrganizationPage);
   }
 });
 
@@ -417,6 +429,7 @@ router.post('/bookmarkList/:index', (req, res) => {
           addedUserNickNames,
           pageLength,
           index,
+          searchIndex,
           urlNotice : 'http://もしくはhttp://から始まる正しいURLを入力してください',
         });
       }
@@ -440,6 +453,7 @@ router.post('/bookmarkList/:index', (req, res) => {
           addedUserNickNames,
           pageLength,
           index,
+          searchIndex,
           titleNotice : 'タイトルを入力してください',
         });
       }
@@ -463,6 +477,7 @@ router.post('/bookmarkList/:index', (req, res) => {
           addedUserNickNames,
           pageLength,
           index,
+          searchIndex,
           titleNotice : 'セキュリティ上の観点からタイトルに「+, -, %, ;」は使えません',
         });
       }
@@ -486,6 +501,7 @@ router.post('/bookmarkList/:index', (req, res) => {
           addedUserNickNames,
           pageLength,
           index,
+          searchIndex,
           descriptionNotice : 'セキュリティ上の観点から説明文に「+, -, %, ;」は使えません',
         });
       }
@@ -509,6 +525,7 @@ router.post('/bookmarkList/:index', (req, res) => {
           addedUserNickNames,
           pageLength,
           index,
+          searchIndex,
           titleNotice : 'タイトルは32文字以下です',
         });
       }
@@ -532,6 +549,7 @@ router.post('/bookmarkList/:index', (req, res) => {
           addedUserNickNames,
           pageLength,
           index,
+          searchIndex,
           descriptionNotice : '説明文は128文字以下です',
         });
       }
@@ -553,6 +571,7 @@ router.post('/bookmarkList/:index', (req, res) => {
           addedUserNickNames,
           pageLength,
           index,
+          searchIndex,
           networkNotice : 'URLが正しいかをご確認の上、ネットワーク接続をお確かめください。',
         });
       });
@@ -585,7 +604,8 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
   var pageLength = allBookmarkData.length;
   var bookmarkData;
   var addedUserNickNames;
-  var numberOfSearchedBookmarks;
+  var searchedBookmarkData;
+  var searchPageLength;
   index = parseInt(index, 10);
   searchIndex = parseInt(searchIndex, 10);
   if(allBookmarkData[0].length === 0){
@@ -680,7 +700,7 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
       values.keyWordsForQuery.unshift(orgId);
       connection.query(values.selectSearchedBookmarks, values.keyWordsForQuery).then((result) => {
         numberOfSearchedBookmarks = result[0].length;
-        var searchedBookmarkData = result[0];
+        searchedBookmarkData = result[0];
         resolve(searchedBookmarkData);
       });
     });
@@ -688,7 +708,7 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
   }
 
   function selectNickNameAndDivideSearchedBookmarkData(value){
-    var searchedBookmarkData = value;
+    searchedBookmarkData = value;
     var promise = new Promise((resolve) => {
       var selectNickName = 'SELECT `nick_name` FROM `users` WHERE `user_id` = ?';
       if(searchedBookmarkData.length > 0){
@@ -705,7 +725,7 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
               for (let i = 0; i < addedUserNickNamesForSearched.length; i += n) {
                 slicedAddedUserNickNamesForSearched.push(addedUserNickNamesForSearched.slice(i, i + n));
               }
-              resolve();
+              resolve(allSearchedBookmarkData);
             }
           });
         });
@@ -716,6 +736,24 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
       }
     });
     return promise;
+  }
+
+  function renderOrganizationPage(){
+    res.render('organizationPage.ejs', {
+      bookmarkData,
+      orgName,
+      orgIntroduction,
+      orgThumbnail,
+      isAdmin,
+      searchedBookmarkData,
+      addedUserNickNames,
+      addedUserNickNamesForSearched,
+      pageLength,
+      searchPageLength,
+      index,
+      searchIndex,
+      numberOfSearchedBookmarks,
+    });
   }
 
   (() => {
@@ -741,6 +779,7 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
           addedUserNickNames,
           pageLength,
           index,
+          searchIndex,
           keyWordNotice : 'セキュリティ上の観点から「+, -, %, ;」を含んでの検索はできません',
         });
       }
@@ -752,307 +791,192 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
       .then(createKeyWordsForQueryByOneColumn)
       .then(doSelectSearchedBookmarks)
       .then(selectNickNameAndDivideSearchedBookmarkData)
-      .then(createSelectCommentQuery)
-      .then(createCommentedBookmarkIds)
-      .then(selectComment)
-      .then(FilterCommentedBookmarkIds)
-      .then(createComments)
-      .then(pushSelectedComments)
-      .then(addNumberOfComments)
       .then((value) => {
-        var searchedBookmarkData = value[searchIndex - 1];
-        var searchPageLength = value.length;
+        searchedBookmarkData = value[searchIndex - 1];
+        searchPageLength = value.length;
         addedUserNickNamesForSearched = slicedAddedUserNickNamesForSearched[searchIndex - 1];
-        res.render('organizationPage.ejs', {
-          bookmarkData,
-          orgName,
-          orgIntroduction,
-          orgThumbnail,
-          isAdmin,
-          searchedBookmarkData,
-          addedUserNickNames,
-          addedUserNickNamesForSearched,
-          pageLength,
-          searchPageLength,
-          index,
-          searchIndex,
-          numberOfSearchedBookmarks,
-        });
-      })
-      .catch(() => {
-        var searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
-        var searchPageLength = allSearchedBookmarkData.length;
+        createSelectCommentQuery(searchedBookmarkData)
+        .then(createCommentedBookmarkIds)
+        .then(selectComment)
+        .then(FilterCommentedBookmarkIds)
+        .then(createComments)
+        .then(pushSelectedComments)
+        .then(addNumberOfComments)
+        .then(renderOrganizationPage)
+        .catch(renderOrganizationPage);
+      }).catch(() => {
+        searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
+        searchPageLength = allSearchedBookmarkData.length;
         addedUserNickNamesForSearched = slicedAddedUserNickNamesForSearched[searchIndex - 1];
-        res.render('organizationPage.ejs', {
-          bookmarkData,
-          orgName,
-          orgIntroduction,
-          orgThumbnail,
-          isAdmin,
-          searchedBookmarkData,
-          addedUserNickNames,
-          addedUserNickNamesForSearched,
-          pageLength,
-          searchPageLength,
-          index,
-          searchIndex,
-          numberOfSearchedBookmarks,
-        });
+        createSelectCommentQuery(searchedBookmarkData)
+        .then(createCommentedBookmarkIds)
+        .then(selectComment)
+        .then(FilterCommentedBookmarkIds)
+        .then(createComments)
+        .then(pushSelectedComments)
+        .then(addNumberOfComments)
+        .then(renderOrganizationPage)
+        .catch(renderOrganizationPage);
       });
     }else if(searchFromTitle === undefined && searchFromDescription === 'on' && searchFromTextsOnSites === undefined){
       createSelectSearchedBookmarksByOneColumn('description')
       .then(createKeyWordsForQueryByOneColumn)
       .then(doSelectSearchedBookmarks)
       .then(selectNickNameAndDivideSearchedBookmarkData)
-      .then(createSelectCommentQuery)
-      .then(createCommentedBookmarkIds)
-      .then(selectComment)
-      .then(FilterCommentedBookmarkIds)
-      .then(createComments)
-      .then(pushSelectedComments)
-      .then(addNumberOfComments)
       .then((value) => {
-        var searchedBookmarkData = value[searchIndex - 1];
-        var searchPageLength = value.length;
+        searchedBookmarkData = value[searchIndex - 1];
+        searchPageLength = value.length;
         addedUserNickNamesForSearched = slicedAddedUserNickNamesForSearched[searchIndex - 1];
-        res.render('organizationPage.ejs', {
-          bookmarkData,
-          orgName,
-          orgIntroduction,
-          orgThumbnail,
-          isAdmin,
-          searchedBookmarkData,
-          addedUserNickNames,
-          addedUserNickNamesForSearched,
-          pageLength,
-          searchPageLength,
-          index,
-          searchIndex,
-          numberOfSearchedBookmarks,
-        });
+        createSelectCommentQuery(searchedBookmarkData)
+        .then(createCommentedBookmarkIds)
+        .then(selectComment)
+        .then(FilterCommentedBookmarkIds)
+        .then(createComments)
+        .then(pushSelectedComments)
+        .then(addNumberOfComments)
+        .then(renderOrganizationPage)
+        .catch(renderOrganizationPage);
       }).catch(() => {
-        var searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
-        var searchPageLength = allSearchedBookmarkData.length;
+        searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
+        searchPageLength = allSearchedBookmarkData.length;
         addedUserNickNamesForSearched = slicedAddedUserNickNamesForSearched[searchIndex - 1];
-        res.render('organizationPage.ejs', {
-          bookmarkData,
-          orgName,
-          orgIntroduction,
-          orgThumbnail,
-          isAdmin,
-          searchedBookmarkData,
-          addedUserNickNames,
-          addedUserNickNamesForSearched,
-          pageLength,
-          searchPageLength,
-          index,
-          searchIndex,
-          numberOfSearchedBookmarks,
-        });
+        createSelectCommentQuery(searchedBookmarkData)
+        .then(createCommentedBookmarkIds)
+        .then(selectComment)
+        .then(FilterCommentedBookmarkIds)
+        .then(createComments)
+        .then(pushSelectedComments)
+        .then(addNumberOfComments)
+        .then(renderOrganizationPage)
+        .catch(renderOrganizationPage);
       });
     }else if(searchFromTitle === undefined && searchFromDescription === undefined && searchFromTextsOnSites === 'on'){
       createSelectSearchedBookmarksByOneColumn('text')
       .then(createKeyWordsForQueryByOneColumn)
       .then(doSelectSearchedBookmarks)
       .then(selectNickNameAndDivideSearchedBookmarkData)
-      .then(createSelectCommentQuery)
-      .then(createCommentedBookmarkIds)
-      .then(selectComment)
-      .then(FilterCommentedBookmarkIds)
-      .then(createComments)
-      .then(pushSelectedComments)
-      .then(addNumberOfComments)
       .then((value) => {
-        var searchPageLength = value.length;
-        var searchedBookmarkData = value[searchIndex - 1];
+        searchPageLength = value.length;
+        searchedBookmarkData = value[searchIndex - 1];
         addedUserNickNamesForSearched = slicedAddedUserNickNamesForSearched[searchIndex - 1];
-        res.render('organizationPage.ejs', {
-          bookmarkData,
-          orgName,
-          orgIntroduction,
-          orgThumbnail,
-          isAdmin,
-          searchedBookmarkData,
-          addedUserNickNames,
-          addedUserNickNamesForSearched,
-          pageLength,
-          searchPageLength,
-          index,
-          searchIndex,
-          numberOfSearchedBookmarks,
-        });
+        createSelectCommentQuery(searchedBookmarkData)
+        .then(createCommentedBookmarkIds)
+        .then(selectComment)
+        .then(FilterCommentedBookmarkIds)
+        .then(createComments)
+        .then(pushSelectedComments)
+        .then(addNumberOfComments)
+        .then(renderOrganizationPage)
+        .catch(renderOrganizationPage);
       }).catch(() => {
-        var searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
-        var searchPageLength = allSearchedBookmarkData.length;
+        searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
+        searchPageLength = allSearchedBookmarkData.length;
         addedUserNickNamesForSearched = slicedAddedUserNickNamesForSearched[searchIndex - 1];
-        res.render('organizationPage.ejs', {
-          bookmarkData,
-          orgName,
-          orgIntroduction,
-          orgThumbnail,
-          isAdmin,
-          searchedBookmarkData,
-          addedUserNickNames,
-          addedUserNickNamesForSearched,
-          pageLength,
-          searchPageLength,
-          index,
-          searchIndex,
-          numberOfSearchedBookmarks,
-        });
+        createSelectCommentQuery(searchedBookmarkData)
+        .then(createCommentedBookmarkIds)
+        .then(selectComment)
+        .then(FilterCommentedBookmarkIds)
+        .then(createComments)
+        .then(pushSelectedComments)
+        .then(addNumberOfComments)
+        .then(renderOrganizationPage)
+        .catch(renderOrganizationPage);
       });
     }else if(searchFromTitle === 'on' && searchFromDescription === 'on' && searchFromTextsOnSites === undefined){
       createSelectSearchedBookmarksByTwoColumn('title', 'description')
       .then(createKeyWordsForQueryByTwoColumn)
       .then(doSelectSearchedBookmarks)
       .then(selectNickNameAndDivideSearchedBookmarkData)
-      .then(createSelectCommentQuery)
-      .then(createCommentedBookmarkIds)
-      .then(selectComment)
-      .then(FilterCommentedBookmarkIds)
-      .then(createComments)
-      .then(pushSelectedComments)
-      .then(addNumberOfComments)
       .then((value) => {
-        var searchPageLength = value.length;
-        var searchedBookmarkData = value[searchIndex - 1];
+        searchPageLength = value.length;
+        searchedBookmarkData = value[searchIndex - 1];
         addedUserNickNamesForSearched = slicedAddedUserNickNamesForSearched[searchIndex - 1];
-        res.render('organizationPage.ejs', {
-          bookmarkData,
-          orgName,
-          orgIntroduction,
-          orgThumbnail,
-          isAdmin,
-          searchedBookmarkData,
-          addedUserNickNames,
-          addedUserNickNamesForSearched,
-          pageLength,
-          searchPageLength,
-          index,
-          searchIndex,
-          numberOfSearchedBookmarks,
-        });
+        createSelectCommentQuery(searchedBookmarkData)
+        .then(createCommentedBookmarkIds)
+        .then(selectComment)
+        .then(FilterCommentedBookmarkIds)
+        .then(createComments)
+        .then(pushSelectedComments)
+        .then(addNumberOfComments)
+        .then(renderOrganizationPage)
+        .catch(renderOrganizationPage);
       }).catch(() => {
-        var searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
-        var searchPageLength = allSearchedBookmarkData.length;
+        searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
+        searchPageLength = allSearchedBookmarkData.length;
         addedUserNickNamesForSearched = slicedAddedUserNickNamesForSearched[searchIndex - 1];
-        res.render('organizationPage.ejs', {
-          bookmarkData,
-          orgName,
-          orgIntroduction,
-          orgThumbnail,
-          isAdmin,
-          searchedBookmarkData,
-          addedUserNickNames,
-          addedUserNickNamesForSearched,
-          pageLength,
-          searchPageLength,
-          index,
-          searchIndex,
-          numberOfSearchedBookmarks,
-        });
+        createCommentedBookmarkIds(searchedBookmarkData)
+        .then(createCommentedBookmarkIds)
+        .then(selectComment)
+        .then(FilterCommentedBookmarkIds)
+        .then(createComments)
+        .then(pushSelectedComments)
+        .then(addNumberOfComments)
+        .then(renderOrganizationPage)
+        .catch(renderOrganizationPage);
       });
     }else if(searchFromTitle === 'on' && searchFromDescription === undefined && searchFromTextsOnSites === 'on'){
       createSelectSearchedBookmarksByTwoColumn('title', 'text')
       .then(createKeyWordsForQueryByTwoColumn)
       .then(doSelectSearchedBookmarks)
       .then(selectNickNameAndDivideSearchedBookmarkData)
-      .then(createSelectCommentQuery)
-      .then(createCommentedBookmarkIds)
-      .then(selectComment)
-      .then(FilterCommentedBookmarkIds)
-      .then(createComments)
-      .then(pushSelectedComments)
-      .then(addNumberOfComments)
       .then((value) => {
-        var searchPageLength = value.length;
-        var searchedBookmarkData = value[searchIndex - 1];
+        searchPageLength = value.length;
+        searchedBookmarkData = value[searchIndex - 1];
         addedUserNickNamesForSearched = slicedAddedUserNickNamesForSearched[searchIndex - 1];
-        res.render('organizationPage.ejs', {
-          bookmarkData,
-          orgName,
-          orgIntroduction,
-          orgThumbnail,
-          isAdmin,
-          searchedBookmarkData,
-          addedUserNickNames,
-          addedUserNickNamesForSearched,
-          pageLength,
-          searchPageLength,
-          index,
-          searchIndex,
-          numberOfSearchedBookmarks,
-        });
+        createSelectCommentQuery(searchedBookmarkData)
+        .then(createCommentedBookmarkIds)
+        .then(selectComment)
+        .then(FilterCommentedBookmarkIds)
+        .then(createComments)
+        .then(pushSelectedComments)
+        .then(addNumberOfComments)
+        .then(renderOrganizationPage)
+        .catch(renderOrganizationPage);
       }).catch(() => {
-        var searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
-        var searchPageLength = allSearchedBookmarkData.length;
+        searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
+        searchPageLength = allSearchedBookmarkData.length;
         addedUserNickNamesForSearched = slicedAddedUserNickNamesForSearched[searchIndex - 1];
-        res.render('organizationPage.ejs', {
-          bookmarkData,
-          orgName,
-          orgIntroduction,
-          orgThumbnail,
-          isAdmin,
-          searchedBookmarkData,
-          addedUserNickNames,
-          addedUserNickNamesForSearched,
-          pageLength,
-          searchPageLength,
-          index,
-          searchIndex,
-          numberOfSearchedBookmarks,
-        });
+        createSelectCommentQuery(searchedBookmarkData)
+        .then(createCommentedBookmarkIds)
+        .then(selectComment)
+        .then(FilterCommentedBookmarkIds)
+        .then(createComments)
+        .then(pushSelectedComments)
+        .then(addNumberOfComments)
+        .then(renderOrganizationPage)
+        .catch(renderOrganizationPage);
       });
     }else if(searchFromTitle === undefined && searchFromDescription === 'on' && searchFromTextsOnSites === 'on'){
       createSelectSearchedBookmarksByTwoColumn('description', 'text')
       .then(createKeyWordsForQueryByTwoColumn)
       .then(doSelectSearchedBookmarks)
       .then(selectNickNameAndDivideSearchedBookmarkData)
-      .then(createSelectCommentQuery)
-      .then(createCommentedBookmarkIds)
-      .then(selectComment)
-      .then(FilterCommentedBookmarkIds)
-      .then(createComments)
-      .then(pushSelectedComments)
-      .then(addNumberOfComments)
       .then((value) => {
-        var searchPageLength = value.length;
-        var searchedBookmarkData = value[searchIndex - 1];
+        searchPageLength = value.length;
+        searchedBookmarkData = value[searchIndex - 1];
         addedUserNickNamesForSearched = slicedAddedUserNickNamesForSearched[searchIndex - 1];
-        res.render('organizationPage.ejs', {
-          bookmarkData,
-          orgName,
-          orgIntroduction,
-          orgThumbnail,
-          isAdmin,
-          searchedBookmarkData,
-          addedUserNickNames,
-          addedUserNickNamesForSearched,
-          pageLength,
-          searchPageLength,
-          index,
-          searchIndex,
-          numberOfSearchedBookmarks,
-        });
+        createSelectCommentQuery(searchedBookmarkData)
+        .then(createCommentedBookmarkIds)
+        .then(selectComment)
+        .then(FilterCommentedBookmarkIds)
+        .then(createComments)
+        .then(pushSelectedComments)
+        .then(addNumberOfComments)
+        .then(renderOrganizationPage)
+        .catch(renderOrganizationPage);
       }).catch(() => {
-        var searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
-        var searchPageLength = allSearchedBookmarkData.length;
+        searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
+        searchPageLength = allSearchedBookmarkData.length;
         addedUserNickNamesForSearched = slicedAddedUserNickNamesForSearched[searchIndex - 1];
-        res.render('organizationPage.ejs', {
-          bookmarkData,
-          orgName,
-          orgIntroduction,
-          orgThumbnail,
-          isAdmin,
-          searchedBookmarkData,
-          addedUserNickNames,
-          addedUserNickNamesForSearched,
-          pageLength,
-          searchPageLength,
-          index,
-          searchIndex,
-          numberOfSearchedBookmarks,
-        });
+        createSelectCommentQuery(searchedBookmarkData)
+        .then(createCommentedBookmarkIds)
+        .then(selectComment)
+        .then(FilterCommentedBookmarkIds)
+        .then(createComments)
+        .then(pushSelectedComments)
+        .then(addNumberOfComments)
+        .then(renderOrganizationPage)
+        .catch(renderOrganizationPage);
       });
     }else if(searchFromTitle === 'on' && searchFromDescription === 'on' && searchFromTextsOnSites === 'on'){
       (() => {
@@ -1117,51 +1041,32 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
         return promise;
       }).then(doSelectSearchedBookmarks)
       .then(selectNickNameAndDivideSearchedBookmarkData)
-      .then(createSelectCommentQuery)
-      .then(createCommentedBookmarkIds)
-      .then(selectComment)
-      .then(FilterCommentedBookmarkIds)
-      .then(createComments)
-      .then(pushSelectedComments)
-      .then(addNumberOfComments)
       .then((value) => {
-        var searchPageLength = value.length;
-        var searchedBookmarkData = value[searchIndex - 1];
+        searchPageLength = value.length;
+        searchedBookmarkData = value[searchIndex - 1];
         addedUserNickNamesForSearched = slicedAddedUserNickNamesForSearched[searchIndex - 1];
-        res.render('organizationPage.ejs', {
-          bookmarkData,
-          orgName,
-          orgIntroduction,
-          orgThumbnail,
-          isAdmin,
-          searchedBookmarkData,
-          addedUserNickNames,
-          addedUserNickNamesForSearched,
-          pageLength,
-          searchPageLength,
-          index,
-          searchIndex,
-          numberOfSearchedBookmarks,
-        });
+        createSelectCommentQuery(searchedBookmarkData)
+        .then(createCommentedBookmarkIds)
+        .then(selectComment)
+        .then(FilterCommentedBookmarkIds)
+        .then(createComments)
+        .then(pushSelectedComments)
+        .then(addNumberOfComments)
+        .then(renderOrganizationPage)
+        .catch(renderOrganizationPage);
       }).catch(() => {
-        var searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
-        var searchPageLength = allSearchedBookmarkData.length;
+        searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
+        searchPageLength = allSearchedBookmarkData.length;
         addedUserNickNamesForSearched = slicedAddedUserNickNamesForSearched[searchIndex - 1];
-        res.render('organizationPage.ejs', {
-          bookmarkData,
-          orgName,
-          orgIntroduction,
-          orgThumbnail,
-          isAdmin,
-          searchedBookmarkData,
-          addedUserNickNames,
-          addedUserNickNamesForSearched,
-          pageLength,
-          searchPageLength,
-          index,
-          searchIndex,
-          numberOfSearchedBookmarks,
-        });
+        createSelectCommentQuery(searchedBookmarkData)
+        .then(createCommentedBookmarkIds)
+        .then(selectComment)
+        .then(FilterCommentedBookmarkIds)
+        .then(createComments)
+        .then(pushSelectedComments)
+        .then(addNumberOfComments)
+        .then(renderOrganizationPage)
+        .catch(renderOrganizationPage);
       });
     }else{
       res.render('organizationPage.ejs', {
