@@ -28,6 +28,7 @@ main{
 .notice{
   color: red;
   margin-bottom: 10px;
+  margin-top: 10px;
 }
 #mail{
   margin-top: 10px;
