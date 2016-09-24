@@ -10,6 +10,7 @@ var orgData;
 var index;
 var allSearchedBookmarkData;
 var searchIndex;
+var numberOfSearchedBookmarks;
 
 function createSelectCommentQuery(value){
   var promise = new Promise((resolve, reject) => {
@@ -239,6 +240,7 @@ router.get('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =>
           pageLength,
           index,
           searchIndex,
+          numberOfSearchedBookmarks,
         });
       }).catch(() => {
         res.render('myPage.ejs', {
@@ -247,6 +249,7 @@ router.get('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =>
           pageLength,
           index,
           searchIndex,
+          numberOfSearchedBookmarks,
         });
       });
     }else{
@@ -271,6 +274,7 @@ router.get('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =>
         searchPageLength,
         index,
         searchIndex,
+        numberOfSearchedBookmarks,
       });
     }).catch(() => {
       res.render('myPage.ejs', {
@@ -281,6 +285,7 @@ router.get('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =>
         searchPageLength,
         index,
         searchIndex,
+        numberOfSearchedBookmarks,
       });
     });
   }
@@ -506,7 +511,6 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
   var searchFromDescription = req.body.searchFromDescription;
   var searchFromTextsOnSites = req.body.searchFromTextsOnSites;
   var pageLength = allBookmarkData.length;
-  var numberOfSearchedBookmarks;
   index = parseInt(index, 10);
   searchIndex = parseInt(searchIndex, 10);
   var bookmarkData;
