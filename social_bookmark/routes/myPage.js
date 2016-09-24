@@ -312,6 +312,7 @@ router.post('/bookmarkList/:index', (req, res) => {
           orgData,
           pageLength,
           index,
+          searchIndex,
         });
       }
     });
@@ -330,6 +331,7 @@ router.post('/bookmarkList/:index', (req, res) => {
           orgData,
           pageLength,
           index,
+          searchIndex,
         });
       }
     });
@@ -348,6 +350,7 @@ router.post('/bookmarkList/:index', (req, res) => {
           orgData,
           pageLength,
           index,
+          searchIndex,
         });
       }
     });
@@ -366,6 +369,7 @@ router.post('/bookmarkList/:index', (req, res) => {
           orgData,
           pageLength,
           index,
+          searchIndex,
         });
       }
     });
@@ -384,6 +388,7 @@ router.post('/bookmarkList/:index', (req, res) => {
           orgData,
           pageLength,
           index,
+          searchIndex,
         });
       }
     });
@@ -403,6 +408,7 @@ router.post('/bookmarkList/:index', (req, res) => {
           orgData,
           pageLength,
           index,
+          searchIndex,
         });
       });
     });
@@ -649,6 +655,7 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
           keyWordNotice : 'セキュリティ上の観点から「+, -, %, ;」を含んでの検索はできません',
           pageLength,
           index,
+          searchIndex,
         });
       }
     });
