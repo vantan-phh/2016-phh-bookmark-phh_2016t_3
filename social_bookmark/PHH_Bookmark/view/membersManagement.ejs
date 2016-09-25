@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title></title>
+    <title>Members Management - PHHB</title>
     <link rel="stylesheet" type="text/css" href="/css/membersManagement.css">
   </head>
   <body>
@@ -40,7 +40,7 @@
               <div>検索結果</div>
               <div id="searchList">
               <% for(var i = 0; i < searchedUsers.length; i++){ %>
-                <div class="searchListUN"><%= searchedUsers[i].nick_name %><%= searchedUsers[i].name %>
+                <div class="searchListUN"><%= searchedUsers[i].nick_name %>(<%= searchedUsers[i].name %>)
                 <input type="button" value="招待" class="select" name="<%= searchedUsers[i].name %>,<%= searchedUsers[i].nick_name %>">
                 </div>
               <% } %>

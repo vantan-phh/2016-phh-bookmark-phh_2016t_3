@@ -98,6 +98,7 @@ main{
   overflow: hidden;
   background-color: rgba(170, 170, 160, 0.3);
   border-radius: 10px;
+  padding: 30px 30px 30px 30px;
 }
 #organization_list{
   text-overflow: hidden;

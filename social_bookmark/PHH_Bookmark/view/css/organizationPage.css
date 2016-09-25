@@ -11,10 +11,18 @@ main{
   position: relative;
   top: 100px;
   left: 200px;
-  width: 800px;
+  width: 720px;
   margin-bottom: 100px;
   background-color: rgba(170, 170, 160, 0.3);
   border-radius: 10px;
+  padding: 30px 30px 30px 30px;
+}
+#pageTitle{
+  font-size: 25px;
+  margin-bottom: 10px;
+}
+#pageTitle ~ *{
+  margin-left: 15px;
 }
 #orgInfo{
   overflow: hidden;
@@ -88,7 +96,7 @@ main{
 }
 .toLast{
   float: right;
-  margin-right: 180px
+  margin-right: 30px
 }
 #search{
   margin-bottom: 70px;

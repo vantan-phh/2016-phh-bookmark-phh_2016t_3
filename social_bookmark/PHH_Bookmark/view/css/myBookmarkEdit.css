@@ -90,10 +90,9 @@ main{
   position: relative;
   left: 300px;
   top: 100px;
-  padding-left: 20px;
-  padding-right: 40px;
   width: 500px;
   height: auto;
+  padding: 30px 30px 30px 30px;
 }
 #list{
   position: relative;
