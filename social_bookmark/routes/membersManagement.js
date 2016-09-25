@@ -145,6 +145,7 @@ router.get('/', (req, res) => {
         orgThumbnail,
         orgIntroduction,
         myUserName,
+        orgId,
       });
     });
   });

@@ -11,10 +11,10 @@
       <div id="all">
         <div id="org">
           <div id="img">
-            <img src="<%= orgThumbnail %>">
+            <a name="<%= orgId %>" class="orgId"><img src="<%= orgThumbnail %>"></a>
           </div>
           <div id="nameintro">
-            <h2 id="orgName"><%= orgName %></h2>
+            <h2 id="orgName"><a name="<%= orgId%>" class="orgId"><%= orgName %></a></h2>
             <div id="introduction">
               <%= orgIntroduction %>
             </div>
@@ -106,6 +106,10 @@
 
       <form action="/PHH_Bookmark/membersManagement/leave" method="post" name="leave">
       </form>
+
+      <form action="/PHH_Bookmark/organizationPage/submitOrgId" method="post" name="submitOrgId">
+        <input type="hidden" name="result">
+      </form>
     </main>
   </body>
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
@@ -119,6 +123,7 @@
     var $button = $(".button");
     var $helpimg = $('#helpimg');
     var $inviteExplainBody = $('#inviteExplainBody');
+    var $orgId = $('.orgId');
 
     $inviteExplainBody.css('display', 'none');
 
@@ -143,6 +148,10 @@
     });
     $leaveButton.click(function(){
       document.leave.submit();
+    });
+    $orgId.click(function(){
+      document.submitOrgId.result.value = this.name;
+      document.submitOrgId.submit();
     });
     $helpimg.hover(function(){
       $helpimg.after('<p id="displayHelp">ヘルプを表示</p>');
