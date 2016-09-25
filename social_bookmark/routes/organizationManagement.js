@@ -56,6 +56,7 @@ router.get('/', (req, res) => {
       orgName,
       orgIntroduction,
       orgThumbnail,
+      orgId,
     });
   });
 });

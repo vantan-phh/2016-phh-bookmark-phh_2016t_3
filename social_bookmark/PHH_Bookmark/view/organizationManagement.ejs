@@ -9,6 +9,7 @@
     <% include layout %>
     <main>
       <p id="pageTitle">組織管理ページ</p>
+      <input type="button" value="組織ページへ" name="<%= orgId %>" id="orgId">
       <div id="body">
         <form action="/PHH_Bookmark/organizationManagement" method="post" enctype="multipart/form-data">
           <div id="name" class="formTitle">組織名</div>
@@ -41,6 +42,9 @@
           </form>
         </div>
       </div>
+      <form action="/PHH_Bookmark/organizationPage/submitOrgId" method="post" name="submitOrgId">
+        <input type="hidden" name="result">
+      </form>
     </main>
   </body>
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
@@ -49,6 +53,7 @@
       var $button = $(".button");
       var $dissolve = $("#dissolve");
       var $dissolveButton = $("#dissolveButton");
+      var $orgId = $('#orgId');
       $button.click(function(){
         this.disabled = true;
         this.form.submit();
@@ -63,6 +68,10 @@
           $dissolve.append($dissolveButton);
           $('.beforeDissolve').detach();
         });
+      });
+      $orgId.click(function(){
+        document.submitOrgId.result.value = this.name;
+        document.submitOrgId.submit();
       });
     });
   </script>
