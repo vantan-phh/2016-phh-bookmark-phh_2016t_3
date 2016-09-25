@@ -10,9 +10,9 @@
     <main>
       <div id="orgInfo">
         <div id="img">
-          <img src="<%= orgThumbnail %>">
+          <a name="<%= orgId %>" class="orgId"><img src="<%= orgThumbnail %>"></a>
         </div>
-        <p><%= orgName %></p>
+        <a name="<%= orgId %>" class="orgId"><p><%= orgName %></p></a>
         <div><%= orgIntroduction %></div>
       </div>
 
@@ -41,16 +41,23 @@
           <div id="submitButton"><input type="submit" value="送信" class="button"></div>
         </form>
       </div>
-
+      <form action="/PHH_Bookmark/organizationPage/submitOrgId" method="post" name="submitOrgId">
+        <input type="hidden" name="result">
+      </form>
     </main>
   </body>
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
   <script>
     $(function(){
       var $button = $(".button");
+      var $orgId = $('.orgId');
       $button.click(function(){
         this.disabled = true;
         this.form.submit();
+      });
+      $orgId.click(function(){
+        document.submitOrgId.result.value = this.name;
+        document.submitOrgId.submit();
       });
     });
   </script>

@@ -78,6 +78,7 @@ router.get('/', (req, res) => {
       orgThumbnail,
       orgIntroduction,
       isAdmin,
+      orgId,
     });
   });
 });
