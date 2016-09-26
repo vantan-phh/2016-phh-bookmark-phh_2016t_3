@@ -79,6 +79,7 @@ router.post('/', upload.single('image_file'), (req, res) => {
             orgName,
             orgIntroduction,
             orgThumbnail,
+            orgId,
             orgNameNotice : '組織名を入力してください',
           });
         });
@@ -97,6 +98,7 @@ router.post('/', upload.single('image_file'), (req, res) => {
             orgName,
             orgIntroduction,
             orgThumbnail,
+            orgId,
             orgIntroductionNotice : 'セキュリティ上の観点から紹介文に「+, -, %, ;」は使えません',
           });
         });
@@ -115,6 +117,7 @@ router.post('/', upload.single('image_file'), (req, res) => {
             orgName,
             orgIntroduction,
             orgThumbnail,
+            orgId,
             orgNameNotice : 'セキュリティ上の観点から組織名に「+, -, %, ;」は使えません',
           });
         });
@@ -135,6 +138,7 @@ router.post('/', upload.single('image_file'), (req, res) => {
                   res.render('organizationManagement.ejs', {
                     orgName,
                     orgIntroduction,
+                    orgId,
                     thumbailNotice : '画像ファイルが正しく読み込めませんでした。',
                   });
                 }else{
@@ -182,6 +186,7 @@ router.post('/', upload.single('image_file'), (req, res) => {
                       res.render('organizationManagement.ejs', {
                         orgName,
                         orgIntroduction,
+                        orgId,
                         thumbailNotice : '画像ファイルが正しく読み込めませんでした。',
                       });
                     }else{
@@ -223,6 +228,7 @@ router.post('/', upload.single('image_file'), (req, res) => {
                 orgName,
                 orgIntroduction,
                 orgThumbnail,
+                orgId,
                 orgNameNotice : 'その名前の組織は既に存在しています。',
               });
             });

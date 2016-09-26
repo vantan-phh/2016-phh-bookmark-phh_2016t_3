@@ -192,6 +192,7 @@ router.post('/searchUser', (req, res) => {
           orgThumbnail,
           notice : 'ユーザー名は半角英数です',
           myUserName,
+          orgId,
         });
       }
     });
@@ -235,6 +236,7 @@ router.post('/searchUser', (req, res) => {
               memberNickNames,
               myUserName,
               searchedUsers : result[0],
+              orgId,
             });
           }else{
             res.render('membersManagement.ejs', {
@@ -247,6 +249,7 @@ router.post('/searchUser', (req, res) => {
               memberNickNames,
               notice : '該当するユーザーが見つかりません。',
               myUserName,
+              orgId,
             });
           }
         });
@@ -299,6 +302,7 @@ router.post('/searchUser', (req, res) => {
               memberNickNames,
               myUserName,
               searchedUsers : result[0],
+              orgId,
             });
           }else{
             res.render('membersManagement.ejs', {
@@ -311,6 +315,7 @@ router.post('/searchUser', (req, res) => {
               memberUserNames,
               memberNickNames,
               myUserName,
+              orgId,
             });
           }
         });
@@ -348,6 +353,7 @@ router.post('/selectUser', (req, res) => {
         memberNickNames,
         memberUserNames,
         myUserName,
+        orgId,
       });
     });
   }
@@ -422,6 +428,7 @@ router.post('/excludeUser', (req, res) => {
       memberUserNames,
       memberNickNames,
       myUserName,
+      orgId,
     });
   });
 });
@@ -516,10 +523,11 @@ router.post('/leave', (req, res) => {
             memberUserNames,
             memberNickNames,
             orgName : values.orgName,
-            orgThumbnail : values.image_path,
+            orgThumbnail : values.orgThumbnail,
             orgIntroduction : values.orgIntroduction,
             myUserName,
             authorityNotice : '管理者が一人のみのため脱退はできません。',
+            orgId,
           });
         }
       });

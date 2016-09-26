@@ -120,6 +120,7 @@ router.post('/', (req, res) => {
           orgName,
           orgIntroduction,
           orgThumbnail,
+          orgId,
           titleNotice : 'タイトルを入力してください。',
         });
       }
@@ -139,6 +140,7 @@ router.post('/', (req, res) => {
           orgThumbnail,
           title,
           description,
+          orgId,
           titleNotice : 'セキュリティ上の観点からタイトルに「+, -, %, ;」は使えません',
         });
       }
@@ -160,6 +162,7 @@ router.post('/', (req, res) => {
         orgThumbnail,
         title,
         description,
+        orgId,
         descriptionNotice : 'セキュリティ上の観点から説明文に「+, -, %, ;」は使えません',
       });
     }
