@@ -17,10 +17,10 @@
           <div class="form"><input type="text" name="orgName" id="orgName"></div>
         <% } %>
         <% if(typeof orgNameNotice !== 'undefined'){ %>
-          <p><%= orgNameNotice %></p>
+          <p class="notice"><%= orgNameNotice %></p>
         <% } %>
         <% if(typeof orgNameExists !== 'undefined'){%>
-          <div><%= orgNameExists %></div>
+          <p class="notice"><%= orgNameExists %></p>
         <% } %>
         <p class="formTitle">紹介文</p>
         <% if(typeof orgIntroduction !== 'undefined') { %>
@@ -29,24 +29,18 @@
           <div class="form"><textarea type="text" name="orgIntroduction" id="orgIntroduction"></textarea></div>
         <% } %>
         <% if(typeof orgIntroductionNotice !== 'undefined'){ %>
-          <p><%= orgIntroductionNotice %></p>
+          <p class="notice"><%= orgIntroductionNotice %></p>
         <% } %>
-        <p class="subtitle">サムネイル</p>
-        <div><input type="file" accept="image/*" name="image_file"></div>
-        <% if(typeof thumbailNotice !== 'undefined'){%>
-          <p><%= thumbailNotice %></p>
-        <% } %>
-        <div id="create"><input type="submit" value="作成" id="createOrg" name="createOrg" class="button"></div>
-        <input type="hidden" name="result" value="">
         <div id="userLists">
           <div id="inviteAndSearch">
             <p class="subtitle">ユーザーの招待</p>
             <div id="searchForm">
               <div class="form"><input type="text" placeholder="ユーザー名を入力" name="invitedUser" id="invitedUser"></div>
               <input type="button" value="検索" id="searchUser">
+              <div id="notice"></div>
             </div>
             <% if(typeof searchUserNotice !== 'undefined'){ %>
-              <p><%= searchUserNotice %></p>
+              <p class="notice"><%= searchUserNotice %></p>
             <% } %>
             <% if(typeof searchedUsers !== 'undefined'){%>
               <div class="subtitle">検索にヒットしたユーザー</div>
@@ -59,7 +53,7 @@
               </div>
             <% } %>
             <% if(typeof noUser !== 'undefined'){ %>
-              <%= noUser %>
+              <p class="notice"><%= noUser %></p>
             <% } %>
           </form>
         </div>
@@ -72,6 +66,13 @@
           <% } %>
         </div>
       </div>
+      <p class="subtitle">サムネイル</p>
+      <div><input type="file" accept="image/*" name="image_file"></div>
+      <% if(typeof thumbailNotice !== 'undefined'){%>
+        <p class="notice"><%= thumbailNotice %></p>
+      <% } %>
+      <div id="create"><input type="submit" value="作成" id="createOrg" name="createOrg" class="button"></div>
+      <input type="hidden" name="result" value="">
 
       <form action="/PHH_Bookmark/createOrganization/searchUser" method="post" name="searchUser">
         <input type="hidden" name="result">
@@ -105,6 +106,7 @@ $(function(){
   var $createOrg = $('#createOrg');
   var $deleteButton = $('.deleteButton');
   var $button = $(".button");
+  var $notice = $('#notice');
   var checkForm = /^[a-zA-Z0-9]+$/;
   $button.click(function(){
     this.disabled = true;
@@ -138,7 +140,7 @@ $(function(){
   $invitedUser.keyup(function(){
     var invitedUser = $invitedUser.val();
     $('#inviteUserNotice').detach();
-    if(!checkForm.test(invitedUser)) $invitedUser.after('<p id="inviteUserNotice">ユーザーネームは半角英数です</p>');
+    if(!checkForm.test(invitedUser)) $notice.after('<p id="inviteUserNotice">ユーザーネームは半角英数です</p>');
   });
 });
 </script>

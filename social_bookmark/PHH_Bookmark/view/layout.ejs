@@ -34,6 +34,12 @@
     left: 70px;
     top: 5px;
   }
+  #headerLogo img{
+    position: absolute;
+    left: 170px;
+    top: 10px;
+    height: 40px;
+  }
 
   #headerMenu a{
     color: #36a029;
@@ -43,12 +49,12 @@
     color: #008000;
   }
 
-  #headerTitle{
+  /*#headerTitle{
     color: #36a029;
     top: 20px;
     left: 170px;
     position: absolute;
-  }
+  }*/
 
   #headerSearch{
     border: solid #e1e1e1 2px;
@@ -145,9 +151,7 @@
   <div id="header">
     <a id="headerFavicon" href="/PHH_Bookmark/topPage"><img src="/img/favicon.png"></a>
     <% if (typeof userName !== 'undefined' && typeof nickName !== 'undefined') { %>
-      <div id="headerTitle">
-        <p>ここにろご</p>
-      </div>
+      <a id="headerLogo" href="/PHH_Bookmark/topPage"><img src="/img/logo.png"></img></a>
       <span id="headerLoginUser"><%= nickName%><div id="headerUserName">(<%= userName %>)</div></span>
       <a id="headerMyImg" href="/PHH_Bookmark/myProfile"><img src="<%= thumbnail %>"></a>
       <div id="headerOpenMenu" onclick="obj=document.getElementById('headerMenuList').style; obj.display=(obj.display=='none')?'block':'none';">
