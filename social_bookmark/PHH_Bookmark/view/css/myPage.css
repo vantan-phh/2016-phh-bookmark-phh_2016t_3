@@ -15,8 +15,8 @@ main{
   border-radius: 10px;
   position: relative;
   top: 100px;
-  left: 200px;
-  width: 720px;
+  left: 50px;
+  width: 1000px;
   margin-bottom: 100px;
   padding: 30px 30px 30px 30px;
 }
@@ -25,6 +25,13 @@ main{
 }
 #orgAndBookmarks{
   margin-left: 15px;
+}
+#organization_list{
+  text-overflow: hidden;
+  width: 250px;
+  margin-right: auto;
+  float: left;
+  min-height: 1500px;
 }
 .subTitle{
   margin-top: 10px;
@@ -41,11 +48,14 @@ main{
   float: left;
 }
 .thumbnail>img{
-  height: 40px;
-  max-width: 80px;
+  height: 30px;
+  max-width: 60px;
+  margin-top: 6px;
+  margin-left: 3px;
+  border-radius: 5px;
 }
 #search{
-  clear: both;
+  overflow: hidden;
 }
 #searchCheck{
   overflow: hidden;
@@ -80,6 +90,7 @@ main{
 }
 #myBookmarkList{
   margin-top: 10px;
+  overflow: hidden;
 }
 .numOfHit{
   clear: both;
