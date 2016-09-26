@@ -185,15 +185,15 @@ router.post('/password', (req, res) => {
 router.post('/leave', (req, res) => {
   var myId = req.session.user_id;
   (() => {
-    var promise = new Promise((resolve) => {
+    var promise = new Promise((resolve, reject) => {
       var checkOrganization = 'SELECT * FROM (SELECT * FROM `organization_memberships` WHERE `user_id` = ? AND `is_admin` = true) AS a';
       connection.query(checkOrganization, [myId]).then((result) => {
-        resolve(result[0]);
+        result[0].length ? reject(result[0]) : resolve();
       });
     });
     return promise;
-  })().then((value) => {
-    var promise = new Promise((resolve) => {
+  })().catch((value) => {
+    var promise = new Promise((resolve, reject) => {
       var orgIds = [];
       value.forEach((currentValue, index, array) => {
         orgIds.push(currentValue.org_id);
@@ -202,37 +202,37 @@ router.post('/leave', (req, res) => {
             orgIds,
             selectedMemberships : value,
           };
-          resolve(values);
+          reject(values);
         }
       });
     });
     return promise;
-  }).then((values) => {
-    var promise = new Promise((resolve) => {
+  }).catch((values) => {
+    var promise = new Promise((resolve, reject) => {
       values.orgIds = values.orgIds.filter((currentValue, index, array) => array.indexOf(currentValue) === index);
-      resolve(values);
+      reject(values);
     });
     return promise;
-  }).then((values) => {
-    var promise = new Promise((resolve) => {
+  }).catch((values) => {
+    var promise = new Promise((resolve, reject) => {
       values.memberships = {};
       values.orgIds.forEach((currentValue, index, array) => {
         values.memberships[currentValue] = [];
-        if(index + 1 === array.length) resolve(values);
+        if(index + 1 === array.length) reject(values);
       });
     });
     return promise;
-  }).then((values) => {
-    var promise = new Promise((resolve) => {
+  }).catch((values) => {
+    var promise = new Promise((resolve, reject) => {
       values.selectedMemberships.forEach((currentValue, index, array) => {
         values.orgIds.forEach((_currentValue, _index, _array) => {
           if(currentValue.org_id === _currentValue) values.memberships[_currentValue].push(currentValue.user_id);
-          if(index + 1 === array.length && _index + 1 === _array.length) resolve(values);
+          if(index + 1 === array.length && _index + 1 === _array.length) reject(values);
         });
       });
     });
     return promise;
-  }).then((values) => {
+  }).catch((values) => {
     var promise = new Promise((resolve, reject) => {
       var cannotLeave = 0;
       for(var i = 0; i < values.orgIds.length; i++){
@@ -264,7 +264,7 @@ router.post('/leave', (req, res) => {
     });
     return promise;
   }).then(() => {
-    var deleteFromUsers = 'DELETE FROM `users` WHERE `user_id` = ?';
+    var deleteFromUsers = 'UPDATE `users` SET `name` = "unknown", `mail` = "unknown", `salt` = "unknown", hash = "unknown", `nick_name` = "unknown", image_path = "NULL", introduction = "NULL" WHERE `user_id` = ?';
     connection.query(deleteFromUsers, [myId]).then(() => {
       delete req.session.user_id;
       res.redirect('/PHH_Bookmark/left');

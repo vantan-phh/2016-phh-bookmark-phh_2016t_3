@@ -13,6 +13,9 @@
           <img src="<%= thumbnailPath %>" width="128" height="128"></img>
         </div>
         <div class="div">
+          <% if(typeof notExist !== 'undefined'){ %>
+            <p><%= notExist %></p>
+          <% } %>
           <p><%= nickName %></p>
           <p><%= introduction %></p>
         </div>
