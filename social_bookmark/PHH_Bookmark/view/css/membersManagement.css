@@ -151,3 +151,6 @@ main{
   background-color: #91f2a0;
   position: relative;
 }
+.notice{
+  color: red;
+}
