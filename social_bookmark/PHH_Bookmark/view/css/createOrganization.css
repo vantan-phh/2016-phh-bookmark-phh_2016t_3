@@ -6,6 +6,7 @@
   background-color: rgba(170, 170, 160, 0.3);
   border-radius: 10px;
   padding: 30px 30px 30px 30px;
+  margin-bottom: 100px;
 }
 #pagetitle{
   font-size: 25px;
@@ -57,6 +58,10 @@
 #invitedUser{
   float: left;
 }
+#inviteUserNotice{
+  clear: both;
+  color: red;
+}
 #searchUser{
   margin-left: 5px;
   background: linear-gradient(#07d34f, #05b142);
@@ -90,10 +95,13 @@
   width: 50px;
   height: 20px;
 }
+.hitUser input:hover{
+  background: linear-gradient(#828282, #404040);
+}
 #userLists{
   overflow: hidden;
   margin-top: 40px;
-  margin-bottom: 100px;
+  margin-bottom: 40px;
 }
 #inviteAndSearch{
   float: left;
@@ -112,4 +120,7 @@
   text-shadow: 0.5px 0.5px 0.5px black;
   width: 50px;
   height: 20px;
+}
+.notice{
+  color: red;
 }
