@@ -14,7 +14,7 @@
         <% if(typeof orgName !== 'undefined') { %>
           <div class="form"><input type="text" name="orgName" id="orgName" value="<%= orgName %>"></div>
         <% } else { %>
-          <div class="form"><input type="text" name="orgName" id="orgName"></div>
+          <div class="form"><input type="text" name="orgName" id="orgName" placeholder="例）ツール3"></div>
         <% } %>
         <% if(typeof orgNameNotice !== 'undefined'){ %>
           <p class="notice"><%= orgNameNotice %></p>
@@ -26,7 +26,7 @@
         <% if(typeof orgIntroduction !== 'undefined') { %>
           <div class="form"><textarea type="text" name="orgIntroduction" id="orgIntroduction"><%= orgIntroduction %></textarea></div>
         <% } else {%>
-          <div class="form"><textarea type="text" name="orgIntroduction" id="orgIntroduction"></textarea></div>
+          <div class="form"><textarea type="text" name="orgIntroduction" id="orgIntroduction" placeholder="例）ソーシャルブックマークの開発をします"></textarea></div>
         <% } %>
         <% if(typeof orgIntroductionNotice !== 'undefined'){ %>
           <p class="notice"><%= orgIntroductionNotice %></p>
