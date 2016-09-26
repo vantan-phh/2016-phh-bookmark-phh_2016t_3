@@ -157,7 +157,7 @@ router.get('/', (req, res) => {
   var orgId = req.session.org_id;
   var checkMembership = 'SELECT `is_admin` FROM `organization_memberships` WHERE `user_id` = ? AND `org_id` = ?';
   var specifyOrg = 'SELECT * FROM `organizations` WHERE `org_id` = ?';
-  var selectBookmarkData = 'SELECT * FROM `bookmarks` WHERE `org_id` = ?';
+  var selectBookmarkData = 'SELECT * FROM `bookmarks` WHERE `org_id` = ? ORDER BY `bookmark_id` DESC';
   var selectOwnBookmarkIds = 'SELECT * FROM `bookmarks` WHERE `user_id` = ? AND `org_id` = ?';
   (() => {
     var promise = new Promise((resolve) => {
@@ -626,7 +626,7 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
       var selectSearchedBookmarks = 'SELECT * FROM `bookmarks` WHERE `org_id` = ? AND (`' + column + '` LIKE';
       keyWords.forEach((currentValue, _index, array) => {
         if(_index + 1 === array.length){
-          selectSearchedBookmarks += ' ?)';
+          selectSearchedBookmarks += ' ?) ORDER BY `bookmark_id` DESC';
           resolve(selectSearchedBookmarks);
         }else{
           selectSearchedBookmarks += ' ? AND `' + column + '` LIKE';
@@ -648,7 +648,7 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
       });
       keyWords.forEach((currentValue, _index, array) => {
         if(_index + 1 === array.length){
-          selectSearchedBookmarks += ' ?))';
+          selectSearchedBookmarks += ' ?)) ORDER BY `bookmark_id` DESC';
           resolve(selectSearchedBookmarks);
         }else{
           selectSearchedBookmarks += ' ? AND `' + column2 + '` LIKE';
@@ -1010,7 +1010,7 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
           var selectSearchedBookmarks = value;
           keyWords.forEach((currentValue, _index, array) => {
             if(_index + 1 === array.length){
-              selectSearchedBookmarks += ' ?))';
+              selectSearchedBookmarks += ' ?)) ORDER BY `bookmark_id` DESC';
               resolve(selectSearchedBookmarks);
             }else{
               selectSearchedBookmarks += ' ? AND `text` LIKE';
