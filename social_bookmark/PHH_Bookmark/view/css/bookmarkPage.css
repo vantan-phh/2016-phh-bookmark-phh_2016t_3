@@ -3,12 +3,13 @@
 -----------------------------*/
 main{
   position: relative;
-  left: 300px;
+  left: 200px;
   top: 60px;
-  margin: 0 auto;
+  width: 750px;
+  margin-bottom: 100px;
   background-color: rgba(170, 170, 160, 0.3);
   border-radius: 10px;
-  padding: 30px 30px 30px 30px;
+  padding: 30px 30px 100px 30px;
 }
 
 #wrapper{
@@ -112,4 +113,7 @@ main{
   position: relative;
   left: 0;
   top: 0;
+}
+#clear{
+  clear: both;
 }
