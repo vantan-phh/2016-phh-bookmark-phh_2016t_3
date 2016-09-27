@@ -16,7 +16,11 @@
           <% if(typeof notExist !== 'undefined'){ %>
             <p><%= notExist %></p>
           <% } %>
-          <p><%= nickName %></p>
+          <% if(typeof targetNickName !== 'undefined'){ %>
+            <p><%= targetNickName %></p>
+          <% }else{ %>
+            <p><%= nickName %></p>
+          <% } %>
           <p><%= introduction %></p>
         </div>
       </div>

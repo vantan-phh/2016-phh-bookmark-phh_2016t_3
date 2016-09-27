@@ -199,8 +199,8 @@ router.get('/', (req, res) => {
     return promise;
   }).then((values) => {
     res.render('userProfile.ejs', {
-      userName : values.userName,
-      nickName : values.nickName,
+      targetUserName : values.userName,
+      targetNickName : values.nickName,
       thumbnailPath : values.thumbnailPath,
       introduction : values.introduction,
       recentBookmarks : values.recentBookmarks,
@@ -208,8 +208,8 @@ router.get('/', (req, res) => {
     });
   }).catch((values) => {
     res.render('userProfile', {
-      userName : values.userName,
-      nickName : values.nickName,
+      targetUserName : values.userName,
+      targetNickName : values.nickName,
       thumbnailPath : values.thumbnailPath,
       introduction : values.introduction,
       recentBookmarks : values.recentBookmarks,
