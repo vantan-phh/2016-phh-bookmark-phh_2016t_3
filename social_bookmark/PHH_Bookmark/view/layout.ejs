@@ -150,8 +150,8 @@
 <header>
   <div id="header">
     <a id="headerFavicon" href="/PHH_Bookmark/topPage"><img src="/img/favicon.png"></a>
+    <a id="headerLogo" href="/PHH_Bookmark/topPage"><img src="/img/logo.png"></img></a>
     <% if (typeof userName !== 'undefined' && typeof nickName !== 'undefined') { %>
-      <a id="headerLogo" href="/PHH_Bookmark/topPage"><img src="/img/logo.png"></img></a>
       <span id="headerLoginUser"><%= nickName%><div id="headerUserName">(<%= userName %>)</div></span>
       <a id="headerMyImg" href="/PHH_Bookmark/myProfile"><img src="<%= thumbnail %>"></a>
       <div id="headerOpenMenu" onclick="obj=document.getElementById('headerMenuList').style; obj.display=(obj.display=='none')?'block':'none';">
