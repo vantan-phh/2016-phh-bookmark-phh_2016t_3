@@ -15,9 +15,10 @@ router.post('/', (req, res) => {
 router.get('/', (req, res) => {
   var target = req.session.target;
   (() => {
-    var promise = new Promise((resolve) => {
-      var query = 'SELECT `name`, `nick_name`, `image_path`, `introduction` FROM `users` WHERE `user_id` = ?';
+    var promise = new Promise((resolve, reject) => {
+      var query = 'SELECT `name`, `nick_name`, `image_path`, `introduction`, `hash` FROM `users` WHERE `user_id` = ?';
       connection.query(query, [target]).then((result) => {
+        if(result[0][0].hash === 'unknown') reject();
         var nickName = result[0][0].nick_name;
         var thumbnailPath = result[0][0].image_path;
         var introduction = result[0][0].introduction;
@@ -44,6 +45,16 @@ router.get('/', (req, res) => {
       });
     });
     return promise;
+  }).catch(() => {
+    res.render('userProfile.ejs', {
+      userName : '',
+      nickName : '',
+      thumbnailPath : '',
+      introduction : '',
+      recentBookmarks : '',
+      orgData : '',
+      notExist : 'このユーザーはすでに存在しません。',
+    });
   }).then((values) => {
     var promise = new Promise((resolve, reject) => {
       var selectOrgData = 'SELECT * FROM `organizations` WHERE `org_id` =';
@@ -188,8 +199,8 @@ router.get('/', (req, res) => {
     return promise;
   }).then((values) => {
     res.render('userProfile.ejs', {
-      userName : values.userName,
-      nickName : values.nickName,
+      targetUserName : values.userName,
+      targetNickName : values.nickName,
       thumbnailPath : values.thumbnailPath,
       introduction : values.introduction,
       recentBookmarks : values.recentBookmarks,
@@ -197,8 +208,8 @@ router.get('/', (req, res) => {
     });
   }).catch((values) => {
     res.render('userProfile', {
-      userName : values.userName,
-      nickName : values.nickName,
+      targetUserName : values.userName,
+      targetNickName : values.nickName,
       thumbnailPath : values.thumbnailPath,
       introduction : values.introduction,
       recentBookmarks : values.recentBookmarks,

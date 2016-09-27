@@ -186,7 +186,7 @@ router.get('/', (req, res) => {
     return promise;
   }).then(() => {
     var promise = new Promise((resolve) => {
-      var query = 'SELECT * FROM `bookmarks` WHERE `user_id` = ?';
+      var query = 'SELECT * FROM `bookmarks` WHERE `user_id` = ? ORDER BY `bookmark_id` DESC';
       connection.query(query, [userId]).then((result) => {
         var n = 12;
         allBookmarkData = [];
@@ -207,10 +207,11 @@ router.get('/', (req, res) => {
   }).then((value) => {
     allBookmarkData = value;
     res.redirect('/PHH_Bookmark/myPage/bookmarkList/1/searchBookmarkList/0');
-  })
-  .catch((value) => {
+  }).catch((value) => {
     allBookmarkData = value;
     res.redirect('/PHH_Bookmark/myPage/bookmarkList/1/searchBookmarkList/0');
+  }).catch(() => {
+    res.redirect('/PHH_Bookmark/errorPage.ejs');
   });
 });
 
@@ -251,6 +252,8 @@ router.get('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =>
           searchIndex,
           numberOfSearchedBookmarks,
         });
+      }).catch(() => {
+        res.render('errorPage.ejs');
       });
     }else{
       res.redirect('/PHH_Bookmark/myPage/bookmarkList/1/searchBookmarkList/0');
@@ -287,6 +290,8 @@ router.get('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =>
         searchIndex,
         numberOfSearchedBookmarks,
       });
+    }).catch(() => {
+      res.render('errorPage.ejs');
     });
   }
 });
@@ -419,6 +424,8 @@ router.post('/bookmarkList/:index', (req, res) => {
     connection.query(createBookmark, [userId, title, url, description, text]).then(() => {
       res.redirect('/PHH_Bookmark/myPage');
     });
+  }).cstch(() => {
+    res.render('errorPage.ejs');
   });
 });
 
@@ -475,6 +482,8 @@ router.post('/bookmarkList/:index/submitUrl', (req, res) => {
         searchIndex,
       });
     }
+  }).catch(() => {
+    res.render('errorPage.ejs');
   });
 });
 
@@ -507,6 +516,8 @@ router.post('/delete', (req, res) => {
     return promise;
   }).then(() => {
     res.redirect('/PHH_Bookmark/myPage');
+  }).catch(() => {
+    res.render('errorPage.ejs');
   });
 });
 
@@ -530,13 +541,15 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
   var splitKeyWord = /[\S]+/g;
   var keyWords = keyWord.match(splitKeyWord);
   var keyWordsForQuery;
+  var searchedBookmarkData;
+  var searchPageLength;
 
   function createSelectSearchedBookmarksByOneColumn(column){
     var promise = new Promise((resolve) => {
       var selectSearchedBookmarks = 'SELECT * FROM `bookmarks` WHERE `user_id` = ? AND (`' + column + '` LIKE';
       keyWords.forEach((currentValue, _index, array) => {
         if(_index + 1 === array.length){
-          selectSearchedBookmarks += ' ?)';
+          selectSearchedBookmarks += ' ?) ORDER BY `bookmark_id` DESC';
           resolve(selectSearchedBookmarks);
         }else{
           selectSearchedBookmarks += ' ? AND `' + column + '` LIKE';
@@ -558,7 +571,7 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
       });
       keyWords.forEach((currentValue, _index, array) => {
         if(_index + 1 === array.length){
-          selectSearchedBookmarks += ' ?))';
+          selectSearchedBookmarks += ' ?)) ORDER BY `bookmark_id` DESC';
           resolve(selectSearchedBookmarks);
         }else{
           selectSearchedBookmarks += ' ? AND `' + column2 + '` LIKE';
@@ -610,7 +623,7 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
       values.keyWordsForQuery.unshift(myId);
       connection.query(values.selectSearchedBookmarks, values.keyWordsForQuery).then((result) => {
         numberOfSearchedBookmarks = result[0].length;
-        var searchedBookmarkData = result[0];
+        searchedBookmarkData = result[0];
         resolve(searchedBookmarkData);
       });
     });
@@ -619,7 +632,7 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
 
   function divideSearchedBookmarkData(value){
     var promise = new Promise((resolve) => {
-      var searchedBookmarkData = value;
+      searchedBookmarkData = value;
       var n = 12;
       allSearchedBookmarkData = [];
       numberOfSearchedBookmarks = searchedBookmarkData.length;
@@ -633,6 +646,23 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
       resolve(allSearchedBookmarkData);
     });
     return promise;
+  }
+
+  function renderMyPage(){
+    res.render('myPage.ejs', {
+      bookmarkData,
+      searchedBookmarkData,
+      orgData,
+      pageLength,
+      searchPageLength,
+      index,
+      searchIndex,
+      numberOfSearchedBookmarks,
+    });
+  }
+
+  function renderErrorPage(){
+    res.render('errorPage.ejs');
   }
 
   (() => {
@@ -667,8 +697,8 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
       .then(doSelectSearchedBookmarks)
       .then(divideSearchedBookmarkData)
       .catch(() => {
-        var searchPageLength = allSearchedBookmarkData.length;
-        var searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
+        searchPageLength = allSearchedBookmarkData.length;
+        searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
         createSelectCommentQuery(searchedBookmarkData)
         .then(createCommentedBookmarkIds)
         .then(selectComment)
@@ -676,32 +706,12 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
         .then(createComments)
         .then(pushSelectedComments)
         .then(addNumberOfComments)
-        .then(() => {
-          res.render('myPage.ejs', {
-            bookmarkData,
-            searchedBookmarkData,
-            orgData,
-            pageLength,
-            searchPageLength,
-            index,
-            searchIndex,
-            numberOfSearchedBookmarks,
-          });
-        }).catch(() => {
-          res.render('myPage.ejs', {
-            bookmarkData,
-            searchedBookmarkData,
-            orgData,
-            pageLength,
-            searchPageLength,
-            index,
-            searchIndex,
-            numberOfSearchedBookmarks,
-          });
-        });
+        .then(renderMyPage)
+        .catch(renderMyPage)
+        .catch(renderErrorPage);
       }).then((value) => {
-        var searchPageLength = value.length;
-        var searchedBookmarkData = value[searchIndex - 1];
+        searchPageLength = value.length;
+        searchedBookmarkData = value[searchIndex - 1];
         createSelectCommentQuery(searchedBookmarkData)
         .then(createCommentedBookmarkIds)
         .then(selectComment)
@@ -709,29 +719,9 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
         .then(createComments)
         .then(pushSelectedComments)
         .then(addNumberOfComments)
-        .then(() => {
-          res.render('myPage.ejs', {
-            bookmarkData,
-            searchedBookmarkData,
-            orgData,
-            pageLength,
-            searchPageLength,
-            index,
-            searchIndex,
-            numberOfSearchedBookmarks,
-          });
-        }).catch(() => {
-          res.render('myPage.ejs', {
-            bookmarkData,
-            searchedBookmarkData,
-            orgData,
-            pageLength,
-            searchPageLength,
-            index,
-            searchIndex,
-            numberOfSearchedBookmarks,
-          });
-        });
+        .then(renderMyPage)
+        .catch(renderMyPage)
+        .catch(renderErrorPage);
       });
     }else if(searchFromTitle === undefined && searchFromDescription === 'on' && searchFromTextsOnSites === undefined){
       createSelectSearchedBookmarksByOneColumn('description')
@@ -739,8 +729,8 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
       .then(doSelectSearchedBookmarks)
       .then(divideSearchedBookmarkData)
       .catch(() => {
-        var searchPageLength = allSearchedBookmarkData.length;
-        var searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
+        searchPageLength = allSearchedBookmarkData.length;
+        searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
         createSelectCommentQuery(searchedBookmarkData)
         .then(createCommentedBookmarkIds)
         .then(selectComment)
@@ -748,32 +738,12 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
         .then(createComments)
         .then(pushSelectedComments)
         .then(addNumberOfComments)
-        .then(() => {
-          res.render('myPage.ejs', {
-            bookmarkData,
-            searchedBookmarkData,
-            orgData,
-            pageLength,
-            searchPageLength,
-            index,
-            searchIndex,
-            numberOfSearchedBookmarks,
-          });
-        }).catch(() => {
-          res.render('myPage.ejs', {
-            bookmarkData,
-            searchedBookmarkData,
-            orgData,
-            pageLength,
-            searchPageLength,
-            index,
-            searchIndex,
-            numberOfSearchedBookmarks,
-          });
-        });
+        .then(renderMyPage)
+        .catch(renderMyPage)
+        .catch(renderErrorPage);
       }).then((value) => {
-        var searchPageLength = value.length;
-        var searchedBookmarkData = value[searchIndex - 1];
+        searchPageLength = value.length;
+        searchedBookmarkData = value[searchIndex - 1];
         createSelectCommentQuery(searchedBookmarkData)
         .then(createCommentedBookmarkIds)
         .then(selectComment)
@@ -781,29 +751,9 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
         .then(createComments)
         .then(pushSelectedComments)
         .then(addNumberOfComments)
-        .then(() => {
-          res.render('myPage.ejs', {
-            bookmarkData,
-            searchedBookmarkData,
-            orgData,
-            pageLength,
-            searchPageLength,
-            index,
-            searchIndex,
-            numberOfSearchedBookmarks,
-          });
-        }).catch(() => {
-          res.render('myPage.ejs', {
-            bookmarkData,
-            searchedBookmarkData,
-            orgData,
-            pageLength,
-            searchPageLength,
-            index,
-            searchIndex,
-            numberOfSearchedBookmarks,
-          });
-        });
+        .then(renderMyPage)
+        .catch(renderMyPage)
+        .catch(renderErrorPage);
       });
     }else if(searchFromTitle === undefined && searchFromDescription === undefined && searchFromTextsOnSites === 'on'){
       createSelectSearchedBookmarksByOneColumn('text')
@@ -811,8 +761,8 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
       .then(doSelectSearchedBookmarks)
       .then(divideSearchedBookmarkData)
       .catch(() => {
-        var searchPageLength = allSearchedBookmarkData.length;
-        var searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
+        searchPageLength = allSearchedBookmarkData.length;
+        searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
         createSelectCommentQuery(searchedBookmarkData)
         .then(createCommentedBookmarkIds)
         .then(selectComment)
@@ -820,32 +770,12 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
         .then(createComments)
         .then(pushSelectedComments)
         .then(addNumberOfComments)
-        .then(() => {
-          res.render('myPage.ejs', {
-            bookmarkData,
-            searchedBookmarkData,
-            orgData,
-            pageLength,
-            searchPageLength,
-            index,
-            searchIndex,
-            numberOfSearchedBookmarks,
-          });
-        }).catch(() => {
-          res.render('myPage.ejs', {
-            bookmarkData,
-            searchedBookmarkData,
-            orgData,
-            pageLength,
-            searchPageLength,
-            index,
-            searchIndex,
-            numberOfSearchedBookmarks,
-          });
-        });
+        .then(renderMyPage)
+        .catch(renderMyPage)
+        .catch(renderErrorPage);
       }).then((value) => {
-        var searchPageLength = value.length;
-        var searchedBookmarkData = value[searchIndex - 1];
+        searchPageLength = value.length;
+        searchedBookmarkData = value[searchIndex - 1];
         createSelectCommentQuery(searchedBookmarkData)
         .then(createCommentedBookmarkIds)
         .then(selectComment)
@@ -853,29 +783,9 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
         .then(createComments)
         .then(pushSelectedComments)
         .then(addNumberOfComments)
-        .then(() => {
-          res.render('myPage.ejs', {
-            bookmarkData,
-            searchedBookmarkData,
-            orgData,
-            pageLength,
-            searchPageLength,
-            index,
-            searchIndex,
-            numberOfSearchedBookmarks,
-          });
-        }).catch(() => {
-          res.render('myPage.ejs', {
-            bookmarkData,
-            searchedBookmarkData,
-            orgData,
-            pageLength,
-            searchPageLength,
-            index,
-            searchIndex,
-            numberOfSearchedBookmarks,
-          });
-        });
+        .then(renderMyPage)
+        .catch(renderMyPage)
+        .catch(renderErrorPage);
       });
     }else if(searchFromTitle === 'on' && searchFromDescription === 'on' && searchFromTextsOnSites === undefined){
       createSelectSearchedBookmarksByTwoColumn('title', 'description')
@@ -883,8 +793,8 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
       .then(doSelectSearchedBookmarks)
       .then(divideSearchedBookmarkData)
       .catch(() => {
-        var searchPageLength = allSearchedBookmarkData.length;
-        var searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
+        searchPageLength = allSearchedBookmarkData.length;
+        searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
         createSelectCommentQuery(searchedBookmarkData)
         .then(createCommentedBookmarkIds)
         .then(selectComment)
@@ -892,32 +802,12 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
         .then(createComments)
         .then(pushSelectedComments)
         .then(addNumberOfComments)
-        .then(() => {
-          res.render('myPage.ejs', {
-            bookmarkData,
-            searchedBookmarkData,
-            orgData,
-            pageLength,
-            searchPageLength,
-            index,
-            searchIndex,
-            numberOfSearchedBookmarks,
-          });
-        }).catch(() => {
-          res.render('myPage.ejs', {
-            bookmarkData,
-            searchedBookmarkData,
-            orgData,
-            pageLength,
-            searchPageLength,
-            index,
-            searchIndex,
-            numberOfSearchedBookmarks,
-          });
-        });
+        .then(renderMyPage)
+        .catch(renderMyPage)
+        .catch(renderErrorPage);
       }).then((value) => {
-        var searchPageLength = value.length;
-        var searchedBookmarkData = value[searchIndex - 1];
+        searchPageLength = value.length;
+        searchedBookmarkData = value[searchIndex - 1];
         createSelectCommentQuery(searchedBookmarkData)
         .then(createCommentedBookmarkIds)
         .then(selectComment)
@@ -925,29 +815,9 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
         .then(createComments)
         .then(pushSelectedComments)
         .then(addNumberOfComments)
-        .then(() => {
-          res.render('myPage.ejs', {
-            bookmarkData,
-            searchedBookmarkData,
-            orgData,
-            pageLength,
-            searchPageLength,
-            index,
-            searchIndex,
-            numberOfSearchedBookmarks,
-          });
-        }).catch(() => {
-          res.render('myPage.ejs', {
-            bookmarkData,
-            searchedBookmarkData,
-            orgData,
-            pageLength,
-            searchPageLength,
-            index,
-            searchIndex,
-            numberOfSearchedBookmarks,
-          });
-        });
+        .then(renderMyPage)
+        .catch(renderMyPage)
+        .catch(renderErrorPage);
       });
     }else if(searchFromTitle === 'on' && searchFromDescription === undefined && searchFromTextsOnSites === 'on'){
       createSelectSearchedBookmarksByTwoColumn('title', 'text')
@@ -955,8 +825,8 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
       .then(doSelectSearchedBookmarks)
       .then(divideSearchedBookmarkData)
       .catch(() => {
-        var searchPageLength = allSearchedBookmarkData.length;
-        var searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
+        searchPageLength = allSearchedBookmarkData.length;
+        searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
         createSelectCommentQuery(searchedBookmarkData)
         .then(createCommentedBookmarkIds)
         .then(selectComment)
@@ -964,32 +834,12 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
         .then(createComments)
         .then(pushSelectedComments)
         .then(addNumberOfComments)
-        .then(() => {
-          res.render('myPage.ejs', {
-            bookmarkData,
-            searchedBookmarkData,
-            orgData,
-            pageLength,
-            searchPageLength,
-            index,
-            searchIndex,
-            numberOfSearchedBookmarks,
-          });
-        }).catch(() => {
-          res.render('myPage.ejs', {
-            bookmarkData,
-            searchedBookmarkData,
-            orgData,
-            pageLength,
-            searchPageLength,
-            index,
-            searchIndex,
-            numberOfSearchedBookmarks,
-          });
-        });
+        .then(renderMyPage)
+        .catch(renderMyPage)
+        .catch(renderErrorPage);
       }).then((value) => {
-        var searchPageLength = value.length;
-        var searchedBookmarkData = value[searchIndex - 1];
+        searchPageLength = value.length;
+        searchedBookmarkData = value[searchIndex - 1];
         createSelectCommentQuery(searchedBookmarkData)
         .then(createCommentedBookmarkIds)
         .then(selectComment)
@@ -997,29 +847,9 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
         .then(createComments)
         .then(pushSelectedComments)
         .then(addNumberOfComments)
-        .then(() => {
-          res.render('myPage.ejs', {
-            bookmarkData,
-            searchedBookmarkData,
-            orgData,
-            pageLength,
-            searchPageLength,
-            index,
-            searchIndex,
-            numberOfSearchedBookmarks,
-          });
-        }).catch(() => {
-          res.render('myPage.ejs', {
-            bookmarkData,
-            searchedBookmarkData,
-            orgData,
-            pageLength,
-            searchPageLength,
-            index,
-            searchIndex,
-            numberOfSearchedBookmarks,
-          });
-        });
+        .then(renderMyPage)
+        .catch(renderMyPage)
+        .catch(renderErrorPage);
       });
     }else if(searchFromTitle === undefined && searchFromDescription === 'on' && searchFromTextsOnSites === 'on'){
       createSelectSearchedBookmarksByTwoColumn('description', 'text')
@@ -1027,8 +857,8 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
       .then(doSelectSearchedBookmarks)
       .then(divideSearchedBookmarkData)
       .catch(() => {
-        var searchPageLength = allSearchedBookmarkData.length;
-        var searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
+        searchPageLength = allSearchedBookmarkData.length;
+        searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
         createSelectCommentQuery(searchedBookmarkData)
         .then(createCommentedBookmarkIds)
         .then(selectComment)
@@ -1036,32 +866,12 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
         .then(createComments)
         .then(pushSelectedComments)
         .then(addNumberOfComments)
-        .then(() => {
-          res.render('myPage.ejs', {
-            bookmarkData,
-            searchedBookmarkData,
-            orgData,
-            pageLength,
-            searchPageLength,
-            index,
-            searchIndex,
-            numberOfSearchedBookmarks,
-          });
-        }).catch(() => {
-          res.render('myPage.ejs', {
-            bookmarkData,
-            searchedBookmarkData,
-            orgData,
-            pageLength,
-            searchPageLength,
-            index,
-            searchIndex,
-            numberOfSearchedBookmarks,
-          });
-        });
+        .then(renderMyPage)
+        .catch(renderMyPage)
+        .catch(renderErrorPage);
       }).then((value) => {
-        var searchPageLength = value.length;
-        var searchedBookmarkData = value[searchIndex - 1];
+        searchPageLength = value.length;
+        searchedBookmarkData = value[searchIndex - 1];
         createSelectCommentQuery(searchedBookmarkData)
         .then(createCommentedBookmarkIds)
         .then(selectComment)
@@ -1069,29 +879,9 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
         .then(createComments)
         .then(pushSelectedComments)
         .then(addNumberOfComments)
-        .then(() => {
-          res.render('myPage.ejs', {
-            bookmarkData,
-            searchedBookmarkData,
-            orgData,
-            pageLength,
-            searchPageLength,
-            index,
-            searchIndex,
-            numberOfSearchedBookmarks,
-          });
-        }).catch(() => {
-          res.render('myPage.ejs', {
-            bookmarkData,
-            searchedBookmarkData,
-            orgData,
-            pageLength,
-            searchPageLength,
-            index,
-            searchIndex,
-            numberOfSearchedBookmarks,
-          });
-        });
+        .then(renderMyPage)
+        .catch(renderMyPage)
+        .catch(renderErrorPage);
       });
     }else if(searchFromTitle === 'on' && searchFromDescription === 'on' && searchFromTextsOnSites === 'on'){
       (() => {
@@ -1125,7 +915,7 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
           var selectSearchedBookmarks = value;
           keyWords.forEach((currentValue, _index, array) => {
             if(_index + 1 === array.length){
-              selectSearchedBookmarks += ' ?))';
+              selectSearchedBookmarks += ' ?)) ORDER BY `bookmark_id` DESC';
               resolve(selectSearchedBookmarks);
             }else{
               selectSearchedBookmarks += ' ? AND `text` LIKE';
@@ -1164,22 +954,8 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
       .then(pushSelectedComments)
       .then(addNumberOfComments)
       .catch(() => {
-        var searchPageLength = allSearchedBookmarkData.length;
-        var searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
-        res.render('myPage.ejs', {
-          bookmarkData,
-          searchedBookmarkData,
-          orgData,
-          pageLength,
-          searchPageLength,
-          index,
-          searchIndex,
-          numberOfSearchedBookmarks,
-        });
-      })
-      .then((value) => {
-        var searchPageLength = value.length;
-        var searchedBookmarkData = value[searchIndex - 1];
+        searchPageLength = allSearchedBookmarkData.length;
+        searchedBookmarkData = allSearchedBookmarkData[searchIndex - 1];
         createSelectCommentQuery(searchedBookmarkData)
         .then(createCommentedBookmarkIds)
         .then(selectComment)
@@ -1187,29 +963,22 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
         .then(createComments)
         .then(pushSelectedComments)
         .then(addNumberOfComments)
-        .then(() => {
-          res.render('myPage.ejs', {
-            bookmarkData,
-            searchedBookmarkData,
-            orgData,
-            pageLength,
-            searchPageLength,
-            index,
-            searchIndex,
-            numberOfSearchedBookmarks,
-          });
-        }).catch(() => {
-          res.render('myPage.ejs', {
-            bookmarkData,
-            searchedBookmarkData,
-            orgData,
-            pageLength,
-            searchPageLength,
-            index,
-            searchIndex,
-            numberOfSearchedBookmarks,
-          });
-        });
+        .then(renderMyPage)
+        .catch(renderMyPage)
+        .catch(renderErrorPage);
+      }).then((value) => {
+        searchPageLength = value.length;
+        searchedBookmarkData = value[searchIndex - 1];
+        createSelectCommentQuery(searchedBookmarkData)
+        .then(createCommentedBookmarkIds)
+        .then(selectComment)
+        .then(filterCommentedBookmarkIds)
+        .then(createComments)
+        .then(pushSelectedComments)
+        .then(addNumberOfComments)
+        .then(renderMyPage)
+        .catch(renderMyPage)
+        .catch(renderErrorPage);
       });
     }else{
       res.render('myPage.ejs', {

@@ -32,6 +32,10 @@ main{
   margin-right: auto;
   float: left;
   min-height: 1500px;
+  height: auto;
+}
+.clear{
+  clear: both;
 }
 .subTitle{
   margin-top: 10px;
