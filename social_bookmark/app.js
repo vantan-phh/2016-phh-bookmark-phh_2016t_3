@@ -27,6 +27,7 @@ var accountSetting = require('./routes/accountSetting');
 var otherProfile = require('./routes/otherProfile');
 var welcome = require('./routes/welcome');
 var left = require('./routes/left');
+var error = require('./routes/error');
 
 var app = express();
 
@@ -92,9 +93,8 @@ app.use('/PHH_Bookmark/accountSetting', setUser, accountSetting);
 app.use('/PHH_Bookmark/otherProfile', setUser, otherProfile);
 app.use('/PHH_Bookmark/left', left);
 
-app.use((req, res, next) => {
-  console.log('my custom middleware!');
-  next();
+app.use(setUser, (req, res) => {
+  res.render('errorPage.ejs');
 });
 
 

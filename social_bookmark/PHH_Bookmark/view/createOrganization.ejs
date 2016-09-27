@@ -55,24 +55,25 @@
             <% if(typeof noUser !== 'undefined'){ %>
               <p class="notice"><%= noUser %></p>
             <% } %>
-          </form>
-        </div>
-        <div id="memberList">
-          <% if(typeof selectedNickNames !== 'undefined') { %>
-            <div class="subtitle"> 選択されたユーザー</div>
-            <% for(var i = 0; i < selectedNickNames.length; i++){ %>
-              <div class="selectedUser"><%= selectedNickNames[i] %><%= selectedUserNames[i] %><input type="button" value="削除" name="<%= selectedUserNames[i] %>" class="deleteButton"></div>
+          </div>
+          <div id="memberList">
+            <% if(typeof selectedNickNames !== 'undefined') { %>
+              <div class="subtitle"> 選択されたユーザー</div>
+              <% for(var i = 0; i < selectedNickNames.length; i++){ %>
+                <div class="selectedUser"><%= selectedNickNames[i] %><%= selectedUserNames[i] %><input type="button" value="削除" name="<%= selectedUserNames[i] %>" class="deleteButton"></div>
+              <% } %>
             <% } %>
-          <% } %>
+          </div>
         </div>
-      </div>
-      <p class="subtitle">サムネイル</p>
-      <div><input type="file" accept="image/*" name="image_file"></div>
-      <% if(typeof thumbailNotice !== 'undefined'){%>
-        <p class="notice"><%= thumbailNotice %></p>
-      <% } %>
-      <div id="create"><input type="submit" value="作成" id="createOrg" name="createOrg" class="button"></div>
-      <input type="hidden" name="result" value="">
+        <p class="subtitle">サムネイル</p>
+        <div><input type="file" accept="image/*" name="image_file"></div>
+        <% if(typeof thumbailNotice !== 'undefined'){%>
+          <p class="notice"><%= thumbailNotice %></p>
+        <% } %>
+        <div id="create"><input type="submit" value="作成" id="createOrg" name="createOrg" class="button"></div>
+        <input type="hidden" name="result" value="">
+      </form>
+
 
       <form action="/PHH_Bookmark/createOrganization/searchUser" method="post" name="searchUser">
         <input type="hidden" name="result">

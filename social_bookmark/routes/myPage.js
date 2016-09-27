@@ -207,10 +207,11 @@ router.get('/', (req, res) => {
   }).then((value) => {
     allBookmarkData = value;
     res.redirect('/PHH_Bookmark/myPage/bookmarkList/1/searchBookmarkList/0');
-  })
-  .catch((value) => {
+  }).catch((value) => {
     allBookmarkData = value;
     res.redirect('/PHH_Bookmark/myPage/bookmarkList/1/searchBookmarkList/0');
+  }).catch(() => {
+    res.redirect('/PHH_Bookmark/errorPage.ejs');
   });
 });
 
@@ -251,6 +252,8 @@ router.get('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =>
           searchIndex,
           numberOfSearchedBookmarks,
         });
+      }).catch(() => {
+        res.render('errorPage.ejs');
       });
     }else{
       res.redirect('/PHH_Bookmark/myPage/bookmarkList/1/searchBookmarkList/0');
@@ -287,6 +290,8 @@ router.get('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =>
         searchIndex,
         numberOfSearchedBookmarks,
       });
+    }).catch(() => {
+      res.render('errorPage.ejs');
     });
   }
 });
@@ -419,6 +424,8 @@ router.post('/bookmarkList/:index', (req, res) => {
     connection.query(createBookmark, [userId, title, url, description, text]).then(() => {
       res.redirect('/PHH_Bookmark/myPage');
     });
+  }).cstch(() => {
+    res.render('errorPage.ejs');
   });
 });
 
@@ -475,6 +482,8 @@ router.post('/bookmarkList/:index/submitUrl', (req, res) => {
         searchIndex,
       });
     }
+  }).catch(() => {
+    res.render('errorPage.ejs');
   });
 });
 
@@ -507,6 +516,8 @@ router.post('/delete', (req, res) => {
     return promise;
   }).then(() => {
     res.redirect('/PHH_Bookmark/myPage');
+  }).catch(() => {
+    res.render('errorPage.ejs');
   });
 });
 
@@ -650,6 +661,10 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
     });
   }
 
+  function renderErrorPage(){
+    res.render('errorPage.ejs');
+  }
+
   (() => {
     var promise = new Promise((resolve) => {
       if(checkSpace.test(keyWord)){
@@ -692,7 +707,8 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
         .then(pushSelectedComments)
         .then(addNumberOfComments)
         .then(renderMyPage)
-        .catch(renderMyPage);
+        .catch(renderMyPage)
+        .catch(renderErrorPage);
       }).then((value) => {
         searchPageLength = value.length;
         searchedBookmarkData = value[searchIndex - 1];
@@ -704,7 +720,8 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
         .then(pushSelectedComments)
         .then(addNumberOfComments)
         .then(renderMyPage)
-        .catch(renderMyPage);
+        .catch(renderMyPage)
+        .catch(renderErrorPage);
       });
     }else if(searchFromTitle === undefined && searchFromDescription === 'on' && searchFromTextsOnSites === undefined){
       createSelectSearchedBookmarksByOneColumn('description')
@@ -722,7 +739,8 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
         .then(pushSelectedComments)
         .then(addNumberOfComments)
         .then(renderMyPage)
-        .catch(renderMyPage);
+        .catch(renderMyPage)
+        .catch(renderErrorPage);
       }).then((value) => {
         searchPageLength = value.length;
         searchedBookmarkData = value[searchIndex - 1];
@@ -734,7 +752,8 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
         .then(pushSelectedComments)
         .then(addNumberOfComments)
         .then(renderMyPage)
-        .catch(renderMyPage);
+        .catch(renderMyPage)
+        .catch(renderErrorPage);
       });
     }else if(searchFromTitle === undefined && searchFromDescription === undefined && searchFromTextsOnSites === 'on'){
       createSelectSearchedBookmarksByOneColumn('text')
@@ -752,7 +771,8 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
         .then(pushSelectedComments)
         .then(addNumberOfComments)
         .then(renderMyPage)
-        .catch(renderMyPage);
+        .catch(renderMyPage)
+        .catch(renderErrorPage);
       }).then((value) => {
         searchPageLength = value.length;
         searchedBookmarkData = value[searchIndex - 1];
@@ -764,7 +784,8 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
         .then(pushSelectedComments)
         .then(addNumberOfComments)
         .then(renderMyPage)
-        .catch(renderMyPage);
+        .catch(renderMyPage)
+        .catch(renderErrorPage);
       });
     }else if(searchFromTitle === 'on' && searchFromDescription === 'on' && searchFromTextsOnSites === undefined){
       createSelectSearchedBookmarksByTwoColumn('title', 'description')
@@ -782,7 +803,8 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
         .then(pushSelectedComments)
         .then(addNumberOfComments)
         .then(renderMyPage)
-        .catch(renderMyPage);
+        .catch(renderMyPage)
+        .catch(renderErrorPage);
       }).then((value) => {
         searchPageLength = value.length;
         searchedBookmarkData = value[searchIndex - 1];
@@ -794,7 +816,8 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
         .then(pushSelectedComments)
         .then(addNumberOfComments)
         .then(renderMyPage)
-        .catch(renderMyPage);
+        .catch(renderMyPage)
+        .catch(renderErrorPage);
       });
     }else if(searchFromTitle === 'on' && searchFromDescription === undefined && searchFromTextsOnSites === 'on'){
       createSelectSearchedBookmarksByTwoColumn('title', 'text')
@@ -812,7 +835,8 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
         .then(pushSelectedComments)
         .then(addNumberOfComments)
         .then(renderMyPage)
-        .catch(renderMyPage);
+        .catch(renderMyPage)
+        .catch(renderErrorPage);
       }).then((value) => {
         searchPageLength = value.length;
         searchedBookmarkData = value[searchIndex - 1];
@@ -824,7 +848,8 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
         .then(pushSelectedComments)
         .then(addNumberOfComments)
         .then(renderMyPage)
-        .catch(renderMyPage);
+        .catch(renderMyPage)
+        .catch(renderErrorPage);
       });
     }else if(searchFromTitle === undefined && searchFromDescription === 'on' && searchFromTextsOnSites === 'on'){
       createSelectSearchedBookmarksByTwoColumn('description', 'text')
@@ -842,7 +867,8 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
         .then(pushSelectedComments)
         .then(addNumberOfComments)
         .then(renderMyPage)
-        .catch(renderMyPage);
+        .catch(renderMyPage)
+        .catch(renderErrorPage);
       }).then((value) => {
         searchPageLength = value.length;
         searchedBookmarkData = value[searchIndex - 1];
@@ -854,7 +880,8 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
         .then(pushSelectedComments)
         .then(addNumberOfComments)
         .then(renderMyPage)
-        .catch(renderMyPage);
+        .catch(renderMyPage)
+        .catch(renderErrorPage);
       });
     }else if(searchFromTitle === 'on' && searchFromDescription === 'on' && searchFromTextsOnSites === 'on'){
       (() => {
@@ -937,7 +964,8 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
         .then(pushSelectedComments)
         .then(addNumberOfComments)
         .then(renderMyPage)
-        .catch(renderMyPage);
+        .catch(renderMyPage)
+        .catch(renderErrorPage);
       }).then((value) => {
         searchPageLength = value.length;
         searchedBookmarkData = value[searchIndex - 1];
@@ -949,7 +977,8 @@ router.post('/bookmarkList/:index/searchBookmarkList/:searchIndex', (req, res) =
         .then(pushSelectedComments)
         .then(addNumberOfComments)
         .then(renderMyPage)
-        .catch(renderMyPage);
+        .catch(renderMyPage)
+        .catch(renderErrorPage);
       });
     }else{
       res.render('myPage.ejs', {
