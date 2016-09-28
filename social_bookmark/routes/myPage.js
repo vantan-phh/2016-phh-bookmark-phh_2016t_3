@@ -424,7 +424,7 @@ router.post('/bookmarkList/:index', (req, res) => {
     connection.query(createBookmark, [userId, title, url, description, text]).then(() => {
       res.redirect('/PHH_Bookmark/myPage');
     });
-  }).cstch(() => {
+  }).catch(() => {
     res.render('errorPage.ejs');
   });
 });
