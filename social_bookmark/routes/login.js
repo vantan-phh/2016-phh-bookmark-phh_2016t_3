@@ -48,7 +48,7 @@ router.post('/', (req, res) => {
             }else{
               req.session.user_id = false;
               res.render('login.ejs', {
-                noUser : 'ログインに失敗しました',
+                noUser : 'ログインに失敗しました、',
               });
             }
           });
@@ -111,7 +111,7 @@ router.post('/', (req, res) => {
         }else{
           req.session.user_id = false;
           res.render('login.ejs', {
-            noUser : 'ログインに失敗しました',
+            noUser : 'ログインに失敗しました、',
           });
         }
       });
@@ -132,7 +132,7 @@ router.post('/', (req, res) => {
             }else{
               req.session.user_id = false;
               res.render('login.ejs', {
-                noUser : 'ログインに失敗しました',
+                noUser : 'ログインに失敗しました、',
               });
             }
           });
@@ -180,7 +180,7 @@ router.post('/', (req, res) => {
           }else{
             req.session.user_id = false;
             res.render('login.ejs', {
-              noUser : 'ログインに失敗しました',
+              noUser : 'ログインに失敗しました、',
             });
           }
         });
