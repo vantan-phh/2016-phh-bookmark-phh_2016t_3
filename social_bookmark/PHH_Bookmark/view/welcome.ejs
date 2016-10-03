@@ -3,22 +3,33 @@
   <head>
     <meta charset="utf-8">
     <title>Welcome - PHHB</title>
-    <link rel="stylesheet" type="text/css" href="/css/welcome.css">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/welcome.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
   </head>
-  <body>
+  <body class="container-fluid">
     <% include layout %>
     <main>
-      <p id="pageTitle">ようこそ</p>
-      <div id="descriptionBody">
-        <p class="description">PHH Bookmarkは特定組織内でのより高速・安心・低難易度でのURLの共有を促進するソーシャルブックマークサービスです。</p>
-        <p class="description"></p>
-        <div id="noAccount">
-          <p class="guide">初めてのかた</p>
-          <a href="/PHH_Bookmark/createAccount"><button id="createAccount">アカウントを作る</button></a>
+      <div class="row text-center">
+        <p class="h2 col-sm-4" id="pageTitle">ようこそ</p>
+      </div>
+      <div>
+        <div class="text-center" id="desc">
+          <p>PHH Bookmarkは特定組織内でのより高速・安心・低難易度でのURLの共有を促進するソーシャルブックマークサービスです。</p>
         </div>
-        <div id="haveAccount">
-          <p class="guide">アカウントをお持ちのかた</p>
-          <a href="/PHH_Bookmark/login"><button id="login">ログイン</button></a>
+        <div class="row text-center">
+          <div class="col-sm-4 col-sm-offset-2">
+            <p class="h4">初めてのかた</p>
+            <a href="/PHH_Bookmark/createAccount"><button class="btn btn-success btn-block">Create Account</button></a>
+          </div>
+          <div class="col-sm-4">
+            <p class="h4">アカウントをお持ちのかた</p>
+            <a href="/PHH_Bookmark/login"><button class="btn btn-info btn-block">Login</button></a>
+          </div>
+          <div class="col-sm-2"></div>
         </div>
       </div>
     </main>
