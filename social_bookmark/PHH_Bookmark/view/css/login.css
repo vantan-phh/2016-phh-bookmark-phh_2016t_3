@@ -5,10 +5,9 @@ main{
 .button{
   width: 200px;
 }
-.notice{
-  padding-top: 10px;
-  padding-bottom: 10px;
-  color: red;
+.alert{
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 #submitButton{
   margin-bottom: 20px;

@@ -18,7 +18,7 @@
           <h2 class="form-title">Login</h2>
           <div class="form-group">
             <label><p>Email Address or Username</p>
-            <input class="input form-control" name="email_or_user_name" size="30" type="text" placeholder="Email or Username"></label>
+            <input class="input form-control" name="email_or_user_name" size="35" type="text" placeholder="Email or Username">
             <% if (typeof mailNotice !== 'undefined') { %>
               <div class="alert alert-danger" role="alert">
                 <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
@@ -31,16 +31,18 @@
                 <%= usernameNotice %>入力してください
               </div>
             <% } %>
+            </label>
           </div>
           <div class="form-group">
             <label><p>Password</p>
-            <input class="input form-control" name="password" size="30" type="password" placeholder="Password"></label>
+            <input class="input form-control" name="password" size="35" type="password" placeholder="Password">
             <% if (typeof passwordNotice !== 'undefined') { %>
               <div class="alert alert-danger" role="alert">
                 <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
                 <%= passwordNotice %>
               </div>
             <% } %>
+            </label>
           </div>
 
           <input id="submitButton" type="submit" value="Login" class="button btn btn-info">
