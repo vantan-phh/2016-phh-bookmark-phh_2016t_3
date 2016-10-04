@@ -3,36 +3,68 @@
   <head>
     <meta charset="utf-8">
     <title>Create Account - PHHB</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="/css/createAccount.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
   </head>
   <body>
     <% include layout %>
     <main>
-      <form action="/PHH_Bookmark/createAccount" method="post">
-        <h2>Create an Account</h2>
-        <label><p class="read">Email Address</p><input name="email" type="text" placeholder="メールアドレスを入力してください"></label>
-        <% if (typeof eMailExists !== 'undefined') { %>
-          <p class="error"><%= eMailExists %></p>
-        <% } %>
-        <% if (typeof mailNotice !== 'undefined') { %>
-          <p class="error"><%= mailNotice %></p>
-        <% } %>
-        <label><p class="read">Username</p><input name="user_name" type="text" placeholder="ユーザーネームを入力してください"></label>
-        <% if(typeof userNameExists !== 'undefined'){ %>
-          <p class="error"><%= userNameExists %></p>
-        <% } %>
-        <% if (typeof usernameNotice !== 'undefined') { %>
-          <p class="error"><%= usernameNotice %></p>
-        <% } %>
-        <label><p class="read">Password</p><input name="password" type="password" placeholder="パスワードを入力してください"></label>
-        <label><p class="read">Again Password</p><input name="again_password" type="password" placeholder="もう一度パスワードを入力してください"></label>
-        <% if (typeof passwordNotice !== 'undefined') { %>
-          <p class="error"><%= passwordNotice %></p>
-        <% } %>
-        <input id="submitBtn" type="submit" value="Create an account" class="button">
-      </form>
+      <div class="text-center">
+        <form action="/PHH_Bookmark/createAccount" method="post">
+          <h2>Create Account</h2>
+          <div class="form-group">
+            <label><p class="read">Email Address</p><input name="email" class="input form-control" size="35" type="text" placeholder="Email">
+            <% if (typeof eMailExists !== 'undefined') { %>
+              <div class="alert alert-danger emailNotice" role="alert">
+                <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                <%= eMailExists %>
+              </div>
+            <% } %>
+            <% if (typeof mailNotice !== 'undefined') { %>
+              <div class="alert alert-danger emailNotice" role="alert">
+                <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                <%= mailNotice %>
+              </div>
+            <% } %>
+            </label>
+          </div>
+          <div class="form-group">
+            <label><p class="read">Username</p><input name="user_name" class="input form-control" size="35" type="text" placeholder="Username">
+            <% if(typeof userNameExists !== 'undefined'){ %>
+              <div class="alert alert-danger userNameNotice" role="alert">
+                <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                <%= userNameExists %>
+              </div>
+            <% } %>
+            <% if (typeof usernameNotice !== 'undefined') { %>
+              <div class="alert alert-danger userNameNotice" role="alert">
+                <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                <%= usernameNotice %>
+              </div>
+            <% } %>
+            </label>
+          </div>
+          <div class="form-group">
+            <label><p class="read">Password</p><input name="password" class="input form-control" size="35" type="password" placeholder="Password"></label>
+          </div>
+          <div class="form-group">
+            <label><p class="read">Confirm Password</p><input name="again_password" class="input form-control" size="35" type="password" placeholder="Password (Again)">
+            <% if (typeof passwordNotice !== 'undefined') { %>
+              <div class="alert alert-danger againPasswordNotice" role="alert">
+                <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                <%= passwordNotice %>
+              </div>
+            <% } %>
+            </label>
+          </div>
+          <input id="submitBtn" type="submit" value="Create account" class="button btn btn-success">
+        </form>
+      </div>
     </main>
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <script>
       $(function(){
         var $email = $('[name="email"]');
@@ -49,24 +81,24 @@
         });
         $email.keyup(function(){
           var email = $email.val();
-          $('#emailNotice').detach();
-          if(!checkEmail.test(email)) $email.after('<p class="error" id="emailNotice">正しいメールアドレスを入力してください</p>');
+          $('.emailNotice').detach();
+          if(!checkEmail.test(email)) $email.after('<div class="emailNotice alert alert-danger" role="alert"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>正しいメールアドレスを入力してください</div>');
         });
         $userName.keyup(function(){
           var userName = $userName.val();
-          $('#userNameNotice').detach();
-          if(!checkForm.test(userName) || userName.length > 16) $userName.after('<p class="error" id="userNameNotice">ユーザーネームは半角英数16文字以下です</p>');
+          $('.userNameNotice').detach();
+          if(!checkForm.test(userName) || userName.length > 16) $userName.after('<div class="userNameNotice alert alert-danger" role="alert"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>ユーザーネームは半角英数16文字以下です</div>');
         });
         $password.keyup(function(){
           var password = $password.val();
-          $('#passwordNotice').detach();
-          if(!checkForm.test(password) || password.length < 8) $password.after('<p class="error" id="passwordNotice">パスワードは半角英数８文字以上です</p>');
+          $('.passwordNotice').detach();
+          if(!checkForm.test(password) || password.length < 8) $password.after('<div class="passwordNotice alert alert-danger" role="alert"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>パスワードは半角英数8文字以上です</div>');
         });
         $againPassword.keyup(function(){
           var againPassword = $againPassword.val();
           var password = $password.val();
-          $('#againPasswordNotice').detach();
-          if(againPassword !== password) $againPassword.after('<p class="error" id="againPasswordNotice">パスワードが一致しません</p>');
+          $('.againPasswordNotice').detach();
+          if(againPassword !== password) $againPassword.after('<div class="againPasswordNotice alert alert-danger" role="alert"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>パスワードが一致しません</div>');
         });
       });
     </script>

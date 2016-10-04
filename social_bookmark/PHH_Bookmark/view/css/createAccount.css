@@ -1,65 +1,9 @@
-*{
-  box-sizing: border-box;
-  font-family: sans-serif;
-}
-body{
-  background-color: #fafafa;
-  margin: 0px;
-}
-/*----------------------------/
-            ヘッダー
------------------------------*/
-header{
-  background-color: white;
-  border-bottom: solid #ccc 1px;
-  padding: 10px;
-  width: 1279px;
-  height: 60px;
-}
-
-#headerFavicon img{
-  position: absolute;
-  left: 140px;
-  top: 5px;
-}
-
-/*----------------------------/
-          コンテンツ
------------------------------*/
 main{
-  background-color: #fefefe;
-  border: solid 1px gray;
-  position: absolute;
-  left: 450px;
-  margin-top: 50px;
-  padding-left: 20px;
-  width: 450px;
+  position: relative;
+  top: 100px;
+  margin-bottom: 100px;
 }
-
-label .read{
-  margin: 5px 0 3px 0;
-}
-label input{
-  font-size: 15px;
-  padding: 5px;
-  width: 400px;
-  height: 30px;
-}
-label .readInput{
-  margin: 3px 0 10px 0;
-}
-.error{
-  color: red;
-}
-#submitBtn{
-  margin-top: 15px;
-  color: white;
-  font-size: 20px;
-  background-color: #00e100;
-  margin-bottom: 20px;
-  width: 400px;
-  height: 40px;
-}
-#submitBtn:hover{
-  background-color: green;
+.alert{
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
