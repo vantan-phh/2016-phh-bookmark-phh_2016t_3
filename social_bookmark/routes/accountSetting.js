@@ -90,87 +90,74 @@ router.post('/password', (req, res) => {
   var newPassword = req.body.newPassword;
   var newPasswordConfirm = req.body.newPasswordConfirm;
   var checkForm = /^[a-zA-Z0-9]+$/;
-  (() => {
-    var promise = new Promise((resolve) => {
-      if(checkForm.test(newPassword) && newPassword.length >= 8){
-        resolve();
-      }else{
-        var selectMyData = 'SELECT * FROM `users` WHERE `user_id` = ?';
-        connection.query(selectMyData, [myId]).then((result) => {
-          res.render('accountSetting.ejs', {
-            myData : result[0][0],
-            passwordNotice : 'パスワードは半角英数8文字以上です',
-          });
+  new Promise((resolve) => {
+    if(checkForm.test(newPassword) && newPassword.length >= 8){
+      resolve();
+    }else{
+      var selectMyData = 'SELECT * FROM `users` WHERE `user_id` = ?';
+      connection.query(selectMyData, [myId]).then((result) => {
+        res.render('accountSetting.ejs', {
+          myData : result[0][0],
+          passwordNotice : 'パスワードは半角英数8文字以上です',
         });
-      }
-    });
-    return promise;
-  })().then(() => {
-    var promise = new Promise((resolve) => {
-      var selectHashAndSalt = 'SELECT * FROM `users` WHERE `user_id` = ?';
-      connection.query(selectHashAndSalt, [myId]).then((result) => {
-        var values = {
-          currentHash : result[0][0].hash,
-          currentSalt : result[0][0].salt,
-        };
-        resolve(values);
       });
-    });
-    return promise;
-  }).then((values) => {
-    var promise = new Promise((resolve) => {
-      var submittedHash = toHash(currentPassword, values.currentSalt);
-      values.submittedHash = submittedHash;
+    }
+  })
+  .then(() => new Promise((resolve) => {
+    var selectHashAndSalt = 'SELECT * FROM `users` WHERE `user_id` = ?';
+    connection.query(selectHashAndSalt, [myId]).then((result) => {
+      var values = {
+        currentHash : result[0][0].hash,
+        currentSalt : result[0][0].salt,
+      };
       resolve(values);
     });
-    return promise;
-  }).then((values) => {
-    var promise = new Promise((resolve) => {
-      if(values.submittedHash === values.currentHash){
-        resolve(values);
-      }else{
-        var selectMyData = 'SELECT * FROM `users` WHERE `user_id` = ?';
-        connection.query(selectMyData, [myId]).then((result) => {
-          res.render('accountSetting.ejs', {
-            passwordNotice : '入力された値と現在のパスワードが一致しません。',
-            myData : result[0][0],
-          });
-        });
-      }
-    });
-    return promise;
-  }).then((values) => {
-    var promise = new Promise((resolve) => {
-      if(newPassword === newPasswordConfirm){
-        resolve(values);
-      }else{
-        var selectMyData = 'SELECT * FROM `users` WHERE `user_id` = ?';
-        connection.query(selectMyData, [myId]).then((result) => {
-          res.render('accountSetting.ejs', {
-            confirmNotice : '新しいパスワードとその確認の入力値が一致しません。',
-            myData : result[0][0],
-          });
-        });
-      }
-    });
-    return promise;
-  }).then((values) => {
-    var promise = new Promise((resolve) => {
-      var newPasswordAndHash = hashPassword(newPassword);
-      values.newPasswordAndHash = newPasswordAndHash;
+  }))
+  .then((values) => new Promise((resolve) => {
+    var submittedHash = toHash(currentPassword, values.currentSalt);
+    values.submittedHash = submittedHash;
+    resolve(values);
+  }))
+  .then((values) => new Promise((resolve) => {
+    if(values.submittedHash === values.currentHash){
       resolve(values);
-    });
-    return promise;
-  }).then((values) => {
+    }else{
+      var selectMyData = 'SELECT * FROM `users` WHERE `user_id` = ?';
+      connection.query(selectMyData, [myId]).then((result) => {
+        res.render('accountSetting.ejs', {
+          passwordNotice : '入力された値と現在のパスワードが一致しません。',
+          myData : result[0][0],
+        });
+      });
+    }
+  }))
+  .then((values) => new Promise((resolve) => {
+    if(newPassword === newPasswordConfirm){
+      resolve(values);
+    }else{
+      var selectMyData = 'SELECT * FROM `users` WHERE `user_id` = ?';
+      connection.query(selectMyData, [myId]).then((result) => {
+        res.render('accountSetting.ejs', {
+          confirmNotice : '新しいパスワードとその確認の入力値が一致しません。',
+          myData : result[0][0],
+        });
+      });
+    }
+  }))
+  .then((values) => new Promise((resolve) => {
+    var newPasswordAndHash = hashPassword(newPassword);
+    values.newPasswordAndHash = newPasswordAndHash;
+    resolve(values);
+  }))
+  .then((values) => {
     var newHash = values.newPasswordAndHash[0];
     var newSalt = values.newPasswordAndHash[1];
-    var promise = new Promise((resolve) => {
+    return new Promise((resolve) => {
       var changePassword = 'UPDATE `users` SET `hash` = ?, `salt` = ? WHERE `user_id` = ?';
       connection.query(changePassword, [newHash, newSalt, myId]).then(() => {
         resolve();
       });
     });
-    return promise;
   }).then(() => {
     var selectMyData = 'SELECT * FROM `users` WHERE `user_id` = ?';
     connection.query(selectMyData, [myId]).then((result) => {
@@ -184,86 +171,70 @@ router.post('/password', (req, res) => {
 
 router.post('/leave', (req, res) => {
   var myId = req.session.user_id;
-  (() => {
-    var promise = new Promise((resolve, reject) => {
-      var checkOrganization = 'SELECT * FROM (SELECT * FROM `organization_memberships` WHERE `user_id` = ? AND `is_admin` = true) AS a';
-      connection.query(checkOrganization, [myId]).then((result) => {
-        result[0].length ? reject(result[0]) : resolve();
-      });
+  new Promise((resolve, reject) => {
+    var checkOrganization = 'SELECT * FROM (SELECT * FROM `organization_memberships` WHERE `user_id` = ? AND `is_admin` = true) AS a';
+    connection.query(checkOrganization, [myId]).then((result) => {
+      result[0].length ? reject(result[0]) : resolve();
     });
-    return promise;
-  })().catch((value) => {
-    var promise = new Promise((resolve, reject) => {
-      var orgIds = [];
-      value.forEach((currentValue, index, array) => {
-        orgIds.push(currentValue.org_id);
-        if(index + 1 === array.length){
-          var values = {
-            orgIds,
-            selectedMemberships : value,
-          };
-          reject(values);
-        }
-      });
-    });
-    return promise;
-  }).catch((values) => {
-    var promise = new Promise((resolve, reject) => {
-      values.orgIds = values.orgIds.filter((currentValue, index, array) => array.indexOf(currentValue) === index);
-      reject(values);
-    });
-    return promise;
-  }).catch((values) => {
-    var promise = new Promise((resolve, reject) => {
-      values.memberships = {};
-      values.orgIds.forEach((currentValue, index, array) => {
-        values.memberships[currentValue] = [];
-        if(index + 1 === array.length) reject(values);
-      });
-    });
-    return promise;
-  }).catch((values) => {
-    var promise = new Promise((resolve, reject) => {
-      values.selectedMemberships.forEach((currentValue, index, array) => {
-        values.orgIds.forEach((_currentValue, _index, _array) => {
-          if(currentValue.org_id === _currentValue) values.memberships[_currentValue].push(currentValue.user_id);
-          if(index + 1 === array.length && _index + 1 === _array.length) reject(values);
-        });
-      });
-    });
-    return promise;
-  }).catch((values) => {
-    var promise = new Promise((resolve, reject) => {
-      var cannotLeave = 0;
-      for(var i = 0; i < values.orgIds.length; i++){
-        if(values.memberships[values.orgIds[i]].length <= 1){
-          cannotLeave++;
-        }
+  }))
+  .catch((value) => new Promise((resolve, reject) => {
+    var orgIds = [];
+    value.forEach((currentValue, index, array) => {
+      orgIds.push(currentValue.org_id);
+      if(index + 1 === array.length){
+        var values = {
+          orgIds,
+          selectedMemberships : value,
+        };
+        reject(values);
       }
-      cannotLeave > 0 ? reject() : resolve();
     });
-    return promise;
-  }).then(() => {
-    var promise = new Promise((resolve) => {
-      var deleteMembership = 'DELETE FROM `organization_memberships` WHERE `user_id` = ?';
-      connection.query(deleteMembership, [myId]).then(() => {
-        resolve();
-      }, () => {
-        resolve();
+  }))
+  .catch((values) => {new Promise((resolve, reject) => {
+    values.orgIds = values.orgIds.filter((currentValue, index, array) => array.indexOf(currentValue) === index);
+    reject(values);
+  }))
+  .catch((values) => new Promise((resolve, reject) => {
+    values.memberships = {};
+    values.orgIds.forEach((currentValue, index, array) => {
+      values.memberships[currentValue] = [];
+      if(index + 1 === array.length) reject(values);
+    });
+  }))
+  .catch((values) => new Promise((resolve, reject) => {
+    values.selectedMemberships.forEach((currentValue, index, array) => {
+      values.orgIds.forEach((_currentValue, _index, _array) => {
+        if(currentValue.org_id === _currentValue) values.memberships[_currentValue].push(currentValue.user_id);
+        if(index + 1 === array.length && _index + 1 === _array.length) reject(values);
       });
     });
-    return promise;
-  }).then(() => {
-    var promise = new Promise((resolve) => {
-      var deleteBookmarks = 'DELETE FROM `bookmarks` WHERE `user_id` = ? AND `org_id` = NULL';
-      connection.query(deleteBookmarks, [myId]).then(() => {
-        resolve();
-      }, () => {
-        resolve();
-      });
+  }))
+  .catch((values) => new Promise((resolve, reject) => {
+    var cannotLeave = 0;
+    for(var i = 0; i < values.orgIds.length; i++){
+      if(values.memberships[values.orgIds[i]].length <= 1){
+        cannotLeave++;
+      }
+    }
+    cannotLeave > 0 ? reject() : resolve();
+  }))
+  .then(() => new Promise((resolve) => {
+    var deleteMembership = 'DELETE FROM `organization_memberships` WHERE `user_id` = ?';
+    connection.query(deleteMembership, [myId]).then(() => {
+      resolve();
+    }, () => {
+      resolve();
     });
-    return promise;
-  }).then(() => {
+  }))
+  .then(() => new Promise((resolve) => {
+    var deleteBookmarks = 'DELETE FROM `bookmarks` WHERE `user_id` = ? AND `org_id` = NULL';
+    connection.query(deleteBookmarks, [myId]).then(() => {
+      resolve();
+    }, () => {
+      resolve();
+    });
+  }))
+  .then(() => {
     var deleteFromUsers = 'UPDATE `users` SET `name` = "unknown", `mail` = "unknown", `salt` = "unknown", hash = "unknown", `nick_name` = "unknown", image_path = "NULL", introduction = "NULL" WHERE `user_id` = ?';
     connection.query(deleteFromUsers, [myId]).then(() => {
       delete req.session.user_id;
