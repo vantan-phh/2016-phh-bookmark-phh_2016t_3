@@ -52,50 +52,30 @@ router.post('/', (req, res) => {
   var againPassword = req.body.again_password;
   (() => {
     var promise = new Promise((resolve) => {
-      if(password === againPassword){
-        resolve();
-      }else{
+      if(password !== againPassword){
         res.render('createAccount.ejs', {
           passwordNotice : 'パスワードが一致しません',
         });
       }
-    });
-    return promise;
-  })().then(() => {
-    var promise = new Promise((resolve) => {
-      if(checkEmail.test(eMail)){
-        resolve();
-      }else{
+
+      if(!checkEmail.test(eMail)){
         res.render('createAccount.ejs', {
           mailNotice : '正しいメールアドレスを入力してください',
         });
       }
-    });
-    return promise;
-  }).then(() => {
-    var promise = new Promise((resolve) => {
-      if(checkForm.test(userName) && userName.length <= 16){
-        resolve();
-      }else{
+
+      if(!checkForm.test(userName) && userName.length > 16){
         res.render('createAccount.ejs', {
           usernameNotice : 'ユーザーネームは半角英数16文字以下です',
         });
       }
-    });
-    return promise;
-  }).then(() => {
-    var promise = new Promise((resolve) => {
-      if(checkForm.test(password) && password.length >= 8){
-        resolve();
-      }else{
+
+      if(!checkForm.test(password) && password.length < 8){
         res.render('createAccount.ejs', {
           passwordNotice : 'パスワードは半角英数8文字以上です',
         });
       }
-    });
-    return promise;
-  }).then(() => {
-    var promise = new Promise((resolve) => {
+
       var existsEmailQuery = 'SELECT `mail` FROM `users` WHERE `mail` = ?';
       connection.query(existsEmailQuery, [eMail]).then((result) => {
         if(result[0].length > 0){
