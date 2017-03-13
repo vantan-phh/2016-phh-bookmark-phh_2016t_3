@@ -9,7 +9,7 @@ router.get('/', (req, res) => {
   var bookmarkId = req.session.bookmark_id;
   (() => {
     var promise = new Promise((resolve) => {
-      var query = 'SELECT * FROM `comments` WHERE `bookmark_id` = ? ORDER BY `comment_id` DESC';
+      var query = 'SELECT * FROM `comments` WHERE `bookmark_id` = ?';
       connection.query(query, [bookmarkId]).then((result) => {
         var queryResult = result[0];
         resolve(queryResult);
