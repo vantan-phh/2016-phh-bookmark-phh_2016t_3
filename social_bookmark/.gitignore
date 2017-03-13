@@ -1,6 +1,7 @@
 node_modules
 .DS_Store
 PHH_Bookmark/view/img/uploads
+PHH_Bookmark/view/test.js
 social_bookmark/.node-version
 npm-debug.log
 .eslintrc
